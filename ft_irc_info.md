@@ -25,6 +25,10 @@ https://fedoramagazine.org/beginners-guide-irc/
 
 https://ncona.com/2019/04/building-a-simple-server-with-cpp/
 
+
+IRC project documentations by the university of Chicago
+http://chi.cs.uchicago.edu/chirc
+
 So basically, the client would send the server basic commands and the server woud respond. basic. server would have to authenticate client, using the password provided in the command line.
 
 irrsi - cli base Irc client.would be good reference
