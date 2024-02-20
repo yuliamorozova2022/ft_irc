@@ -29,3 +29,161 @@ So basically, the client would send the server basic commands and the server wou
 
 irrsi - cli base Irc client.would be good reference
 https://irssi.org/download/
+
+
+FTIRC allowed commands from the pdf + basic info thanks to chatGPT:
+1. **socket**:
+	```cpp
+	int socket(int domain, int type, int protocol);
+	```
+	Creates a new communication endpoint, returning a socket descriptor for further use in network communication.
+
+2. **close**:
+	```cpp
+	int close(int fd);
+	```
+	Closes a file descriptor, including sockets, to release system resources and terminate the connection.
+
+3. **setsockopt**:
+	```cpp
+	int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+	```
+	Sets various options associated with a socket, such as controlling socket behavior or modifying socket properties.
+
+4. **getsockname**:
+	```cpp
+	int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+	```
+	Retrieves the local address assigned to a socket, useful for obtaining the details of a bound socket.
+
+5. **getprotobyname**:
+	```cpp
+	struct protoent *getprotobyname(const char *name);
+	```
+	Retrieves protocol information based on the protocol name, aiding in setting up socket options.
+
+6. **gethostbyname**:
+	```cpp
+	struct hostent *gethostbyname(const char *name);
+	```
+	Resolves a hostname to an IPv4 address, allowing the program to identify and connect to remote hosts.
+
+7. **getaddrinfo**:
+	```cpp
+	int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+	```
+	Translates a host name and a service name to a set of socket addresses, providing flexibility in handling different address formats.
+
+8. **freeaddrinfo**:
+	```cpp
+	void freeaddrinfo(struct addrinfo *res);
+	```
+	Frees memory allocated by the getaddrinfo function, preventing memory leaks.
+
+9. **bind**:
+	```cpp
+	int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+	```
+	Associates a socket with a specific local address and port number, preparing it for communication.
+
+10. **connect**:
+	```cpp
+	int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+	```
+	Establishes a connection to a remote socket, enabling communication between the local and remote systems.
+
+11. **listen**:
+	```cpp
+	int listen(int sockfd, int backlog);
+	```
+	Marks a socket as passive, indicating that it will be used to accept incoming connection requests.
+
+12. **accept**:
+	```cpp
+	int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+	```
+	Accepts an incoming connection request on a listening socket, creating a new socket for communication with the client.
+
+13. **htons**:
+	```cpp
+	uint16_t htons(uint16_t hostshort);
+	```
+	Converts a 16-bit integer from host byte order to network byte order, ensuring consistency in communication protocols.
+
+14. **htonl**:
+	```cpp
+	uint32_t htonl(uint32_t hostlong);
+	```
+	Converts a 32-bit integer from host byte order to network byte order.
+
+15. **ntohs**:
+	```cpp
+	uint16_t ntohs(uint16_t netshort);
+	```
+	Converts a 16-bit integer from network byte order to host byte order.
+
+16. **ntohl**:
+	```cpp
+	uint32_t ntohl(uint32_t netlong);
+	```
+	Converts a 32-bit integer from network byte order to host byte order.
+
+17. **inet_addr**:
+	```cpp
+	in_addr_t inet_addr(const char *cp);
+	```
+	Converts an IPv4 address in string format to a 32-bit binary representation.
+
+18. **inet_ntoa**:
+	```cpp
+	char *inet_ntoa(struct in_addr in);
+	```
+	Converts a 32-bit binary representation of an IPv4 address to a string format.
+
+19. **send**:
+	```cpp
+	ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+	```
+	Transmits data over a connected socket.
+
+20. **recv**:
+	```cpp
+	ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+	```
+	Receives data from a connected socket.
+
+21. **signal**:
+	```cpp
+	void (*signal(int signum, void (*handler)(int)))(int);
+	```
+	Associates a signal handler function with a specific signal, allowing custom code to be executed upon signal reception.
+
+22. **sigaction**:
+	```cpp
+	int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
+	```
+	A more advanced signal-handling function that provides additional control and features compared to signal.
+
+23. **lseek**:
+	```cpp
+	off_t lseek(int fd, off_t offset, int whence);
+	```
+	Repositions the file offset of an open file descriptor, allowing random access within a file.
+
+24. **fstat**:
+	```cpp
+	int fstat(int fd, struct stat *buf);
+	```
+	Retrieves information about an open file, such as its size, permissions, and other attributes.
+
+25. **fcntl**:
+	```cpp
+	int fcntl(int fd, int cmd, ... /* arg */ );
+	```
+	Performs various operations on open file descriptors, including setting them to be non-blocking.
+
+26. **poll**:
+	```cpp
+	int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+	```
+	Monitors multiple file descriptors for events, providing an efficient way to handle I/O operations with multiple connections.
