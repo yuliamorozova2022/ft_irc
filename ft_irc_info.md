@@ -35,6 +35,11 @@ irrsi - cli base Irc client.would be good reference
 https://irssi.org/download/
 
 
+Youtube Vid
+Using IRC (Internet Relay Chat) - Drupalize .me
+https://www.youtube.com/watch?v=Lxtnw1v5FSI
+
+
 FTIRC allowed commands from the pdf + basic info thanks to chatGPT:
 1. **socket**:
 	```cpp

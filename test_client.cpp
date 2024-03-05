@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define PORT 8080
+#define PORT 6666
 
 int main(int argc, char const* argv[])
 {
@@ -38,13 +38,17 @@ int main(int argc, char const* argv[])
 		return -1;
 	}
 	send(client_fd, "message 1", strlen("message 1"), 0);
-	send(client_fd, "message 2", strlen("message 1"), 0);
-	send(client_fd, "message 3", strlen("message 1"), 0);
-	printf("Hello message sent\n");
-	valread = read(client_fd, buffer,
-				   1024 - 1); // subtract 1 for the null
-							  // terminator at the end
-	printf("%s\n", buffer);
+	printf("Hello 1 sent\n");
+	
+	if (send(client_fd, "message 2", strlen("message 1"), 0) == -1)
+		printf("Hello 2 ERROR\n");
+	else
+		printf("Hello 2 sent\n");
+	
+	if (send(client_fd, "message 3", strlen("message 1"), 0) == -1)
+		printf("Hello 3 ERROR\n");
+	else
+		printf("Hello 3 sent\n");
 
 	// closing the connected socket
 	close(client_fd);
