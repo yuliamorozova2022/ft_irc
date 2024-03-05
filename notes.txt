@@ -1,0 +1,71 @@
+There are regular users and operators.
+An IRC operator (often abbreviated as IRCop or oper) is a user on an IRC network who has privileged access.
+IRC operators are charged with the task of enforcing the network's rules, and in many cases, improving the 
+network in various areas. The permissions available to an IRC operator vary according to the server software 
+in use, and the server's configuration.
+IRC operators are divided into local and global operators. The former are limited to the server(s) they have 
+specific access to; however, global operators can perform actions affecting all users on the network. In 
+order to perform their duties, IRC operators usually have the ability to forcibly disconnect users (Kill), 
+ban (K-line or G-line) users, change network routing by disconnecting (squitting) or connecting servers
+
+According the subject our IRCops have specific to channel commands:
+    ∗ KICK - Eject a client from the channel 
+        Syntax: KICK <channel> <client> :[<message>]
+
+    ∗ INVITE - Invite a client to a channel
+        Syntax: INVITE <nickname> <channel>
+
+    ∗ TOPIC - Change or view the channel topic
+        Syntax: TOPIC <channel> [<topic>]
+
+    ∗ MODE - Change the channel’s mode:
+        · i: Set/remove Invite-only channel
+        · t: Set/remove the restrictions of the TOPIC command to channel operators
+        · k: Set/remove the channel key (password)
+        · o: Give/take channel operator privilege
+        · l: Set/remove the user limit to channel
+        Syntax:
+            MODE <nickname> <flags> (user)
+            MODE <channel> <flags> [<args>]
+
+Usuall commands:
+    * PASS
+        Sets a connection password. This command must be sent before the NICK/USER 
+        registration combination. Defined in RFC 1459.
+        Syntax: PASS <password>
+
+    * USER
+        This command is used at the beginning of a connection to specify the username, 
+        hostname, real name and initial user modes of the connecting client. <realname> 
+        may contain spaces, and thus must be prefixed with a colon. Defined in RFC 1459, 
+        modified in RFC 2812.
+        Syntax: 
+            USER <username> <hostname> <servername> <realname> (RFC 1459)
+            USER <user> <mode> <unused> <realname> (RFC 2812)
+
+    * OPER
+        Authenticates a user as an IRC operator on that server/network. Defined in RFC 1459.
+        Syntax: OPER <username> <password>
+
+    * JOIN
+        Makes the client join the channels in the comma-separated list <channels>, 
+        specifying the passwords, if needed, in the comma-separated list <keys>. If the 
+        channel(s) do not exist then they will be created. Defined in RFC 1459.
+        Syntax: JOIN <channels> [<keys>]
+
+    * QUIT
+        Disconnects the user from the server. Defined in RFC 1459.
+        Syntax: QUIT [<message>]
+
+    * PRIVMSG
+        Sends <message> to <msgtarget>, which is usually a user or channel. Defined in RFC 1459. 
+        Syntax: PRIVMSG <msgtarget> :<message>
+
+
+
+
+    IMPORTANT !
+    Because of IRC's Scandinavian origin, the characters {}|^ are
+   considered to be the lower case equivalents of the characters []\~,
+   respectively. This is a critical issue when determining the
+   equivalence of two nicknames, or channel names.
