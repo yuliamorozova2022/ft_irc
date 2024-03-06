@@ -95,7 +95,6 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in address;
 	socklen_t addrlen = sizeof(address);
 	server_fd = setup_socket();
-
 	int new_connection;
 
 
@@ -170,6 +169,12 @@ int main(int argc, char const *argv[])
 								<< "{"
 								<< buf_vec.data()
 								<< "}" << std::endl;
+
+						
+					stat = send(fds[i].fd, buf_vec.data(), strlen(buf_vec.data()), 0);
+					printf("STAT: %i\n", stat);
+					if (stat == -1)
+						perror("ERROR");
 				}
 				
 			}
