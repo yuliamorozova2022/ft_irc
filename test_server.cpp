@@ -1,9 +1,15 @@
+/* 
+	This is a simple server that echoes whatever message the client sends.
+	it accepts however many messages by the 'while' loop
+ */
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <poll.h>
 
 const int PORT = 6666;
 
@@ -36,7 +42,7 @@ int main(int argc, char const *argv[])
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(PORT);
 
-	// Forcefully attaching socket to the port 8080
+	// Forcefully attaching socket to the port specified
 	if (bind(server_fd, (struct sockaddr *)&address,
 			 sizeof(address)) < 0)
 	{
@@ -50,6 +56,7 @@ int main(int argc, char const *argv[])
 	}
 
 	int bytes;
+	//accept incoming connection request from client
 	new_socket = accept(server_fd, (struct sockaddr *)&address,
 						&addrlen);
 	while ((bytes = recv(new_socket, buf_vec.data(), buf_vec.size(), 0)) > 0)

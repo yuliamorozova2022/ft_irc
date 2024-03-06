@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <iostream>
 
 #define PORT 6666
 
@@ -12,7 +13,6 @@ int main(int argc, char const* argv[])
 {
 	int status, valread, client_fd;
 	struct sockaddr_in serv_addr;
-	char* hello = "Hello from client";
 	char buffer[1024] = { 0 };
 	if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("\n Socket creation error \n");
@@ -37,18 +37,15 @@ int main(int argc, char const* argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
-	send(client_fd, "message 1", strlen("message 1"), 0);
-	printf("Hello 1 sent\n");
-	
-	if (send(client_fd, "message 2", strlen("message 1"), 0) == -1)
-		printf("Hello 2 ERROR\n");
-	else
-		printf("Hello 2 sent\n");
-	
-	if (send(client_fd, "message 3", strlen("message 1"), 0) == -1)
-		printf("Hello 3 ERROR\n");
-	else
-		printf("Hello 3 sent\n");
+
+	std::string msg;
+	while (1)
+	{
+		std::cin >> msg;
+		if (send(client_fd, msg.c_str(), msg.length(), 0) == -1)
+			perror("ERROR");
+
+	}
 
 	// closing the connected socket
 	close(client_fd);
