@@ -79,6 +79,8 @@ int main(int argc, char const* argv[])
 		//otherwise, some event was called on one of the fds. check all of them
 		for (int i = 0; i < nfds; i++)
 		{
+			memset(buf_vec.data(), 0 ,4000);
+
 			if(fds[i].revents == 0) //not the called event
 				continue;
 			if(fds[i].revents != POLLIN)
@@ -87,8 +89,6 @@ int main(int argc, char const* argv[])
 				allok = false;
 				break;
 			}
-			printf("From Descriptor %d, i=%i :", fds[i].fd, i);
-
 			if (fds[i].fd == STDIN_FILENO) // called on stdin
 			{
 				stat =  read(fds[i].fd, buf_vec.data(), buf_vec.size());
@@ -99,17 +99,13 @@ int main(int argc, char const* argv[])
 					break;
 				}
 				buf_vec.data()[strlen(buf_vec.data()) - 1] = 0;
-				printf("{%s}\n", buf_vec.data());
-				if (buf_vec.data()[0] != '*')
+				// printf("{%s}\n", buf_vec.data());
+				stat = send(client_fd, buf_vec.data(), strlen(buf_vec.data()), 0);
+				if (stat == -1)
 				{
-					stat = send(client_fd, buf_vec.data(), strlen(buf_vec.data()), 0);
-					std::cout << "stat: " << stat << std::endl;
-					if (stat == -1)
-					{
-						perror("ERROR");
-						allok = false;
-						break;
-					}
+					perror("ERROR");
+					allok = false;
+					break;
 				}
 				
 			}
@@ -122,38 +118,15 @@ int main(int argc, char const* argv[])
 					allok = false;
 					break;
 				}
-				std::cout	<< "***"
+				std::cout	<< "Res from server: "
 					<< strlen(buf_vec.data())
-					<< "{"
+					<< " {"
 					<< buf_vec.data()
 					<< "}" << std::endl;
 				
 			}
 		}
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// closing the connected socket
 	close(client_fd);
 	return 0;

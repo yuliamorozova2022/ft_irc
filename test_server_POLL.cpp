@@ -129,6 +129,8 @@ int main(int argc, char const *argv[])
 		//otherwise, some event was called on one of the fds. check all of them
 		for (int i = 0; i < nfds; i++)
 		{
+			memset(buf_vec.data(), 0 ,4000);
+
 			if(fds[i].revents == 0) //not the called event
 				continue;
 			if(fds[i].revents != POLLIN)
