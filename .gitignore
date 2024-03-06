@@ -1,0 +1,5 @@
+
+# basically to ignore every file without extension
+*
+!*.*
+!*/
