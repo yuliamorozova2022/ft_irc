@@ -61,8 +61,15 @@ Usuall commands:
         Sends <message> to <msgtarget>, which is usually a user or channel. Defined in RFC 1459. 
         Syntax: PRIVMSG <msgtarget> :<message>
 
+    * PING
+            Tests the presence of a connection. A PING message results in a PONG reply. If <server2>
+            is specified, the message gets passed on to it. Defined in RFC 1459.
+            Syntax: PING <server1> [<server2>]
 
-
+    * PONG
+            This command is a reply to the PING command and works in much the same way. Defined in RFC 1459.
+            Syntax: PONG <server1> [<server2>]
+    // PING - PONG need to be done to communicate with standard clients
 
     IMPORTANT !
     Because of IRC's Scandinavian origin, the characters {}|^ are
