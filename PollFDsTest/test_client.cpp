@@ -1,4 +1,4 @@
-// Improved version of a simple client. this one should be able to listen to incoming messages 
+// Improved version of a simple client. this one should be able to listen to incoming messages
 //	from the server while having STDIN open to send messages.
 
 #include <arpa/inet.h>
@@ -9,6 +9,9 @@
 #include <iostream>
 #include <poll.h>
 #include <vector>
+#include <cstdlib>
+
+#include "./PollManager.hpp"
 
 #define PORT 6666
 #define MAX_CLIENTS 30
@@ -46,26 +49,22 @@ int main(int argc, char const* argv[])
 	client_fd = socket_setup();
 
 //SETTING UP POLL
-	struct pollfd	fds[2];
-	int				nfds = 2;
+	std::cout << "HERE" << std::endl;
 
-	//make sure fds are nulled
-	memset(fds, 0 , sizeof(fds));
+	PollManager	fds(2);
+
 
 	//setup first fd for stdin, if data is read, send it to the server
-	fds[0].fd = STDIN_FILENO;
-	fds[0].events = POLLIN;
+	fds.addFD(STDIN_FILENO);
+	//Then for clientfd, which is where messages from server would be accepted
+	fds.addFD(client_fd);
 
-	//setup first fd for clientfd, if data is read, its recieved from server
-	fds[1].fd = client_fd;
-	fds[1].events = POLLIN;
-	
 	int poll_status;
 	int stat;
 	bool allok = true;
 	while(allok)
 	{
-		poll_status = poll(fds, nfds, POLL_TIMEOUT);
+		poll_status = poll(fds.getFds(), fds.getSize(), POLL_TIMEOUT);
 		if (poll_status < 0)
 		{
 			perror("  poll() failed");
@@ -77,7 +76,7 @@ int main(int argc, char const* argv[])
 			break;
 		}
 		//otherwise, some event was called on one of the fds. check all of them
-		for (int i = 0; i < nfds; i++)
+		for (int i = 0; i < fds.getSize(); i++)
 		{
 			memset(buf_vec.data(), 0 ,4000);
 
@@ -107,7 +106,7 @@ int main(int argc, char const* argv[])
 					allok = false;
 					break;
 				}
-				
+
 			}
 
 			else if (fds[i].fd == client_fd) //called on connection fds
@@ -123,7 +122,7 @@ int main(int argc, char const* argv[])
 					<< " {"
 					<< buf_vec.data()
 					<< "}" << std::endl;
-				
+
 			}
 		}
 	}

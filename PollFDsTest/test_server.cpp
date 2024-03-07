@@ -1,10 +1,9 @@
-/* 
+/*
 	Attemp for an improved server which would accept multiple clients using 'poll'
-	rn server accepts multple connections. 
-	TODO:
-	- get server to send back a message, even if its just an echo of clent msg.
-	- clean up fds array when a client disconnects - rn an inactivw connection stays
-			in the array with fd of -1.
+	rn server accepts multple connections.
+
+	Created a custom class to handle pollfds
+
  */
 
 #include <iostream>
@@ -13,10 +12,12 @@
 #include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <poll.h>
+#include "./PollManager.hpp"
+#include <cstdio>
+#include <cerrno>
+
 
 const int PORT = 6666;
-const int MAX_CLIENTS = 30;
 const int POLL_TIMEOUT = 60 * 1000; // 1 min, in milliseconds
 
 int setup_socket()
@@ -63,8 +64,7 @@ int setup_socket()
 	return (server_fd);
 }
 
-
-bool accept_new_connection(int server_fd, struct pollfd fds[], int &nfds)
+bool accept_new_connection(int server_fd, PollManager &fds)
 {
 	int new_connection;
 	new_connection = accept(server_fd, NULL, NULL);
@@ -79,9 +79,7 @@ bool accept_new_connection(int server_fd, struct pollfd fds[], int &nfds)
 	else //add new connection to fds
 	{
 		printf("  New incoming connection - %d\n", new_connection);
-		fds[nfds].fd = new_connection;
-		fds[nfds].events = POLLIN;
-		nfds++;
+		fds.addFD(new_connection);
 	}
 	return true;
 }
@@ -91,7 +89,7 @@ int main(int argc, char const *argv[])
 	int server_fd;
 	int bytes;
 	std::vector<char> buf_vec(5000);
-	
+
 	struct sockaddr_in address;
 	socklen_t addrlen = sizeof(address);
 	server_fd = setup_socket();
@@ -99,23 +97,17 @@ int main(int argc, char const *argv[])
 
 
 	//SETTING UP POLL
-	struct pollfd	fds[MAX_CLIENTS];
-	int				nfds = 1;
-
-
-	//make sure fds are nulled
-	memset(fds, 0 , sizeof(fds));
+	PollManager			fds;
 
 	//setup first fd for serverfd, where poll will listen for incoming connections
-	fds[0].fd = server_fd;
-	fds[0].events = POLLIN;
-	
+	fds.addFD(server_fd);
+
 	int poll_status;
 	int stat;
 	bool allok = true;
 	while(allok)
 	{
-		poll_status = poll(fds, nfds, POLL_TIMEOUT);
+		poll_status = fds.poll(POLL_TIMEOUT);
 		if (poll_status < 0)
 		{
 			perror("  poll() failed");
@@ -127,28 +119,28 @@ int main(int argc, char const *argv[])
 			break;
 		}
 		//otherwise, some event was called on one of the fds. check all of them
-		for (int i = 0; i < nfds; i++)
+		for (int i = 0; i < fds.getSize(); i++)
 		{
 			memset(buf_vec.data(), 0 ,4000);
 
-			if(fds[i].revents == 0) //not the called event
+			if(fds.getFds()[i].revents == 0) //not the called event
 				continue;
-			if(fds[i].revents != POLLIN)
+			if(fds.getFds()[i].revents != POLLIN)
 			{
 				printf("  Error! revents = %d\n", fds[i].revents);
 				allok = false;
 				break;
 			}
-			if (fds[i].fd == server_fd) // called on serverfd
+			if (fds.getFds()[i].fd == server_fd) // called on serverfd
 			{
-				allok = accept_new_connection(server_fd, fds, nfds);
+				allok = accept_new_connection(server_fd, fds);
 				if (!allok)
 					break;
 			}
 			else //called on connection fds
 			{
 				printf("From Descriptor %d :\n", fds[i].fd);
-				stat = recv(fds[i].fd, buf_vec.data(), buf_vec.size(), 0);
+				stat = recv(fds.getFds()[i].fd, buf_vec.data(), buf_vec.size(), 0);
 				if (stat < 0)
 				{
 					if (errno != EWOULDBLOCK)
@@ -172,31 +164,15 @@ int main(int argc, char const *argv[])
 								<< buf_vec.data()
 								<< "}" << std::endl;
 
-						
+
 					stat = send(fds[i].fd, buf_vec.data(), strlen(buf_vec.data()), 0);
 					printf("STAT: %i\n", stat);
 					if (stat == -1)
 						perror("ERROR");
 				}
-				
+
 			}
 		}
-	}
-	
-
-
-
-
-
-
-
-
-
-	// closing the sockets
-	for (int i = 0; i < nfds; i++)
-	{
-		if(fds[i].fd >= 0)
-			close(fds[i].fd);
 	}
 	return 0;
 }
