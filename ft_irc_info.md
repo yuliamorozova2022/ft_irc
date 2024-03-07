@@ -40,6 +40,33 @@ Using IRC (Internet Relay Chat) - Drupalize .me
 https://www.youtube.com/watch?v=Lxtnw1v5FSI
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TCPFLOW - A tool to monitor passing TCP packages
+**$>sudo tcpflow -i any -g -T %T'    '%A'::'%a'->'%B'::'%b -c port 6666 > ./tcpflow_out**
+-i:
+	specifies what network interface to listen on (‘any’ is a reasonable default to start you off)
+-g:
+	(used to be -J)  gives information in different colors
+-c:
+	prints to the console instead of creating individual files. By default, TCP Flow creates two files for each TCP conversation – one file for the packets coming in and one for the packets being transmitted.
+-T:
+	the format of the output lines. more info in man tcpflow
+
+plus port specification.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+
+
+
+
+
 FTIRC allowed commands from the pdf + basic info thanks to chatGPT:
 1. **socket**:
 	```cpp
