@@ -8,6 +8,7 @@ static struct pollfd * init_fds(int max_size)
 	{
 		fds[i].fd = -1;
 		fds[i].events = POLLIN;
+		fds[i].revents = 0;
 	}
 
 	return fds;
@@ -17,13 +18,13 @@ static struct pollfd * init_fds(int max_size)
 // Constructors
 	PollManager::PollManager() :_max_size(MAX_CLIENTS), _cur_size(0)
 	{
-		_fds = init_fds(_max_size);
+		_fds = init_fds(MAX_CLIENTS);
 		std::cout << "\e[0;33mDefault Constructor called of PollManager\e[0m" << std::endl;
 	}
 	PollManager::PollManager(int max_size) :_max_size(max_size), _cur_size(0)
 	{
 		std::cout << "\e[0;33mInt Constructor called of PollManager\e[0m" << std::endl;
-		_fds = init_fds(_max_size);
+		_fds = init_fds(max_size);
 	}
 
 	PollManager::PollManager(const PollManager &copy)
@@ -48,7 +49,7 @@ static struct pollfd * init_fds(int max_size)
 				close (_fds[i].fd);
 		}
 		delete [] _fds;
-		std::cout << "\e[0;31mDestructor called of PollManager\e[0m" << std::endl;
+		std::cout << "\e[92mDestructor called of PollManager\e[0m" << std::endl;
 	}
 
 

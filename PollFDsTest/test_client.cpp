@@ -19,9 +19,11 @@
 
 int socket_setup ()
 {
-	struct sockaddr_in serv_addr;
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(PORT);
+	struct sockaddr_in client_addr;
+
+	 memset(&client_addr, 0, sizeof(client_addr));
+	client_addr.sin_family = AF_INET;
+	client_addr.sin_port = htons(PORT);
 
 	int client_fd;
 	if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -29,8 +31,8 @@ int socket_setup ()
 		perror("Socket creation Failed ");
 		exit (EXIT_FAILURE);
 	}
-	if (connect(client_fd, (struct sockaddr*)&serv_addr,
-			sizeof(serv_addr)) < 0)
+	if (connect(client_fd, (struct sockaddr*)&client_addr,
+			sizeof(client_addr)) < 0)
 	{
 		perror("Connection Failed ");
 		exit (EXIT_FAILURE);
@@ -41,15 +43,14 @@ int socket_setup ()
 
 int main(int argc, char const* argv[])
 {
-	int status, valread, client_fd;
-	char buffer[1024] = { 0 };
+	int status, client_fd;
 	std::string msg;
 	std::vector<char> buf_vec(5000);
 
 	client_fd = socket_setup();
 
 //SETTING UP POLL
-	std::cout << "HERE" << std::endl;
+	std::cout << "NOTE: type 'exit' to exit." << std::endl;
 
 	PollManager	fds(2);
 
@@ -97,8 +98,11 @@ int main(int argc, char const* argv[])
 					allok = false;
 					break;
 				}
-				buf_vec.data()[strlen(buf_vec.data()) - 1] = 0;
-				// printf("{%s}\n", buf_vec.data());
+				buf_vec.data()[strlen(buf_vec.data()) - 1] = 0; // delete \n at end of line
+				if (strcmp(buf_vec.data(), "exit") == 0)
+				{
+					return(0);
+				}
 				stat = send(client_fd, buf_vec.data(), strlen(buf_vec.data()), 0);
 				if (stat == -1)
 				{

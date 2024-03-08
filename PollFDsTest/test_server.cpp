@@ -15,6 +15,7 @@
 #include "./PollManager.hpp"
 #include <cstdio>
 #include <cerrno>
+#include <csignal>
 
 
 const int PORT = 6666;
@@ -84,6 +85,7 @@ bool accept_new_connection(int server_fd, PollManager &fds)
 	return true;
 }
 
+
 int main(int argc, char const *argv[])
 {
 	int server_fd;
@@ -94,6 +96,10 @@ int main(int argc, char const *argv[])
 	socklen_t addrlen = sizeof(address);
 	server_fd = setup_socket();
 	int new_connection;
+
+	//SIGNALS TEST
+		// signal(SIGINT, sig_handler);
+		// signal(SIGQUIT, sig_handler);
 
 
 	//SETTING UP POLL
