@@ -43,7 +43,9 @@ https://www.youtube.com/watch?v=Lxtnw1v5FSI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TCPFLOW - A tool to monitor passing TCP packages
-**$>sudo tcpflow -i any -g -T %T'    '%A'::'%a'->'%B'::'%b -c port 6666 > ./tcpflow_out**
+```bash
+sudo tcpflow -i any -g -T %T'    '%A'::'%a'->'%B'::'%b -c port 6666 > ./tcpflow_out
+```
 -i:
 	specifies what network interface to listen on (‘any’ is a reasonable default to start you off)
 -g:
