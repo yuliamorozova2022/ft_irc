@@ -4,17 +4,16 @@
 # include <iostream>
 # include <string>
 #include <map>
-// #include <poll.h>
-// #include <unistd.h>
 
-// #define MAX_CLIENTS 30
+#include "Client.hpp"
+
 class Client;
 
 class Channel {
 	private:
 		std::string				_name;
 		std::string				_topic;
-		// std::string			_key;
+		std::string				_key;
 		int						_n_online;
 		Client*					_creator;
 		std::map<int, Client*>	_members;
@@ -37,14 +36,16 @@ class Channel {
 		std::string getName() const;
 		std::string getTopic() const;
 		int getOnline() const ;
-		void setName(std::string new_name) const;
-		void setTopic(std::string new_topic) const;
+		void setName(std::string new_name);
+		void setTopic(std::string new_topic);
 
 		// Methods
-		
+		// void	addMember(Client &client);
+		// void	removeMember(Client &client);
+		// void	addOper(Client &client);
+		// void	removeOper(Client &client);
 
 };
 
-#include "Client.hpp"
 
 #endif
