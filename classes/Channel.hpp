@@ -40,10 +40,10 @@ class Channel {
 		void setTopic(std::string new_topic);
 
 		// Methods
-		// void	addMember(Client &client);
-		// void	removeMember(Client &client);
-		// void	addOper(Client &client);
-		// void	removeOper(Client &client);
+		void	addMember(Client &client);
+		void	removeMember(Client &client);
+		void	addOper(Client &client);
+		void	removeOper(Client &client);
 
 };
 

@@ -48,3 +48,33 @@
 
 //methods
 
+	void	Channel::addMember(Client &client)
+	{
+		_members.insert(
+			std::pair<int, Client *>
+			( client.getFd(), &client));
+
+	}
+
+	void	Channel::removeMember(Client &client)
+	{
+		_members.erase(client.getFd());
+	}
+
+	void	Channel::addOper(Client &client)
+	{
+		_opers.insert(
+			std::pair<int, Client *>
+			( client.getFd(), &client));
+		/* _members.insert(
+			std::pair<int, Client *>
+			( client.getFd(), &client)); */
+		
+		//should opers be part of members??
+	}
+
+	void	Channel::removeOper(Client &client)
+	{
+		_opers.erase(client.getFd());
+		// _members.erase(client.getFd());
+	}
