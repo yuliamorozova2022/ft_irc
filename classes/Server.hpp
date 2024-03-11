@@ -33,11 +33,11 @@ class Server
 		void					setWelcomeMsg(std::string welcomeMsg);
 		
 		// Methods
-		void	addChannel(Channel &channel);
+		void	addChannel(Channel *channel);
 		void	addChannel(std::string channelName, Client& creator);
 		void	addChannel(std::string channelName,std::string key, Client& creator);
 		
-		void	addClient(Client &client);
+		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
 
 	private:

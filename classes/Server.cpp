@@ -12,6 +12,10 @@
 // Destructor
 	Server::~Server()
 	{
+		for (int i = 0; i < _channels.size(); i++)
+			delete(_channels[i]);
+		for (int i = 0; i < _clients.size(); i++)
+			delete(_clients[i]);
 		std::cout << "\e[0;31mDestructor called of Server\e[0m" << std::endl;
 	}
 
@@ -48,30 +52,31 @@
 	}
 
 // Methods
-	void	Server::addChannel(Channel &channel)
+	void	Server::addChannel(Channel *channel)
 	{
-		_channels.push_back(&channel);
+		_channels.push_back(channel);
 	}
 
 	void	Server::addChannel(std::string channelName, Client& creator)
 	{
-		_channels.push_back(&Channel(channelName, creator));
+
+		_channels.push_back(new Channel(channelName, creator));
 
 	}
 
 	void	Server::addChannel(std::string channelName,std::string key, Client& creator)
 	{
-		_channels.push_back(&Channel(channelName, key, creator));
+		_channels.push_back(new Channel(channelName, key, creator));
 
 	}
 
-	void	Server::addClient(Client &client)
+	void	Server::addClient(Client *client)
 	{
-		_clients.push_back(&client);
+		_clients.push_back(client);
 	}
 	
 	void	Server::addClient(std::string userName,std::string nickName, int fd, std::string host)
 	{
-		_clients.push_back(&Client(userName, nickName, fd, host));
+		_clients.push_back(new Client(userName, nickName, fd, host));
 	}
 
