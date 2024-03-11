@@ -4,25 +4,32 @@
 # include <iostream>
 # include <string>
 # include <vector>
-# include "./Channel.hpp"
-# include "./Client.hpp"
+
+# include "Channel.hpp"
+# include "Client.hpp"
 
 class Client;
 class Channel;
 
-class Server
-{
-	public:
-		// Constructors
-		Server(const std::string name,
-			const int serverFd,
-			const std::string serverPass);
-		
-		// Destructor
-		~Server();
-		
+class Server {
+    private:
+        Server();
+//        Server(const Server &copy);
+        const std::string		_name;
+        const int				_serverFd;
+        const std::string		_serverPass;
+        std::string				_welcomeMsg;
+        std::vector<Client *>	_clients;
+        std::vector<Channel *>	_channels;
 
-		// Getters / Setters
+	public:
+		    // Constructors
+		Server(const std::string name, const int serverFd, const std::string serverPass);
+		
+		    // Destructor
+		~Server();
+
+		    // Getters / Setters
 		std::string				getName() const;
 		int						getServerFd() const;
 		std::string				getServerPass() const;
@@ -30,7 +37,7 @@ class Server
 		std::vector<Client *>	getClients() const;
 		std::vector<Channel *>	getChannels() const;
 
-		void					setWelcomeMsg(std::string welcomeMsg);
+		void					setWelcomeMsg(std::string welcomeMsg); // it has to be part of server or just function??
 		
 		// Methods
 		void	addChannel(Channel *channel);
@@ -40,18 +47,6 @@ class Server
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
 
-	private:
-		Server();
-		Server(const Server &copy);
-		const std::string		_name;
-		const int				_serverFd;
-		const std::string		_serverPass;
-		std::string				_welcomeMsg;
-		std::vector<Client *>	_clients;
-		std::vector<Channel *>	_channels;
-
-
-		
 };
 
 #endif
