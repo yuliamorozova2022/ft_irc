@@ -5,6 +5,22 @@
 
 #include <csignal>
 
+
+
+
+/*
+	NOTE:
+		packages myst be aggregated till a new line char is found.
+		nc is good for testing, package will be sent without nl
+		std::getLine can be used for this (?)
+
+
+
+
+ */
+
+
+
 bool g_interrupt = false;
 
 void signal_handler(int const sig)

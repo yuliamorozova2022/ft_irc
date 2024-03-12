@@ -170,8 +170,10 @@ void Server::_client_request(int i)
 	{
 		if (clientRegistered(_fds[i].fd)){
 			std::cout << "  from " << _fds[i].fd
-			<< ": "
+			<< ": {"
 			<< buf_vec.data()
+			<< "}"
+			<< std::strlen(buf_vec.data())
 			<< std::endl;
 		}
 		else

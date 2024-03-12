@@ -98,7 +98,7 @@ int main(int argc, char const* argv[])
 					allok = false;
 					break;
 				}
-				buf_vec.data()[strlen(buf_vec.data()) - 1] = 0; // delete \n at end of line
+				// buf_vec.data()[strlen(buf_vec.data()) - 1] = 0; // delete \n at end of line
 				if (strcmp(buf_vec.data(), "exit") == 0)
 				{
 					return(0);
