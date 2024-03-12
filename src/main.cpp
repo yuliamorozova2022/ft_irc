@@ -2,6 +2,7 @@
 #include "Channel.hpp"
 #include "Server.hpp"
 #include "PollManager.hpp"
+#include <cstdlib>
 
 static bool getPort(std::string str, int *port) {
     if (str[0] == 0)

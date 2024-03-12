@@ -32,11 +32,16 @@ PollManager::PollManager(struct pollfd *fds) {
 
     // Destructor
 PollManager::~PollManager() {
+    std::cout << "cur size: " << _cur_size << std::endl;
     for (int i = 0; i < _cur_size; i++) {
         if (_fds[i].fd != -1)
+        {
+    std::cout << "closing " << _fds[i].fd << std::endl;
             close (_fds[i].fd);
+
+        }
     }
-//    delete [] _fds;
+   delete [] _fds;
     std::cout << "\e[92mDestructor called of PollManager\e[0m" << std::endl;
 }
 
