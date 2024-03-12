@@ -1,23 +1,36 @@
 #include "Server.hpp"
 
+
+#define SERVER_NAME "IRC_42"
 	// Constructors
 
-//Server::Server(const std::string name, const int serverFd, const std::string serverPass) : _name(name), _serverFd(serverFd), _serverPass(serverPass) {
-//	std::cout << "\e[0;33mFields Constructor called of Server\e[0m" << std::endl;
-//}
+int Server::get_set_port(const std::string port_s)
+{
+	if (port_s.length() == 0)
+		return -1;
+	for (int i = 0; i < port_s.length(); i++) {
+		if (isdigit(port_s[i]) == false) {
+			return -1;
+		}
+	}
+	int portFd = atoi(port_s.c_str());
+	if (portFd < 0 || portFd > 65535) {
+		return -1;
+	}
+	return setup_socket(portFd);
+}
 
-//Server::Server(const std::string name, const int port, const std::string serverPass) : _name(name), _serverPass(serverPass) {
-//	_serverFd = setup_socket(port);
-////	if (_serverFd == -1)
-////		throw std::invalid_argument();
-//	std::cout << "\e[0;33mFields Constructor called of Server " << _name << "\e[0m" << std::endl;
-//}
+Server::Server(const std::string port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
+	if (_serverFd == -1)
+		throw std::invalid_argument("Port number invalid, must be int between [0; 65535]");
 
-Server::Server(const int port, const std::string serverPass) : _name("IRC_42"), _serverFd(setup_socket(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
-//	if (_serverFd == -1)
-//		throw std::invalid_argument();
+	std::cout << "adding server fd..." << "\e[0m" << std::endl;
 
-	std::cout << "server FD: " << _serverFd << "\e[0m" << std::endl;
+	_fds.addFD(_serverFd);
+	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
+}
+
+Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(setup_socket(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 
 	_fds.addFD(_serverFd);
 	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
@@ -25,16 +38,10 @@ Server::Server(const int port, const std::string serverPass) : _name("IRC_42"), 
 
 	// Destructor
 Server::~Server() {
-//	std::cout << "destructo" << std::endl;
 	for (int i = 0; i < _channels.size(); i++)
 		delete(_channels[i]);
-//	std::cout << "channels done" << std::endl;
-//	for (int i = 0; i < _fds.getMaxSize(); i++)
-//		_fds.removeFD(_clients[i]->getFd());
-//	_fds.removeFD(_serverFd);
 	for (int i = 0; i < _clients.size(); i++)
 		delete(_clients[i]);
-	// _fds.~PollManager();
 	std::cout << "\e[92mDestructor called of Server\e[0m" << std::endl;
 }
 

@@ -7,6 +7,8 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <exception>
+#include <cstdlib>
+#include <cstdio>
 
 #include "Channel.hpp"
 #include "Client.hpp"
@@ -19,7 +21,6 @@ class PollManager;
 class Server {
     private:
         Server();
-//      Server(const Server &copy);
         const std::string		_name;
         const int      			_serverFd;
         const std::string		_serverPass;
@@ -28,13 +29,13 @@ class Server {
         std::vector<Channel *>	_channels;
 
         PollManager             _fds;
-        int setup_socket(int port);
+        int		setup_socket(int port);
+		int		get_set_port(const std::string port_s);
 
 	public:
 		    // Constructors
         Server(const int serverFd, const std::string serverPass);
-        // Server(const std::string name, const int serverFd, const std::string serverPass);
-//      Server(const std::string name, const std::string port, const std::string serverPass);
+		Server(const std::string port, const std::string serverPass);
 
 		    // Destructor
 		~Server();
@@ -47,14 +48,14 @@ class Server {
 		std::vector<Client *>	getClients() const;
 		std::vector<Channel *>	getChannels() const;
 		void					setWelcomeMsg(std::string welcomeMsg); // it has to be part of server or just function??
-		
+
 		// Methods
         void launch();
 
 		void	addChannel(Channel *channel);
 		void	addChannel(std::string channelName, Client& creator);
 		void	addChannel(std::string channelName,std::string key, Client& creator);
-		
+
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
 

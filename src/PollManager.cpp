@@ -32,7 +32,6 @@ PollManager::PollManager(struct pollfd *fds) {
 
     // Destructor
 PollManager::~PollManager() {
-    std::cout << "cur size: " << _cur_size << std::endl;
     for (int i = 0; i < _cur_size; i++) {
         if (_fds[i].fd != -1)
         {

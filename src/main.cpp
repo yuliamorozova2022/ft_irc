@@ -4,7 +4,7 @@
 #include "PollManager.hpp"
 #include <cstdlib>
 
-static bool getPort(std::string str, int *port) {
+/* static bool getPort(std::string str, int *port) {
     if (str[0] == 0)
         return false;
     for (int i = 0; i < str.length(); i++) {
@@ -20,27 +20,23 @@ static bool getPort(std::string str, int *port) {
     }
     *port = tmp;
     return true;
-}
+} */
 
 int main() {
     int argc = 3;
-    std::string argv[] = {"./ircserv", "6666", "test_pass"};
+    std::string argv[] = {"./ircserv", "0", "test_pass"};
     if (argc != 3) {
         std::cout << "Usage ./ircserv <port> <password>" << std::endl;
         return 1;
     }
-    int port;
-    if (getPort(argv[1], &port)== false)
-        return 1;
 //    std::cout << "port is " << port << std::endl;
     try {
-        Server serv(port, argv[2]);
+        Server serv(argv[1], argv[2]);
         serv.launch();
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
-    std::cout << "test" << std::endl;
 	return 0;
 }
 
