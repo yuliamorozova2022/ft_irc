@@ -4,7 +4,7 @@
 #define SERVER_NAME "IRC_42"
 	// Constructors
 
-int Server::get_set_port(const std::string port_s)
+int Server::_get_set_port(const std::string port_s)
 {
 	if (port_s.length() == 0)
 		return -1;
@@ -17,10 +17,10 @@ int Server::get_set_port(const std::string port_s)
 	if (portFd < 0 || portFd > 65535) {
 		return -1;
 	}
-	return setup_socket(portFd);
+	return _setup_socket(portFd);
 }
 
-Server::Server(const std::string port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
+Server::Server(const std::string port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(_get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 	if (_serverFd == -1)
 		throw std::invalid_argument("Port number invalid, must be int between [0; 65535]");
 
@@ -30,7 +30,7 @@ Server::Server(const std::string port, const std::string serverPass) : _name(SER
 	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
 }
 
-Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(setup_socket(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
+Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(_setup_socket(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 
 	_fds.addFD(_serverFd);
 	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
@@ -81,7 +81,7 @@ void Server::addClient(std::string userName,std::string nickName, int fd, std::s
 	_clients.push_back(new Client(userName, nickName, fd, host));
 }
 
-int Server::setup_socket(int port) {
+int Server::_setup_socket(int port) {
 	struct sockaddr_in address;
 	address.sin_port = htons(port);
 	address.sin_family = AF_INET;
@@ -103,14 +103,71 @@ int Server::setup_socket(int port) {
 	return server_fd;
 }
 
-void Server::launch() {
-	std::cout << "hello" << std::endl;
-	std::cout << "serverFD: " << _serverFd  << std::endl;
-//	int status;
-//	while (true) {
-//		status = _fds.poll(POLL_TIMEOUT);
-//		if (status < 0)
-//			throw std::runtime_error("poll() failed");
-//
-//	}
+void Server::launch()
+{
+	int poll_status;
+	while (!g_interrupt)
+	{
+		poll_status = _fds.poll(POLL_TIMEOUT);
+		if (poll_status < 0)
+		{
+			if (errno != EINTR) //interrupted system call
+				throw std::runtime_error("  poll() failed");
+		}
+		else if (poll_status == 0)
+			throw std::runtime_error("  poll() timed out");
+
+		for (int i = 0; i < _fds.getSize(); i++)
+		{
+			if (_fds.getFds()[i].revents != POLLIN)
+				continue;
+			if (_fds.getFds()[i].fd == _serverFd) // called on serverfd
+				_accept_new_connection();
+			else
+				_client_request(i);
+		}
+	}
+}
+
+void Server::_accept_new_connection()
+{
+	int new_connection;
+	new_connection = accept(_serverFd, NULL, NULL);
+	if (new_connection < 0)
+		throw std::runtime_error("  accept() failed");
+	else
+	{
+		std::cout << "  New incoming connection " << new_connection << std::endl;
+		_fds.addFD(new_connection);
+	}
+}
+
+void Server::_client_request(int i)
+{
+	std::vector<char> buf_vec(5000);
+	int stat = recv(_fds[i].fd, buf_vec.data(), buf_vec.size(), 0);
+	if (stat < 0)
+	{
+		// if (errno != EWOULDBLOCK)
+		// {
+			perror("  recv() failed");
+		// }
+		return;
+	}
+	else if (stat == 0)
+	{
+		std::cout << "  from " << _fds[i].fd
+		<< ": "
+		<< "Connection closed"
+		<< std::endl;
+		_fds.removeFD(_fds[i].fd);
+	}
+	else
+	{
+		std::cout << "  from " << _fds[i].fd
+		<< ": "
+		<< buf_vec.data()
+		<< std::endl;
+
+	}
 }

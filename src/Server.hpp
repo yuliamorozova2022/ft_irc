@@ -6,13 +6,19 @@
 #include <vector>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <exception>
+// #include <exception>
+#include <stdexcept>
 #include <cstdlib>
 #include <cstdio>
+#include <cerrno>
 
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "PollManager.hpp"
+
+
+extern bool g_interrupt;
+
 
 class Client;
 class Channel;
@@ -29,18 +35,21 @@ class Server {
         std::vector<Channel *>	_channels;
 
         PollManager             _fds;
-        int		setup_socket(int port);
-		int		get_set_port(const std::string port_s);
+        int		_setup_socket(int port);
+		int		_get_set_port(const std::string port_s);
 
+		//connection handling
+		void	_accept_new_connection();
+		void	_client_request(int i);
 	public:
-		    // Constructors
-        Server(const int serverFd, const std::string serverPass);
+			// Constructors
+		Server(const int serverFd, const std::string serverPass);
 		Server(const std::string port, const std::string serverPass);
 
-		    // Destructor
+			// Destructor
 		~Server();
 
-		    // Getters / Setters
+			// Getters / Setters
 		std::string				getName() const;
 		int						getServerFd() const;
 		std::string				getServerPass() const;
@@ -49,8 +58,10 @@ class Server {
 		std::vector<Channel *>	getChannels() const;
 		void					setWelcomeMsg(std::string welcomeMsg); // it has to be part of server or just function??
 
-		// Methods
-        void launch();
+			// Methods
+		void	launch();
+
+
 
 		void	addChannel(Channel *channel);
 		void	addChannel(std::string channelName, Client& creator);
@@ -58,6 +69,7 @@ class Server {
 
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
+
 
 };
 
