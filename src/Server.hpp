@@ -3,18 +3,25 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 #include <vector>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-// #include <exception>
 #include <stdexcept>
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 #include <cerrno>
 
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "PollManager.hpp"
+
+// #####################################
+#define USER_NOT_REGISTERED "User not register:("
+// #####################################
+
+
 
 
 extern bool g_interrupt;
@@ -25,18 +32,18 @@ class Channel;
 class PollManager;
 
 class Server {
-    private:
-        Server();
-        const std::string		_name;
-        const int      			_serverFd;
-        const std::string		_serverPass;
-        std::string				_welcomeMsg;
-        std::vector<Client *>	_clients;
-        std::vector<Channel *>	_channels;
+	private:
+		Server();
+		const std::string		_name;
+		const int      			_serverFd;
+		const std::string		_serverPass;
+		std::string				_welcomeMsg;
+		std::map<int, Client *>	_clients;
+		std::map<std::string, Channel *>	_channels;
 
-        PollManager             _fds;
-        int		_setup_socket(int port);
-		int		_get_set_port(const std::string port_s);
+		PollManager	_fds;
+		int			_setup_socket(int port);
+		int			_get_set_port(const std::string port_s);
 
 		//connection handling
 		void	_accept_new_connection();
@@ -50,18 +57,17 @@ class Server {
 		~Server();
 
 			// Getters / Setters
-		std::string				getName() const;
-		int						getServerFd() const;
-		std::string				getServerPass() const;
-		std::string				getWelcomeMsg() const;
-		std::vector<Client *>	getClients() const;
-		std::vector<Channel *>	getChannels() const;
-		void					setWelcomeMsg(std::string welcomeMsg); // it has to be part of server or just function??
+		std::string							getName() const;
+		int									getServerFd() const;
+		std::string							getServerPass() const;
+		std::string							getWelcomeMsg() const;
+		const std::map<int, Client *>				&getClients() const;
+		const std::map<std::string, Channel *>	&getChannels() const;
+		void								setWelcomeMsg(std::string welcomeMsg);
 
 			// Methods
 		void	launch();
-
-
+		Client	&getClientByFd(int fd) const;
 
 		void	addChannel(Channel *channel);
 		void	addChannel(std::string channelName, Client& creator);
@@ -69,6 +75,8 @@ class Server {
 
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
+
+		bool	clientRegistered(int fd) const;
 
 
 };

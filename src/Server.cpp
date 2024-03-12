@@ -38,10 +38,14 @@ Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME
 
 	// Destructor
 Server::~Server() {
-	for (int i = 0; i < _channels.size(); i++)
-		delete(_channels[i]);
-	for (int i = 0; i < _clients.size(); i++)
-		delete(_clients[i]);
+	for (std::map<int, Client *>::iterator it = _clients.begin();
+			it != _clients.end();
+			it ++)
+		delete(it->second);
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
+			it != _channels.end();
+			it ++)
+		delete(it->second);
 	std::cout << "\e[92mDestructor called of Server\e[0m" << std::endl;
 }
 
@@ -54,31 +58,31 @@ std::string Server::getServerPass() const {return _serverPass;}
 
 std::string Server::getWelcomeMsg() const {return _welcomeMsg;}
 
-std::vector<Client *> Server::getClients() const {return _clients;}
+const std::map<int, Client *> &Server::getClients() const {return _clients;}
 
-std::vector<Channel *> Server::getChannels() const {return _channels;}
+const std::map<std::string, Channel *> &Server::getChannels() const {return _channels;}
 
 void Server::setWelcomeMsg(std::string welcomeMsg) {_welcomeMsg = welcomeMsg;}
 
 	// Methods
 void Server::addChannel(Channel *channel) {
-	_channels.push_back(channel);
+	_channels.insert(std::pair<std::string, Channel *> (channel->getName(), channel));
 }
 
 void Server::addChannel(std::string channelName, Client& creator) {
-	_channels.push_back(new Channel(channelName, creator));
+	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName, creator)));
 }
 
 void Server::addChannel(std::string channelName,std::string key, Client& creator) {
-	_channels.push_back(new Channel(channelName, key, creator));
+	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName,key, creator)));
 }
 
 void Server::addClient(Client *client) {
-	_clients.push_back(client);
+	_clients.insert(std::pair<int, Client *> (client->getFd(), client));
 }
 
 void Server::addClient(std::string userName,std::string nickName, int fd, std::string host) {
-	_clients.push_back(new Client(userName, nickName, fd, host));
+	_clients.insert(std::pair<int, Client *> (fd, new Client(userName, nickName, fd, host)));
 }
 
 int Server::_setup_socket(int port) {
@@ -164,10 +168,32 @@ void Server::_client_request(int i)
 	}
 	else
 	{
-		std::cout << "  from " << _fds[i].fd
-		<< ": "
-		<< buf_vec.data()
-		<< std::endl;
-
+		if (clientRegistered(_fds[i].fd)){
+			std::cout << "  from " << _fds[i].fd
+			<< ": "
+			<< buf_vec.data()
+			<< std::endl;
+		}
+		else
+		{
+			stat = send(_fds[i].fd, USER_NOT_REGISTERED, std::strlen(USER_NOT_REGISTERED), 0);
+			std::cout << "  from " << _fds[i].fd
+			<< ": "
+			<< "Closing connection ..."
+			<< std::endl;
+			_fds.removeFD(_fds[i].fd);
+		}
 	}
+}
+
+bool	Server::clientRegistered(int fd) const
+{
+	if (_clients.find(fd) != _clients.end())
+		return (true);
+	return (false);
+}
+Client	&Server::getClientByFd(int fd) const
+{
+	Client *client_ptr = _clients.find(fd)->second;
+	return (*client_ptr);
 }
