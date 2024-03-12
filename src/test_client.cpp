@@ -24,6 +24,7 @@ int socket_setup ()
 	 memset(&client_addr, 0, sizeof(client_addr));
 	client_addr.sin_family = AF_INET;
 	client_addr.sin_port = htons(PORT);
+    client_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
 	int client_fd;
 	if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)

@@ -4,8 +4,7 @@
 #define SERVER_NAME "IRC_42"
 	// Constructors
 
-int Server::_get_set_port(const std::string port_s)
-{
+int Server::_get_set_port(const std::string port_s) {
 	if (port_s.length() == 0)
 		return -1;
 	for (int i = 0; i < port_s.length(); i++) {
@@ -107,22 +106,18 @@ int Server::_setup_socket(int port) {
 	return server_fd;
 }
 
-void Server::launch()
-{
+void Server::launch() {
 	int poll_status;
-	while (!g_interrupt)
-	{
+	while (!g_interrupt) {
 		poll_status = _fds.poll(POLL_TIMEOUT);
-		if (poll_status < 0)
-		{
+		if (poll_status < 0) {
 			if (errno != EINTR) //interrupted system call
 				throw std::runtime_error("  poll() failed");
 		}
 		else if (poll_status == 0)
 			throw std::runtime_error("  poll() timed out");
 
-		for (int i = 0; i < _fds.getSize(); i++)
-		{
+		for (int i = 0; i < _fds.getSize(); i++) {
 			if (_fds.getFds()[i].revents != POLLIN)
 				continue;
 			if (_fds.getFds()[i].fd == _serverFd) // called on serverfd
@@ -133,51 +128,38 @@ void Server::launch()
 	}
 }
 
-void Server::_accept_new_connection()
-{
+void Server::_accept_new_connection() {
 	int new_connection;
 	new_connection = accept(_serverFd, NULL, NULL);
 	if (new_connection < 0)
-		throw std::runtime_error("  accept() failed");
-	else
-	{
+		throw std::runtime_error("  accept() for new client failed");
+	else {
 		std::cout << "  New incoming connection " << new_connection << std::endl;
 		_fds.addFD(new_connection);
 	}
 }
 
-void Server::_client_request(int i)
-{
+void Server::_client_request(int i) {
 	std::vector<char> buf_vec(5000);
+    std::fill(buf_vec.begin(), buf_vec.end(), 0);
 	int stat = recv(_fds[i].fd, buf_vec.data(), buf_vec.size(), 0);
 	if (stat < 0)
-	{
-		// if (errno != EWOULDBLOCK)
-		// {
-			perror("  recv() failed");
-		// }
-		return;
-	}
-	else if (stat == 0)
-	{
+        throw std::runtime_error("  recv() failed");
+    if (stat == 0) {
 		std::cout << "  from " << _fds[i].fd
 		<< ": "
 		<< "Connection closed"
 		<< std::endl;
 		_fds.removeFD(_fds[i].fd);
-	}
-	else
-	{
-		if (clientRegistered(_fds[i].fd)){
+	} else {
+		if (clientRegistered(_fds[i].fd)) {
 			std::cout << "  from " << _fds[i].fd
 			<< ": {"
 			<< buf_vec.data()
 			<< "}"
 			<< std::strlen(buf_vec.data())
 			<< std::endl;
-		}
-		else
-		{
+		} else {
 			stat = send(_fds[i].fd, USER_NOT_REGISTERED, std::strlen(USER_NOT_REGISTERED), 0);
 			std::cout << "  from " << _fds[i].fd
 			<< ": "
@@ -186,16 +168,16 @@ void Server::_client_request(int i)
 			_fds.removeFD(_fds[i].fd);
 		}
 	}
+//    std::fill(buf_vec.begin(), buf_vec.end(), 0);
+//    memset(&buf_vec, 0, 5000);
 }
 
-bool	Server::clientRegistered(int fd) const
-{
+bool	Server::clientRegistered(int fd) const {
 	if (_clients.find(fd) != _clients.end())
 		return (true);
 	return (false);
 }
-Client	&Server::getClientByFd(int fd) const
-{
+Client	&Server::getClientByFd(int fd) const {
 	Client *client_ptr = _clients.find(fd)->second;
 	return (*client_ptr);
 }
