@@ -163,9 +163,10 @@ void Server::_accept_new_connection() {
 void Server::_client_request(int i) {
 	std::vector<char> buf_vec(5000);
 	std::fill(buf_vec.begin(), buf_vec.end(), 0);
-	int stat = recv(_fds[i].fd, buf_vec.data(), buf_vec.size(), 0);
-	if (stat < 0)
-		throw std::runtime_error("  recv() failed");
+	int stat;
+	std::string msg = get_command(getClientByFd(_fds[i].fd), stat);
+	// if (stat < 0)
+	// 	throw std::runtime_error(" 111 recv() failed");
 	if (stat == 0) {
 		std::cout << "  from " << _fds[i].fd
 		<< ": "
@@ -173,7 +174,13 @@ void Server::_client_request(int i) {
 		<< std::endl;
 		_fds.removeFD(_fds[i].fd);
 	} else {
-		if (getClientByFd(_fds[i].fd).isAuthed()) {
+		std::cout << "  from " << _fds[i].fd
+			<< ": {"
+			<< msg
+			<< "} len:"
+			<< msg.length()
+			<< std::endl;
+/* 		if (getClientByFd(_fds[i].fd).isAuthed()) {
 			std::cout << "  from " << _fds[i].fd
 			<< ": {"
 			<< buf_vec.data()
@@ -181,14 +188,13 @@ void Server::_client_request(int i) {
 			<< std::strlen(buf_vec.data())
 			<< std::endl;
 		} else {
-			std::cout << "{"<<get_command(getClientByFd(_fds[i].fd)) << "}" << std::endl;
 			stat = send(_fds[i].fd, USER_NOT_REGISTERED, std::strlen(USER_NOT_REGISTERED), 0);
 			// std::cout << "  from " << _fds[i].fd
 			// << ": "
 			// << "Closing connection ..."
 			// << std::endl;
 			// _fds.removeFD(_fds[i].fd);
-		}
+		} */
 	}
 //    std::fill(buf_vec.begin(), buf_vec.end(), 0);
 //    memset(&buf_vec, 0, 5000);

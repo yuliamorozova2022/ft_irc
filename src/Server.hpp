@@ -24,7 +24,7 @@
 // ################################################
 
 
-std::string get_command(Client &client);
+std::string get_command(Client &client, int &stat);
 
 
 extern bool g_interrupt;
