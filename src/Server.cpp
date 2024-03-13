@@ -1,8 +1,6 @@
 #include "Server.hpp"
+#define SERVER_NAME "IRC.42.com"
 
-
-#define SERVER_NAME "IRC_42"
-	// Constructors
 
 int Server::_get_set_port(const std::string port_s) {
 	if (port_s.length() == 0)
@@ -19,6 +17,10 @@ int Server::_get_set_port(const std::string port_s) {
 	return _setup_socket(portFd);
 }
 
+	// Constructors
+
+
+
 Server::Server(const std::string port, std::string serverPass) : _name(SERVER_NAME), _serverFd(_get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 	if (_serverFd == -1)
 		throw std::invalid_argument("Port number invalid, must be int between [0; 65535]");
@@ -26,12 +28,14 @@ Server::Server(const std::string port, std::string serverPass) : _name(SERVER_NA
 	std::cout << "adding server fd..." << "\e[0m" << std::endl;
 
 	_fds.addFD(_serverFd);
+	setupCmds();
 	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
 }
 
 Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(_setup_socket(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 
 	_fds.addFD(_serverFd);
+	setupCmds();
 	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
 }
 
@@ -174,26 +178,23 @@ void Server::_client_request(int i) {
 		<< std::endl;
 		_fds.removeFD(_fds[i].fd);
 	} else {
-		std::cout << "  from " << _fds[i].fd
+
+		execCmd (getClientByFd(_fds[i].fd), msg);
+
+/* 		if (getClientByFd(_fds[i].fd).isAuthed()) {
+			std::cout << "  from " << _fds[i].fd
 			<< ": {"
 			<< msg
 			<< "} len:"
 			<< msg.length()
 			<< std::endl;
-/* 		if (getClientByFd(_fds[i].fd).isAuthed()) {
-			std::cout << "  from " << _fds[i].fd
-			<< ": {"
-			<< buf_vec.data()
-			<< "}"
-			<< std::strlen(buf_vec.data())
-			<< std::endl;
 		} else {
 			stat = send(_fds[i].fd, USER_NOT_REGISTERED, std::strlen(USER_NOT_REGISTERED), 0);
-			// std::cout << "  from " << _fds[i].fd
-			// << ": "
-			// << "Closing connection ..."
-			// << std::endl;
-			// _fds.removeFD(_fds[i].fd);
+			std::cout << "  from " << _fds[i].fd
+			<< ": "
+			<< "Closing connection ..."
+			<< std::endl;
+			_fds.removeFD(_fds[i].fd);
 		} */
 	}
 //    std::fill(buf_vec.begin(), buf_vec.end(), 0);
@@ -208,4 +209,12 @@ bool	Server::clientRegistered(int fd) const {
 Client	&Server::getClientByFd(int fd) {
 	Client *client_ptr = _clients.find(fd)->second;
 	return (*client_ptr);
+}
+
+int		Server::serverReply(Client &client, std::string msg)
+{
+	std::string newstr  = ":" + _name + " " + msg;
+	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
+	return stat;
+
 }

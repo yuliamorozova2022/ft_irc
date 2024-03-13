@@ -26,16 +26,17 @@
 
 std::string get_command(Client &client, int &stat);
 
-
 extern bool g_interrupt;
-
 
 class Client;
 class Channel;
 class PollManager;
+class Server ;
+
 
 class Server {
 	private:
+		typedef void (Server::*func)(Client &client, std::string args);
 		Server();
 		const std::string		_name;
 		const int      			_serverFd;
@@ -43,15 +44,19 @@ class Server {
 		std::string				_welcomeMsg;
 		std::map<int, Client *>	_clients;
 		std::map<std::string, Channel *>	_channels;
+		std::map<std::string, Server::func>	_cmds;
+		PollManager				_fds;
 
-		PollManager	_fds;
 		int			_setup_socket(int port);
 		int			_get_set_port(const std::string port_s);
 
 		//connection handling
 		void	_accept_new_connection();
 		void	_client_request(int i);
+
 	public:
+
+
 			// Constructors
 		Server(const int serverFd, const std::string serverPass);
 		Server(const std::string port, const std::string serverPass);
@@ -71,16 +76,22 @@ class Server {
 			// Methods
 		void	launch();
 		Client	&getClientByFd(int fd);
-
 		void	addChannel(Channel *channel);
 		void	addChannel(std::string channelName, Client& creator);
 		void	addChannel(std::string channelName,std::string key, Client& creator);
-
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
 		void	addClient(int fd, std::string host);
-
 		bool	clientRegistered(int fd) const;
+		int		serverReply(Client &client, std::string msg);
+
+
+
+			//Command Handling
+		void	setupCmds(void);
+		void	execCmd(Client &client, std::string args);
+		void	pass(Client &client, std::string args);
+
 
 
 };
