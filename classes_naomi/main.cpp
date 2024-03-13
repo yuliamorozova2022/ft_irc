@@ -65,7 +65,7 @@ int main(void)
 
 			if(pollManager.getFds()[i].revents == 0) //not the called event
 				continue;
-			if(pollManager.getFds()[i].revents != POLLIN)
+			if(pollManager.getFds()[i].revents != POLLIN) //not the correct event
 			{
 				printf("  Error! revents = %d\n", pollManager[i].revents);
 				allok = false;
@@ -112,7 +112,7 @@ int main(void)
 						myserv->addClient(
 							msg
 							, "msg", pollManager[i].fd, "localmachine");
-						
+
 					msg = myserv->getClients().back()->getUserName() + " registered!";
 						stat = send(pollManager[i].fd, "yay!",5, 0);
 					}
