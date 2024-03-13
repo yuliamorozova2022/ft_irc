@@ -12,16 +12,19 @@
 #include <cstdio>
 #include <cstring>
 #include <cerrno>
+#include <fcntl.h>
+#include <netdb.h>
 
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "PollManager.hpp"
 
-// #####################################
-#define USER_NOT_REGISTERED "User not register:("
-// #####################################
+// ################################################
+#define USER_NOT_REGISTERED "User not registered :("
+// ################################################
 
 
+std::string get_command(Client &client);
 
 
 extern bool g_interrupt;
@@ -67,7 +70,7 @@ class Server {
 
 			// Methods
 		void	launch();
-		Client	&getClientByFd(int fd) const;
+		Client	&getClientByFd(int fd);
 
 		void	addChannel(Channel *channel);
 		void	addChannel(std::string channelName, Client& creator);
@@ -75,6 +78,7 @@ class Server {
 
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
+		void	addClient(int fd, std::string host);
 
 		bool	clientRegistered(int fd) const;
 

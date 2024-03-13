@@ -19,7 +19,7 @@ int Server::_get_set_port(const std::string port_s) {
 	return _setup_socket(portFd);
 }
 
-Server::Server(const std::string port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(_get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
+Server::Server(const std::string port, std::string serverPass) : _name(SERVER_NAME), _serverFd(_get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 	if (_serverFd == -1)
 		throw std::invalid_argument("Port number invalid, must be int between [0; 65535]");
 
@@ -83,6 +83,9 @@ void Server::addClient(Client *client) {
 void Server::addClient(std::string userName,std::string nickName, int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(userName, nickName, fd, host)));
 }
+void Server::addClient(int fd, std::string host) {
+	_clients.insert(std::pair<int, Client *> (fd, new Client(fd, host)));
+}
 
 int Server::_setup_socket(int port) {
 	struct sockaddr_in address;
@@ -92,16 +95,20 @@ int Server::_setup_socket(int port) {
 	// Creating socket file descriptor
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_fd < 0)
-		throw "socket() failed";
+		throw std::runtime_error("socket() failed");
 	int opt = 1;
 	// Forcefully attaching socket to the port
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
-		throw "setsockopt() failed";
+		throw std::runtime_error("setsockopt() failed");
+	// Setting server fd to non-blocking
+	if (fcntl(server_fd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("fcntl() failed");
+
 	// Forcefully attaching socket to the port specified
 	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-		throw "bind() failed";
+		throw std::runtime_error("bind() failed");
 	if (listen(server_fd, 3) < 0)
-		throw "listen() failed";
+		throw std::runtime_error("listen() failed");
 //	std::cout << "socket done" << std::endl;
 	return server_fd;
 }
@@ -129,30 +136,44 @@ void Server::launch() {
 }
 
 void Server::_accept_new_connection() {
+
 	int new_connection;
-	new_connection = accept(_serverFd, NULL, NULL);
+	char hostname[2048];
+	sockaddr_in s_address = {};
+	socklen_t s_size = sizeof(s_address);
+
+	new_connection = accept(_serverFd, reinterpret_cast<sockaddr *>(&s_address), &s_size);
+
+	if (fcntl(new_connection, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("fcntl() failed");
+
 	if (new_connection < 0)
 		throw std::runtime_error("  accept() for new client failed");
 	else {
 		std::cout << "  New incoming connection " << new_connection << std::endl;
+		if (getnameinfo((struct sockaddr *) &s_address, sizeof(s_address), hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) !=
+		0)
+			throw std::runtime_error("Error while getting hostname on new client.");
+
 		_fds.addFD(new_connection);
+		addClient(new_connection, hostname);
 	}
 }
 
 void Server::_client_request(int i) {
 	std::vector<char> buf_vec(5000);
-    std::fill(buf_vec.begin(), buf_vec.end(), 0);
+	std::fill(buf_vec.begin(), buf_vec.end(), 0);
 	int stat = recv(_fds[i].fd, buf_vec.data(), buf_vec.size(), 0);
 	if (stat < 0)
-        throw std::runtime_error("  recv() failed");
-    if (stat == 0) {
+		throw std::runtime_error("  recv() failed");
+	if (stat == 0) {
 		std::cout << "  from " << _fds[i].fd
 		<< ": "
 		<< "Connection closed"
 		<< std::endl;
 		_fds.removeFD(_fds[i].fd);
 	} else {
-		if (clientRegistered(_fds[i].fd)) {
+		if (getClientByFd(_fds[i].fd).isAuthed()) {
 			std::cout << "  from " << _fds[i].fd
 			<< ": {"
 			<< buf_vec.data()
@@ -160,12 +181,13 @@ void Server::_client_request(int i) {
 			<< std::strlen(buf_vec.data())
 			<< std::endl;
 		} else {
+			std::cout << "{"<<get_command(getClientByFd(_fds[i].fd)) << "}" << std::endl;
 			stat = send(_fds[i].fd, USER_NOT_REGISTERED, std::strlen(USER_NOT_REGISTERED), 0);
-			std::cout << "  from " << _fds[i].fd
-			<< ": "
-			<< "Closing connection ..."
-			<< std::endl;
-			_fds.removeFD(_fds[i].fd);
+			// std::cout << "  from " << _fds[i].fd
+			// << ": "
+			// << "Closing connection ..."
+			// << std::endl;
+			// _fds.removeFD(_fds[i].fd);
 		}
 	}
 //    std::fill(buf_vec.begin(), buf_vec.end(), 0);
@@ -177,7 +199,7 @@ bool	Server::clientRegistered(int fd) const {
 		return (true);
 	return (false);
 }
-Client	&Server::getClientByFd(int fd) const {
+Client	&Server::getClientByFd(int fd) {
 	Client *client_ptr = _clients.find(fd)->second;
 	return (*client_ptr);
 }

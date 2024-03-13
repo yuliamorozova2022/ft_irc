@@ -32,9 +32,15 @@ void signal_handler(int const sig)
 }
 
 
-int main() {
-	int argc = 3;
-	std::string argv[] = {"./ircserv", "6666", "test_pass"};
+int main(int argc, char *argv[]) {
+
+	if (argc == 1)
+	{
+		argc = 3;
+		argv[0] = "./ircserv";
+		argv[1] =  "6666";
+		argv[2] = "test_pass";
+	}
 	if (argc != 3) {
 		std::cout << "Usage ./ircserv <port> <password>" << std::endl;
 		return 1;
