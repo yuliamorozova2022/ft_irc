@@ -36,7 +36,7 @@ class Server ;
 
 class Server {
 	private:
-		typedef void (Server::*func)(Client &client, std::string args);
+		typedef void (Server::*func)(Client &client, std::vector<std::string> cmd);
 		Server();
 		const std::string		_name;
 		const int      			_serverFd;
@@ -90,7 +90,8 @@ class Server {
 			//Command Handling
 		void	setupCmds(void);
 		void	execCmd(Client &client, std::string args);
-		void	pass(Client &client, std::string args);
+		void	pass(Client &client, std::vector<std::string> cmd);
+		void	nick(Client &client, std::vector<std::string> cmd);
 
 
 
