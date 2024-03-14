@@ -34,6 +34,14 @@ std::string get_command(Client &client, int &stat)
 	return (msg);
 }
 
+bool allowed_symbol_check(std::string params) {
+    for (int i = 0; i < params.length(); ++i) {
+        if (isalnum(params[i]) == false && params[i] != '\r') //maybe should be expanded
+            return false;
+    }
+    return true;
+}
+
 /* void	Server::execCommand(Client &client, std::string msg)
 {
 

@@ -155,8 +155,7 @@ void Server::_accept_new_connection() {
 		throw std::runtime_error("  accept() for new client failed");
 	else {
 		std::cout << "  New incoming connection " << new_connection << std::endl;
-		if (getnameinfo((struct sockaddr *) &s_address, sizeof(s_address), hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) !=
-		0)
+		if (getnameinfo((struct sockaddr *) &s_address, sizeof(s_address), hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) != 0)
 			throw std::runtime_error("Error while getting hostname on new client.");
 
 		_fds.addFD(new_connection);

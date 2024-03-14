@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 		argc = 3;
 		argv[0] = "./ircserv";
 		argv[1] =  "6666";
-		argv[2] = "test_pass";
+		argv[2] = "test";
 	}
 	if (argc != 3) {
 		std::cout << "Usage ./ircserv <port> <password>" << std::endl;

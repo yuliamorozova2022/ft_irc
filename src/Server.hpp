@@ -25,13 +25,14 @@
 
 
 std::string get_command(Client &client, int &stat);
+bool allowed_symbol_check(std::string params);
 
 extern bool g_interrupt;
 
 class Client;
 class Channel;
 class PollManager;
-class Server ;
+class Server;
 
 
 class Server {
@@ -55,7 +56,6 @@ class Server {
 		void	_client_request(int i);
 
 	public:
-
 
 			// Constructors
 		Server(const int serverFd, const std::string serverPass);
@@ -92,7 +92,7 @@ class Server {
 		void	execCmd(Client &client, std::string args);
 		void	pass(Client &client, std::vector<std::string> cmd);
 		void	nick(Client &client, std::vector<std::string> cmd);
-
+        void    user(Client &client, std::vector<std::string> cmd);
 
 
 };
