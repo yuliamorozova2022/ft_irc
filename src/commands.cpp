@@ -16,6 +16,7 @@ void Server::setupCmds(void) {
     _cmds.insert(std::pair<std::string, func> ("NICK", &Server::nick));
     _cmds.insert(std::pair<std::string, func> ("USER", &Server::user));
     _cmds.insert(std::pair<std::string, func> ("QUIT", &Server::quit));
+    _cmds.insert(std::pair<std::string, func> ("HELP", &Server::help));
 	// _cmds["func1"] = &Server::func1;
 }
 
@@ -94,5 +95,28 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
         serverReply(client, cmd[1]);
     int tmp_fd = client.getFd();
     _clients.erase(tmp_fd);
-    _fds.removeFD(_fds[tmp_fd].fd);
+    _fds.removeFD(tmp_fd);
+    std::cout << "  from " << tmp_fd << ": " << "Connection closed" << std::endl;
+}
+
+void Server::help(Client &client, std::vector<std::string> cmd) {
+    std::string info = "";
+    info.append("\n\e[1;32m"); //green color
+    info.append("STEP 1: PASS\n");
+    info.append("\e[0m"); //reset color
+    info.append("\tUse PASS command to establish connection. e.g: PASS [Server Password]\n");
+    info.append("\e[1;32m");
+    info.append("STEP 2: NICK\n");
+    info.append("\e[0m");
+    info.append("\tUse NICK command to set a nickname. e.g: NICK yournickname\n");
+    info.append("\e[1;32m");
+    info.append("STEP 3: USER\n");
+    info.append("\e[0m");
+    info.append("\tUse USER command to register your username. e.g: USER yourusername\n\n");
+    info.append("\e[1;35m"); //purple color
+    info.append("AVAILABLE COMMANDS:\n");
+    info.append("\e[0m");
+    info.append("\tHELP\n\tPASS\n\tNICK\n\tUSER\n\tQUIT\n");
+    info.append("\e[0m");
+    serverReply(client, info);
 }

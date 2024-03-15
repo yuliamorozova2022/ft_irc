@@ -94,7 +94,7 @@ class Server {
 		void	nick(Client &client, std::vector<std::string> cmd);
         void    user(Client &client, std::vector<std::string> cmd);
         void    quit(Client &client, std::vector<std::string> cmd);
-
+        void    help(Client &client, std::vector<std::string> cmd);
 
 };
 
