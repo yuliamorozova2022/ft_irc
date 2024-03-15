@@ -176,6 +176,12 @@ void Server::_client_request(int i) {
 		<< "Connection closed"
 		<< std::endl;
 		_fds.removeFD(_fds[i].fd);
+        /*If, for some other reason, a client connection is closed without  the
+   client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
+   on socket), the server is required to fill in the quit  message  with
+   some sort  of  message  reflecting the nature of the event which
+   caused it to happen.
+         */
 	} else {
 
 		execCmd (getClientByFd(_fds[i].fd), msg);
@@ -215,5 +221,4 @@ int		Server::serverReply(Client &client, std::string msg)
 	std::string newstr  = ":" + _name + " " + msg;
 	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
 	return stat;
-
 }

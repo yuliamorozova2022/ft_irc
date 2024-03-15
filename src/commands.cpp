@@ -15,6 +15,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("PASS", &Server::pass));
     _cmds.insert(std::pair<std::string, func> ("NICK", &Server::nick));
     _cmds.insert(std::pair<std::string, func> ("USER", &Server::user));
+    _cmds.insert(std::pair<std::string, func> ("QUIT", &Server::quit));
 	// _cmds["func1"] = &Server::func1;
 }
 
@@ -84,4 +85,14 @@ void Server::user(Client &client, std::vector<std::string> cmd) {
             serverReply(client, client.getNickName() + ", " + getWelcomeMsg()); // client has to be formatted as:   :nickname!username@hostname  ???
         }
     }
+}
+
+void Server::quit(Client &client, std::vector<std::string> cmd) {
+    if (!client.isAuthed())
+        serverReply(client, ERR_NOTREGISTERED);
+    if (cmd.size() >= 2)
+        serverReply(client, cmd[1]);
+    int tmp_fd = client.getFd();
+    _clients.erase(tmp_fd);
+    _fds.removeFD(_fds[tmp_fd].fd);
 }
