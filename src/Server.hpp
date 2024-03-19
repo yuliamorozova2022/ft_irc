@@ -81,6 +81,7 @@ class Server {
 		void	addChannel(std::string channelName,std::string key, Client& creator);
 		void	addClient(Client *client);
 		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
+		void	removeClient(int fd);
 		void	addClient(int fd, std::string host);
 		bool	clientRegistered(int fd) const;
 		int		serverReply(Client &client, std::string msg);
@@ -92,9 +93,9 @@ class Server {
 		void	execCmd(Client &client, std::string args);
 		void	pass(Client &client, std::vector<std::string> cmd);
 		void	nick(Client &client, std::vector<std::string> cmd);
-        void    user(Client &client, std::vector<std::string> cmd);
-        void    quit(Client &client, std::vector<std::string> cmd);
-        void    help(Client &client, std::vector<std::string> cmd);
+		void	user(Client &client, std::vector<std::string> cmd);
+		void	quit(Client &client, std::vector<std::string> cmd);
+		void	help(Client &client, std::vector<std::string> cmd);
 
 };
 
