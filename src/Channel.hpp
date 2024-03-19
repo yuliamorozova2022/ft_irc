@@ -35,6 +35,7 @@ class Channel {
 		    // Getters / Setters
 		std::string getName() const;
 		std::string getTopic() const;
+		std::string getKey() const;
 		int getOnline() const ;
 		void setName(std::string new_name);
 		void setTopic(std::string new_topic);

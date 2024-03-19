@@ -68,26 +68,26 @@ const std::map<std::string, Channel *> &Server::getChannels() const {return _cha
 void Server::setWelcomeMsg(std::string welcomeMsg) {_welcomeMsg = welcomeMsg;}
 
 	// Methods
-void Server::addChannel(Channel *channel) {
-	_channels.insert(std::pair<std::string, Channel *> (channel->getName(), channel));
-}
+// void Server::addChannel(Channel *channel) {
+// 	_channels.insert(std::pair<std::string, Channel *> (channel->getName(), channel));
+// }
 
-void Server::addChannel(std::string channelName, Client& creator) {
+void Server::createChannel(std::string channelName, Client& creator) {
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName, creator)));
 }
 
-void Server::addChannel(std::string channelName,std::string key, Client& creator) {
+void Server::createChannel(std::string channelName,std::string key, Client& creator) {
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName,key, creator)));
 }
 
-void Server::addClient(Client *client) {
-	_clients.insert(std::pair<int, Client *> (client->getFd(), client));
-}
+// void Server::addClient(Client *client) {
+// 	_clients.insert(std::pair<int, Client *> (client->getFd(), client));
+// }
 
-void Server::addClient(std::string userName,std::string nickName, int fd, std::string host) {
+void Server::createClient(std::string userName,std::string nickName, int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(userName, nickName, fd, host)));
 }
-void Server::addClient(int fd, std::string host) {
+void Server::createClient(int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(fd, host)));
 }
 
@@ -159,7 +159,7 @@ void Server::_accept_new_connection() {
 			throw std::runtime_error("Error while getting hostname on new client.");
 
 		_fds.addFD(new_connection);
-		addClient(new_connection, hostname);
+		createClient(new_connection, hostname);
 	}
 }
 

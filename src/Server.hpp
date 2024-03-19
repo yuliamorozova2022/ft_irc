@@ -21,7 +21,18 @@
 
 // ################################################
 #define USER_NOT_REGISTERED "User not registered :("
+#define ERR_NOTREGISTERED "451 :You have not registered"
+#define ERR_ALREADYREGISTRED "462 :You may not reregister"
+#define ERR_PASSWDMISMATCH "464 :Password incorrect"
+
 // ################################################
+
+
+inline std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
+inline std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
+inline std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
+inline std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
+
 
 
 std::string get_command(Client &client, int &stat);
@@ -40,7 +51,7 @@ class Server {
 		typedef void (Server::*func)(Client &client, std::vector<std::string> cmd);
 		Server();
 		const std::string		_name;
-		const int      			_serverFd;
+		const int	  			_serverFd;
 		const std::string		_serverPass;
 		std::string				_welcomeMsg;
 		std::map<int, Client *>	_clients;
@@ -76,12 +87,12 @@ class Server {
 			// Methods
 		void	launch();
 		Client	&getClientByFd(int fd);
-		void	addChannel(Channel *channel);
-		void	addChannel(std::string channelName, Client& creator);
-		void	addChannel(std::string channelName,std::string key, Client& creator);
-		void	addClient(Client *client);
-		void	addClient(std::string userName, std::string nickName, int fd, std::string host);
-		void	addClient(int fd, std::string host);
+		// void	addChannel(Channel *channel);
+		void	createChannel(std::string channelName, Client& creator);
+		void	createChannel(std::string channelName,std::string key, Client& creator);
+		// void	addClient(Client *client);
+		void	createClient(std::string userName, std::string nickName, int fd, std::string host);
+		void	createClient(int fd, std::string host);
 		bool	clientRegistered(int fd) const;
 		int		serverReply(Client &client, std::string msg);
 
@@ -92,9 +103,15 @@ class Server {
 		void	execCmd(Client &client, std::string args);
 		void	pass(Client &client, std::vector<std::string> cmd);
 		void	nick(Client &client, std::vector<std::string> cmd);
-        void    user(Client &client, std::vector<std::string> cmd);
-        void    quit(Client &client, std::vector<std::string> cmd);
-        void    help(Client &client, std::vector<std::string> cmd);
+		void	user(Client &client, std::vector<std::string> cmd);
+		void	quit(Client &client, std::vector<std::string> cmd);
+		void	help(Client &client, std::vector<std::string> cmd);
+
+
+
+		//naomi new
+		void	join(Client &client, std::vector<std::string> cmd);
+		void	privmsg(Client &client, std::vector<std::string> cmd);
 
 };
 
