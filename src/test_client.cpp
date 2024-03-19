@@ -15,7 +15,7 @@
 
 #define MAX_CLIENTS 30
 #define PORT 6666
-#define POLL_TIMEOUT (60 * 1000) // 1 min, in milliseconds
+#define POLL_TIMEOUT (600 * 1000) // 1 min, in milliseconds
 
 int socket_setup ()
 {

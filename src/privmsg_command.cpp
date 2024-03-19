@@ -44,16 +44,25 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 	{
 		if ( Server::getChannels().find(cmd[1]) != Server::getChannels().end())
 		{
-			if (Server::getChannels().find(cmd[1])->second->getKey() != ""
-			|| Server::getChannels().find(cmd[1])->second->getKey() == keys[i]) //if no key is needed for channel
+			if (Server::getChannels().find(cmd[1])->second->getKey() != "")
 			{
-				Server::getChannels().find(cmd[1])->second->addMember(client);
-				client.addChannel(Server::getChannels().find(cmd[1])->second);
+				if (i < keys.size())
+				{
+					serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+					return;
+//
+				}
+				//key incorrect
+				if (Server::getChannels().find(cmd[1])->second->getKey() == keys[i]) {
+					Server::getChannels().find(cmd[1])->second->addMember(client);
+					client.addChannel(Server::getChannels().find(cmd[1])->second);
+				}
 			}
 			else
 			{
-				//key incorrect
-				serverReply(client, ERR_PASSWDMISMATCH);
+				Server::getChannels().find(cmd[1])->second->addMember(client);
+				client.addChannel(Server::getChannels().find(cmd[1])->second);
+
 			}
 
 		}
