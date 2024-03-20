@@ -86,6 +86,15 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
 	if (cmd.size() >= 2)
 		serverReply(client, cmd[1]);
 	int tmp_fd = client.getFd();
+	for (std::map<std::string, Channel *>::iterator it = client.getJoinedChannels().begin();
+		it != client.getJoinedChannels().end();
+		it++)
+	{
+		//needs to send msg
+		it->second->removeMember(client);
+	}
+
+	delete (_clients.find(tmp_fd)->second);
 	_clients.erase(tmp_fd);
 	_fds.removeFD(tmp_fd);
 	std::cout << "  from " << tmp_fd << ": " << "Connection closed" << std::endl;

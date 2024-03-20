@@ -44,11 +44,18 @@ Server::~Server() {
 	for (std::map<int, Client *>::iterator it = _clients.begin();
 			it != _clients.end();
 			it ++)
-		delete(it->second);
+			{
+				std::cout << "deleting " << it->first << std::endl;
+				delete(it->second);
+
+			}
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 			it != _channels.end();
 			it ++)
-		delete(it->second);
+			{
+				std::cout << "deleting " << it->first << std::endl;
+				delete(it->second);
+			}
 	std::cout << "\e[92mDestructor called of Server\e[0m" << std::endl;
 }
 
@@ -73,6 +80,7 @@ void Server::setWelcomeMsg(std::string welcomeMsg) {_welcomeMsg = welcomeMsg;}
 // }
 
 void Server::createChannel(std::string channelName, Client& creator) {
+
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName, creator)));
 }
 
@@ -221,4 +229,9 @@ int		Server::serverReply(Client &client, std::string msg)
 	std::string newstr  = ":" + _name + " " + msg;
 	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
 	return stat;
+}
+
+void	Server::sendMsgOnChannel(Channel &channel, Client &sender, std::string msg)
+{
+	std::string formatted_msg = ": " + sender.getNickName() + " PRIVMSG ";
 }

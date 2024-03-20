@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define MAX_CLIENTS 30
-#define POLL_TIMEOUT (60 * 1000) //1 min in milliseconds
+#define POLL_TIMEOUT (600 * 1000) //1 min in milliseconds
 
 class PollManager {
     private:

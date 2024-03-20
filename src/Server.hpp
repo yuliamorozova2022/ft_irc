@@ -95,6 +95,7 @@ class Server {
 		void	createClient(int fd, std::string host);
 		bool	clientRegistered(int fd) const;
 		int		serverReply(Client &client, std::string msg);
+		void	sendMsgOnChannel(Channel &channel, Client &sender, std::string msg);
 
 
 
