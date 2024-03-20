@@ -45,7 +45,6 @@
 		"streambuf": "cpp",
 		"typeinfo": "cpp",
 		"cstring": "cpp",
-		"ranges": "cpp",
 		"csignal": "cpp",
 		"ctime": "cpp",
 		"strstream": "cpp",

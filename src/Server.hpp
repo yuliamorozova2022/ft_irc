@@ -34,7 +34,6 @@ inline std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :U
 inline std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
 
 
-
 std::string get_command(Client &client, int &stat);
 bool allowed_symbol_check(std::string params);
 
@@ -93,6 +92,7 @@ class Server {
 		// void	addClient(Client *client);
 		void	createClient(std::string userName, std::string nickName, int fd, std::string host);
 		void	createClient(int fd, std::string host);
+    void	removeClient(int fd);
 		bool	clientRegistered(int fd) const;
 		int		serverReply(Client &client, std::string msg);
 		void	sendMsgOnChannel(Channel &channel, Client &sender, std::string msg);
@@ -107,10 +107,6 @@ class Server {
 		void	user(Client &client, std::vector<std::string> cmd);
 		void	quit(Client &client, std::vector<std::string> cmd);
 		void	help(Client &client, std::vector<std::string> cmd);
-
-
-
-		//naomi new
 		void	join(Client &client, std::vector<std::string> cmd);
 		void	privmsg(Client &client, std::vector<std::string> cmd);
 

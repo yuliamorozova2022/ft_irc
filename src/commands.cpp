@@ -1,6 +1,7 @@
 
 #include "Server.hpp"
 
+
 void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("PASS", &Server::pass));
 	_cmds.insert(std::pair<std::string, func> ("PRIVMSG", &Server::privmsg));
@@ -9,7 +10,6 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("QUIT", &Server::quit));
 	_cmds.insert(std::pair<std::string, func> ("HELP", &Server::help));
 	_cmds.insert(std::pair<std::string, func> ("JOIN", &Server::join));
-	// _cmds["func1"] = &Server::func1;
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -19,8 +19,9 @@ void Server::execCmd(Client &client, std::string args){
 	cmd.push_back(args.substr(0, i));
 	// for avoiding duplication of command
 	if (i != args.npos) {
-		args.erase(0, args.find_first_of(' ') + 1);
-		cmd.push_back(args);
+	args.erase(0, args.find_first_of(' ') + 1);
+	cmd.push_back(args);
+
 	}
 //	cmd.push_back(args.substr(0, args.find_first_of(" ")));
 //	cmd.push_back(args.substr(args.find_first_of(" ") + 1));
@@ -83,25 +84,27 @@ void Server::user(Client &client, std::vector<std::string> cmd) {
 void Server::quit(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed())
 		serverReply(client, ERR_NOTREGISTERED);
+	// instead of all users at server message has to be sent for all users in same channels?
 	if (cmd.size() >= 2)
 		serverReply(client, cmd[1]);
 	int tmp_fd = client.getFd();
-	for (std::map<std::string, Channel *>::iterator it = client.getJoinedChannels().begin();
+  for (std::map<std::string, Channel *>::iterator it = client.getJoinedChannels().begin();
 		it != client.getJoinedChannels().end();
 		it++)
 	{
 		//needs to send msg
 		it->second->removeMember(client);
 	}
-
-	delete (_clients.find(tmp_fd)->second);
-	_clients.erase(tmp_fd);
-	_fds.removeFD(tmp_fd);
+	removeClient(tmp_fd);
 	std::cout << "  from " << tmp_fd << ": " << "Connection closed" << std::endl;
 }
 
+
+
 void Server::help(Client &client, std::vector<std::string> cmd) {
+  //	void (cmd);
 	std::string info = "";
+
 	info.append("\n\e[1;32m"); //green color
 	info.append("STEP 1: PASS\n");
 	info.append("\e[0m"); //reset color

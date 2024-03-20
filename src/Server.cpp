@@ -98,6 +98,14 @@ void Server::createClient(std::string userName,std::string nickName, int fd, std
 void Server::createClient(int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(fd, host)));
 }
+void Server::removeClient(int fd) {
+	Client *client_ptr = _clients.find(fd)->second;
+	delete client_ptr;
+	_clients.erase(fd);
+  _fds.removeFD(fd);
+
+}
+
 
 int Server::_setup_socket(int port) {
 	struct sockaddr_in address;
@@ -184,12 +192,12 @@ void Server::_client_request(int i) {
 		<< "Connection closed"
 		<< std::endl;
 		_fds.removeFD(_fds[i].fd);
-        /*If, for some other reason, a client connection is closed without  the
-   client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
-   on socket), the server is required to fill in the quit  message  with
-   some sort  of  message  reflecting the nature of the event which
-   caused it to happen.
-         */
+		/*If, for some other reason, a client connection is closed without  the
+	client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
+	on socket), the server is required to fill in the quit  message  with
+	some sort  of  message  reflecting the nature of the event which
+	caused it to happen.
+		 */
 	} else {
 
 		execCmd (getClientByFd(_fds[i].fd), msg);
@@ -210,8 +218,9 @@ void Server::_client_request(int i) {
 			_fds.removeFD(_fds[i].fd);
 		} */
 	}
-//    std::fill(buf_vec.begin(), buf_vec.end(), 0);
-//    memset(&buf_vec, 0, 5000);
+//	std::fill(buf_vec.begin(), buf_vec.end(), 0);
+//	memset(&buf_vec, 0, 5000);
+
 }
 
 bool	Server::clientRegistered(int fd) const {
