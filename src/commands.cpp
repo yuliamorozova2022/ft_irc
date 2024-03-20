@@ -10,6 +10,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("QUIT", &Server::quit));
 	_cmds.insert(std::pair<std::string, func> ("HELP", &Server::help));
 	_cmds.insert(std::pair<std::string, func> ("JOIN", &Server::join));
+	_cmds.insert(std::pair<std::string, func> ("PING", &Server::pingpong));
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -122,4 +123,9 @@ void Server::help(Client &client, std::vector<std::string> cmd) {
 	info.append("\tHELP\n\tPASS\n\tNICK\n\tUSER\n\tQUIT\n");
 	info.append("\e[0m");
 	serverReply(client, info);
+}
+
+void Server::pingpong(Client &client, std::vector<std::string> cmd)
+{
+	serverReply(client, "PONG " +  cmd[1]);
 }

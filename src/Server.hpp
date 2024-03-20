@@ -116,6 +116,7 @@ class Server {
 		void	help(Client &client, std::vector<std::string> cmd);
 		void	join(Client &client, std::vector<std::string> cmd);
 		void	privmsg(Client &client, std::vector<std::string> cmd);
+		void	pingpong(Client &client, std::vector<std::string> cmd);
 
 };
 
