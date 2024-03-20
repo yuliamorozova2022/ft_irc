@@ -51,3 +51,21 @@ void Channel::removeOper(Client &client) {
 	_opers.erase(client.getFd());
 	_members.erase(client.getFd());
 }
+
+void	Channel::sendToAll(Client &client, std::string msg)
+{
+	msg = client.getPrefix() + msg;
+	// std::map <int, Client *> tst = _members;
+	int stat;
+	for (std::map<int, Client *>::iterator it = _members.begin();
+		it != _members.end();
+		it++)
+	{
+		if (it->first != client.getFd())
+		{
+			stat = send(it->second->getFd(),msg.c_str(), msg.length(), 0);
+			if (stat == -1)
+				throw std::runtime_error("sendToAll () failed!");
+		}
+	}
+}

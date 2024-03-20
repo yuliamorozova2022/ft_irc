@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <sys/socket.h>
 
 #include "Client.hpp"
 
@@ -22,17 +23,17 @@ class Channel {
 		Channel();
 
 	public:
-		    // Constructors
+			// Constructors
 		Channel(std::string name, Client& creator);
 		Channel(std::string name, std::string key, Client& creator);
 		// Channel(const Channel &copy);
-		    // Destructor
+			// Destructor
 		~Channel();
 
-		    // Operators
+			// Operators
 		// Channel & operator=(const Channel &assign);
 
-		    // Getters / Setters
+			// Getters / Setters
 		std::string getName() const;
 		std::string getTopic() const;
 		std::string getKey() const;
@@ -40,11 +41,12 @@ class Channel {
 		void setName(std::string new_name);
 		void setTopic(std::string new_topic);
 
-		    // Methods
+			// Methods
 		void	addMember(Client &client);
 		void	removeMember(Client &client);
 		void	addOper(Client &client);
 		void	removeOper(Client &client);
+		void	sendToAll(Client &client, std::string msg);
 
 };
 

@@ -15,6 +15,9 @@ void Server::setupCmds(void) {
 void Server::execCmd(Client &client, std::string args){
 	std::vector<std::string> cmd;
 
+	std::cout << "test" << std::endl;
+	std::cout <<"message: {" << args << "} len: " << args.length() << std::endl;
+
 	size_t i = args.find_first_of(' ');
 	cmd.push_back(args.substr(0, i));
 	// for avoiding duplication of command
@@ -35,6 +38,7 @@ void Server::execCmd(Client &client, std::string args){
 }
 
 void Server::pass(Client &client, std::vector<std::string> cmd) {
+	std::cout << "pass given: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
 	if (client.isAuthed())
 		serverReply(client, ERR_ALREADYREGISTRED);
 	else if (cmd.size() == 1)
@@ -85,14 +89,15 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed())
 		serverReply(client, ERR_NOTREGISTERED);
 	// instead of all users at server message has to be sent for all users in same channels?
-	if (cmd.size() >= 2)
-		serverReply(client, cmd[1]);
+	if (cmd.size() < 2)
+		cmd[1] = client.getNickName();
 	int tmp_fd = client.getFd();
-  for (std::map<std::string, Channel *>::iterator it = client.getJoinedChannels().begin();
-		it != client.getJoinedChannels().end();
+	std::map <std::string, Channel *> tst = client.getJoinedChannels();
+	for (std::map<std::string, Channel *>::iterator it = tst.begin();
+		it != tst.end();
 		it++)
 	{
-		//needs to send msg
+		it->second->sendToAll(client, "QUIT " + cmd[1]);
 		it->second->removeMember(client);
 	}
 	removeClient(tmp_fd);

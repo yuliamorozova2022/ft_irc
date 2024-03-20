@@ -48,6 +48,7 @@ class Client {
 			//methods
 		void	addChannel(Channel *channel);
 		void	removeChannel(Channel *channel);
+		std::string	getPrefix(void);
 
 };
 

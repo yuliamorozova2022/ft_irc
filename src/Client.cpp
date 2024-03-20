@@ -62,3 +62,8 @@ const std::string &Client::getMsgBuffer() const {return _msgBuffer;}
 void Client::setMsgBuffer(std::string msg) {_msgBuffer = msg;}
 void Client::addMsgBuffer(std::string msg){_msgBuffer += msg;}
 
+std::string	Client::getPrefix(void)
+{
+	// [:nick!user@host ]
+	return (":" + _nickName + "!" + _userName + "@" + _host + " ");
+}
