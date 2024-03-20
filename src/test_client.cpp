@@ -11,11 +11,10 @@
 #include <vector>
 #include <cstdlib>
 
-#include "./PollManager.hpp"
+#include "PollManager.hpp"
 
-#define PORT 6666
 #define MAX_CLIENTS 30
-#define POLL_TIMEOUT (60 * 1000) // 1 min, in milliseconds
+#define PORT 6666
 
 int socket_setup ()
 {
@@ -24,6 +23,7 @@ int socket_setup ()
 	 memset(&client_addr, 0, sizeof(client_addr));
 	client_addr.sin_family = AF_INET;
 	client_addr.sin_port = htons(PORT);
+    client_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
 	int client_fd;
 	if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -98,7 +98,7 @@ int main(int argc, char const* argv[])
 					allok = false;
 					break;
 				}
-				buf_vec.data()[strlen(buf_vec.data()) - 1] = 0; // delete \n at end of line
+				// buf_vec.data()[strlen(buf_vec.data()) - 1] = 0; // delete \n at end of line
 				if (strcmp(buf_vec.data(), "exit") == 0)
 				{
 					return(0);
