@@ -44,11 +44,18 @@ Server::~Server() {
 	for (std::map<int, Client *>::iterator it = _clients.begin();
 			it != _clients.end();
 			it ++)
-		delete(it->second);
+			{
+				std::cout << "deleting " << it->first << std::endl;
+				delete(it->second);
+
+			}
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 			it != _channels.end();
 			it ++)
-		delete(it->second);
+			{
+				std::cout << "deleting " << it->first << std::endl;
+				delete(it->second);
+			}
 	std::cout << "\e[92mDestructor called of Server\e[0m" << std::endl;
 }
 
@@ -68,34 +75,37 @@ const std::map<std::string, Channel *> &Server::getChannels() const {return _cha
 void Server::setWelcomeMsg(std::string welcomeMsg) {_welcomeMsg = welcomeMsg;}
 
 	// Methods
-void Server::addChannel(Channel *channel) {
-	_channels.insert(std::pair<std::string, Channel *> (channel->getName(), channel));
-}
+// void Server::addChannel(Channel *channel) {
+// 	_channels.insert(std::pair<std::string, Channel *> (channel->getName(), channel));
+// }
 
-void Server::addChannel(std::string channelName, Client& creator) {
+void Server::createChannel(std::string channelName, Client& creator) {
+
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName, creator)));
 }
 
-void Server::addChannel(std::string channelName,std::string key, Client& creator) {
+void Server::createChannel(std::string channelName,std::string key, Client& creator) {
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName,key, creator)));
 }
 
-void Server::addClient(Client *client) {
-	_clients.insert(std::pair<int, Client *> (client->getFd(), client));
-}
+// void Server::addClient(Client *client) {
+// 	_clients.insert(std::pair<int, Client *> (client->getFd(), client));
+// }
 
-void Server::addClient(std::string userName,std::string nickName, int fd, std::string host) {
+void Server::createClient(std::string userName,std::string nickName, int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(userName, nickName, fd, host)));
 }
-void Server::addClient(int fd, std::string host) {
+void Server::createClient(int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(fd, host)));
 }
-
 void Server::removeClient(int fd) {
 	Client *client_ptr = _clients.find(fd)->second;
 	delete client_ptr;
 	_clients.erase(fd);
+  _fds.removeFD(fd);
+
 }
+
 
 int Server::_setup_socket(int port) {
 	struct sockaddr_in address;
@@ -165,7 +175,7 @@ void Server::_accept_new_connection() {
 			throw std::runtime_error("Error while getting hostname on new client.");
 
 		_fds.addFD(new_connection);
-		addClient(new_connection, hostname);
+		createClient(new_connection, hostname);
 	}
 }
 
@@ -189,6 +199,7 @@ void Server::_client_request(int i) {
 	caused it to happen.
 		 */
 	} else {
+
 		execCmd (getClientByFd(_fds[i].fd), msg);
 
 /* 		if (getClientByFd(_fds[i].fd).isAuthed()) {
@@ -209,6 +220,7 @@ void Server::_client_request(int i) {
 	}
 //	std::fill(buf_vec.begin(), buf_vec.end(), 0);
 //	memset(&buf_vec, 0, 5000);
+
 }
 
 bool	Server::clientRegistered(int fd) const {
@@ -226,4 +238,9 @@ int		Server::serverReply(Client &client, std::string msg)
 	std::string newstr  = ":" + _name + " " + msg;
 	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
 	return stat;
+}
+
+void	Server::sendMsgOnChannel(Channel &channel, Client &sender, std::string msg)
+{
+	std::string formatted_msg = ": " + sender.getNickName() + " PRIVMSG ";
 }

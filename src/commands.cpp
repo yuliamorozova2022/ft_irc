@@ -2,22 +2,14 @@
 #include "Server.hpp"
 
 
-std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
-std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
-std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
-std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
-
-#define ERR_NOTREGISTERED "451 :You have not registered"
-#define ERR_ALREADYREGISTRED "462 :You may not reregister"
-#define ERR_PASSWDMISMATCH "464 :Password incorrect"
-
 void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("PASS", &Server::pass));
+	_cmds.insert(std::pair<std::string, func> ("PRIVMSG", &Server::privmsg));
 	_cmds.insert(std::pair<std::string, func> ("NICK", &Server::nick));
 	_cmds.insert(std::pair<std::string, func> ("USER", &Server::user));
 	_cmds.insert(std::pair<std::string, func> ("QUIT", &Server::quit));
 	_cmds.insert(std::pair<std::string, func> ("HELP", &Server::help));
-	// _cmds["func1"] = &Server::func1;
+	_cmds.insert(std::pair<std::string, func> ("JOIN", &Server::join));
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -29,6 +21,7 @@ void Server::execCmd(Client &client, std::string args){
 	if (i != args.npos) {
 	args.erase(0, args.find_first_of(' ') + 1);
 	cmd.push_back(args);
+
 	}
 //	cmd.push_back(args.substr(0, args.find_first_of(" ")));
 //	cmd.push_back(args.substr(args.find_first_of(" ") + 1));
@@ -95,15 +88,21 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
 	if (cmd.size() >= 2)
 		serverReply(client, cmd[1]);
 	int tmp_fd = client.getFd();
+  for (std::map<std::string, Channel *>::iterator it = client.getJoinedChannels().begin();
+		it != client.getJoinedChannels().end();
+		it++)
+	{
+		//needs to send msg
+		it->second->removeMember(client);
+	}
 	removeClient(tmp_fd);
-//	close(client.getFd());
-//	_clients.erase(tmp_fd);
-	_fds.removeFD(tmp_fd);
 	std::cout << "  from " << tmp_fd << ": " << "Connection closed" << std::endl;
 }
 
+
+
 void Server::help(Client &client, std::vector<std::string> cmd) {
-//	void (cmd);
+  //	void (cmd);
 	std::string info = "";
 
 	info.append("\n\e[1;32m"); //green color

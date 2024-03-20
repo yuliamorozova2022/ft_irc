@@ -58,7 +58,6 @@
 		"fstream": "cpp",
 		"iomanip": "cpp",
 		"mutex": "cpp",
-		"ranges": "cpp",
 		"span": "cpp",
 		"sstream": "cpp",
 		"cinttypes": "cpp",

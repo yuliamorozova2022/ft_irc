@@ -6,11 +6,13 @@ Channel::Channel() {}
 
 Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0) {
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
+	addOper(creator);
 	_topic = "";
 }
 
 Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0) {
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
+	addOper(creator);
 	_topic = "";
 }
 
@@ -21,6 +23,7 @@ Channel::~Channel() {
 }
 
 	// Getters / Setters
+std::string Channel::getKey() const {return _key;}
 std::string Channel::getName() const {return _name;}
 std::string Channel::getTopic() const {return _topic;}
 int Channel::getOnline() const {return _n_online;}
