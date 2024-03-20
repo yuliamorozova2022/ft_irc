@@ -51,6 +51,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		}
 		if ( Server::getChannels().find(channel_names[i]) != Server::getChannels().end())
 		{
+
 			if (Server::getChannels().find(channel_names[i])->second->getKey() != "")
 			{
 				if (i < keys.size())
@@ -62,12 +63,16 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 				if (Server::getChannels().find(channel_names[i])->second->getKey() == keys[i]) {
 					Server::getChannels().find(channel_names[i])->second->addMember(client);
 					client.addChannel(Server::getChannels().find(channel_names[i])->second);
+					getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
+					serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
 				}
 			}
 			else
 			{
 				Server::getChannels().find(channel_names[i])->second->addMember(client);
 				client.addChannel(Server::getChannels().find(channel_names[i])->second);
+					getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
+					serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
 
 			}
 
@@ -79,6 +84,8 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 			else
 				Server::createChannel(channel_names[i], keys[i], client);
 			client.addChannel(Server::getChannels().find(channel_names[i])->second);
+			getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
+			serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
 		}
 	}
 }

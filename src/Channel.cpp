@@ -7,13 +7,13 @@ Channel::Channel() {}
 Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0) {
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
-	_topic = "";
+	_topic = "default_topic";
 }
 
 Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0) {
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
-	_topic = "";
+	_topic = "default_topic";
 }
 
 
@@ -34,6 +34,7 @@ void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
 	//methods
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
+
 }
 
 void Channel::removeMember(Client &client) {

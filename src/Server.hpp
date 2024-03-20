@@ -33,6 +33,9 @@ inline std::string RPL_YOURHOST (Client &c) {return ("002 " + c.getNickName() + 
 inline std::string RPL_CREATED (Client &c) {return ("003 " + c.getNickName() + " :This server is not yet created");}
 inline std::string RPL_MYINFO (Client &c) {return ("004 " + c.getNickName() + " :IRC42");}
 
+inline std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getName() + " :" + c.getTopic());}
+// inline std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getChannelName() + " :" + c.getTopic());}
+
 inline std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
 inline std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
 inline std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
