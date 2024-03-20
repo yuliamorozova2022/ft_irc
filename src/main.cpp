@@ -16,6 +16,9 @@
 
 
 
+		TODO:
+			ping command
+			use # in channel names (join)
 
  */
 

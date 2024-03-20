@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cctype>
 
 #include "Server.hpp"
 
@@ -65,4 +66,35 @@ std::vector<std::string> split(std::string str, std::string separator)
 	}
 
 	return splot;
+}
+
+
+void Server::welcomeClient(Client &c)
+{
+	c.setRegistered();
+	serverReply(c, RPL_WELCOME(c));
+	serverReply(c, RPL_YOURHOST(c));
+	serverReply(c, RPL_CREATED(c));
+	serverReply(c, RPL_MYINFO(c));
+}
+
+
+
+int getChannelName(std::string &cname)
+{
+	std::string ch_prefix = "+&#!";
+
+	if (cname.length() > 50)
+		return -1;
+
+	if (cname.find(",") != cname.npos)
+		return -1;
+
+	if (ch_prefix.find(cname[0]) != ch_prefix.npos)
+		cname.erase(0,1);
+
+	for (int i = 0; i < cname.length(); i++)
+		std::tolower(cname[i]);
+	return (0);
+
 }

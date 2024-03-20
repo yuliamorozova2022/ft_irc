@@ -28,10 +28,17 @@
 // ################################################
 
 
+inline std::string RPL_WELCOME (Client &c) {return ("001 " + c.getNickName() + " :Welcome to our amazzzzing server! " + c.getNickName());}
+inline std::string RPL_YOURHOST (Client &c) {return ("002 " + c.getNickName() + " :your host is IRC42");}
+inline std::string RPL_CREATED (Client &c) {return ("003 " + c.getNickName() + " :This server is not yet created");}
+inline std::string RPL_MYINFO (Client &c) {return ("004 " + c.getNickName() + " :IRC42");}
+
 inline std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
 inline std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
 inline std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
 inline std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
+
+inline std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel mask");}
 
 
 std::string get_command(Client &client, int &stat);
@@ -92,11 +99,11 @@ class Server {
 		// void	addClient(Client *client);
 		void	createClient(std::string userName, std::string nickName, int fd, std::string host);
 		void	createClient(int fd, std::string host);
-    void	removeClient(int fd);
+		void	removeClient(int fd);
 		bool	clientRegistered(int fd) const;
 		int		serverReply(Client &client, std::string msg);
 		void	sendMsgOnChannel(Channel &channel, Client &sender, std::string msg);
-
+		void	welcomeClient(Client &c);
 
 
 			//Command Handling

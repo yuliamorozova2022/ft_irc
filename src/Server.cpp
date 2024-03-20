@@ -235,7 +235,7 @@ Client	&Server::getClientByFd(int fd) {
 
 int		Server::serverReply(Client &client, std::string msg)
 {
-	std::string newstr  = ":" + _name + " " + msg;
+	std::string newstr  = ":" + _name + " " + msg + "\n";
 	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
 	return stat;
 }

@@ -60,8 +60,7 @@ void Server::nick(Client &client, std::vector<std::string> cmd) {
 		}
 		client.setNickName(cmd[1]);
 		if (client.getUserName() != "") {
-			client.setRegistered();
-			serverReply(client, client.getNickName() + ", " + getWelcomeMsg());
+			welcomeClient(client);
 		}
 	}
 }
@@ -74,8 +73,8 @@ void Server::user(Client &client, std::vector<std::string> cmd) {
 	else {
 		client.setUserName(cmd[1].substr(0, cmd[1].find_first_of(' ')));
 		if (client.getNickName() != "") {
-			client.setRegistered();
-			serverReply(client, client.getNickName() + ", " + getWelcomeMsg()); // client has to be formatted as:   :nickname!username@hostname  ???
+			welcomeClient(client);
+
 		}
 	}
 }

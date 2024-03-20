@@ -1,7 +1,10 @@
 
 #include "Server.hpp"
 
-std::vector<std::string> split(std::string str, std::string separator); //from tools.cpp
+
+//from tools.cpp
+std::vector<std::string> split(std::string str, std::string separator);
+int getChannelName(std::string &cname);
 
 
 void Server::privmsg(Client &client, std::vector<std::string> cmd)
@@ -17,7 +20,6 @@ void Server::privmsg(Client &client, std::vector<std::string> cmd)
 	Command: JOIN
 	Parameters: <channel>{,<channel>} [<key>{,<key>}]
 */
-
 void Server::join(Client &client, std::vector<std::string> cmd)
 {
 
@@ -42,26 +44,30 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 
 	for (int i = 0; i < channel_names.size(); i++)
 	{
-		if ( Server::getChannels().find(cmd[1]) != Server::getChannels().end())
+		if (getChannelName(channel_names[i]) == -1)
 		{
-			if (Server::getChannels().find(cmd[1])->second->getKey() != "")
+			serverReply(client, ERR_BADCHANMASK(channel_names[i]));
+			continue;
+		}
+		if ( Server::getChannels().find(channel_names[i]) != Server::getChannels().end())
+		{
+			if (Server::getChannels().find(channel_names[i])->second->getKey() != "")
 			{
 				if (i < keys.size())
 				{
 					serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 					return;
-//
 				}
 				//key incorrect
-				if (Server::getChannels().find(cmd[1])->second->getKey() == keys[i]) {
-					Server::getChannels().find(cmd[1])->second->addMember(client);
-					client.addChannel(Server::getChannels().find(cmd[1])->second);
+				if (Server::getChannels().find(channel_names[i])->second->getKey() == keys[i]) {
+					Server::getChannels().find(channel_names[i])->second->addMember(client);
+					client.addChannel(Server::getChannels().find(channel_names[i])->second);
 				}
 			}
 			else
 			{
-				Server::getChannels().find(cmd[1])->second->addMember(client);
-				client.addChannel(Server::getChannels().find(cmd[1])->second);
+				Server::getChannels().find(channel_names[i])->second->addMember(client);
+				client.addChannel(Server::getChannels().find(channel_names[i])->second);
 
 			}
 
@@ -69,10 +75,10 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		else
 		{
 			if (i >= keys.size()) //if no key exists for the value
-				Server::createChannel(cmd[1], client);
+				Server::createChannel(channel_names[i], client);
 			else
-				Server::createChannel(cmd[1], keys[i], client);
-			client.addChannel(Server::getChannels().find(cmd[1])->second);
+				Server::createChannel(channel_names[i], keys[i], client);
+			client.addChannel(Server::getChannels().find(channel_names[i])->second);
 		}
 	}
 }
