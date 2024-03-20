@@ -15,21 +15,15 @@ void Server::setupCmds(void) {
 void Server::execCmd(Client &client, std::string args){
 	std::vector<std::string> cmd;
 
-	std::cout << "test" << std::endl;
-	std::cout <<"message: {" << args << "} len: " << args.length() << std::endl;
-
+	args = args.substr(0, args.find('\r'));
 	size_t i = args.find_first_of(' ');
 	cmd.push_back(args.substr(0, i));
 	// for avoiding duplication of command
 	if (i != args.npos) {
-	args.erase(0, args.find_first_of(' ') + 1);
-	cmd.push_back(args);
-
+		args.erase(0, args.find_first_of(' ') + 1);
+		cmd.push_back(args);
 	}
-//	cmd.push_back(args.substr(0, args.find_first_of(" ")));
-//	cmd.push_back(args.substr(args.find_first_of(" ") + 1));
 
-// std::map<std::string, func>::iterator it = _cmds.find(cmd);
 	std::map<std::string, Server::func>::iterator it = _cmds.find(cmd[0]);
 	if (it != _cmds.end())
 		(this->*(it->second))(client, cmd);
@@ -38,8 +32,8 @@ void Server::execCmd(Client &client, std::string args){
 }
 
 void Server::pass(Client &client, std::vector<std::string> cmd) {
-	std::cout << "pass given: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
-	if (client.isAuthed())
+		std::cout << "pass given: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
+if (client.isAuthed())
 		serverReply(client, ERR_ALREADYREGISTRED);
 	else if (cmd.size() == 1)
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
@@ -47,6 +41,7 @@ void Server::pass(Client &client, std::vector<std::string> cmd) {
 		client.setAuth();
 	else
 		serverReply(client, ERR_PASSWDMISMATCH);
+	std::cout << "pass: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
 }
 
 void Server::nick(Client &client, std::vector<std::string> cmd) {
