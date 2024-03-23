@@ -32,6 +32,9 @@ inline std::string RPL_WELCOME (Client &c) {return ("001 " + c.getNickName() + "
 inline std::string RPL_YOURHOST (Client &c) {return ("002 " + c.getNickName() + " :your host is IRC42");}
 inline std::string RPL_CREATED (Client &c) {return ("003 " + c.getNickName() + " :This server is not yet created");}
 inline std::string RPL_MYINFO (Client &c) {return ("004 " + c.getNickName() + " :IRC42");}
+inline std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
+	return ("366 " + c.getNickName() + " " + ch.getName() + " :End of NAMES list");
+	}
 
 inline std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getName() + " :" + c.getTopic());}
 // inline std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getChannelName() + " :" + c.getTopic());}
@@ -120,6 +123,7 @@ class Server {
 		void	join(Client &client, std::vector<std::string> cmd);
 		void	privmsg(Client &client, std::vector<std::string> cmd);
 		void	pingpong(Client &client, std::vector<std::string> cmd);
+		void	names(Client &client, std::vector<std::string> cmd);
 
 };
 

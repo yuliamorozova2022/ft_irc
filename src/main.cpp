@@ -17,8 +17,8 @@
 
 
 		TODO:
-			ping command
-			use # in channel names (join)
+			Tough name reply exists, it doesnt automatically gets called when using JOIN. find a way to call it
+			temp solution commented in Server::join code
 
  */
 

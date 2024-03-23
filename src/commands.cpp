@@ -11,6 +11,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("HELP", &Server::help));
 	_cmds.insert(std::pair<std::string, func> ("JOIN", &Server::join));
 	_cmds.insert(std::pair<std::string, func> ("PING", &Server::pingpong));
+	_cmds.insert(std::pair<std::string, func> ("NAMES", &Server::names));
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -34,7 +35,7 @@ void Server::execCmd(Client &client, std::string args){
 
 void Server::pass(Client &client, std::vector<std::string> cmd) {
 		std::cout << "pass given: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
-if (client.isAuthed())
+	if (client.isAuthed())
 		serverReply(client, ERR_ALREADYREGISTRED);
 	else if (cmd.size() == 1)
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
@@ -129,3 +130,49 @@ void Server::pingpong(Client &client, std::vector<std::string> cmd)
 {
 	serverReply(client, "PONG " +  cmd[1]);
 }
+
+/*
+	this lists users in the specified channel[s], also runs after JOIN command
+	response with two messages
+	RPL_NAMREPLY	=> :<pref> RPL_NAMREPLY <client_nick> = #foobar :foobar1 foobar2 foobar3
+	RPL_ENDOFNAMES	=>
+ */
+ int getChannelName(std::string &cname);
+
+void Server::names(Client &client, std::vector<std::string> cmd)
+{
+	getChannelName(cmd[1]);
+	if (Server::getChannels().find(cmd[1]) == Server::getChannels().end())
+		return;
+	Channel &ch = *(Server::getChannels().find(cmd[1])->second);
+
+		std::string userlist = "";
+
+		for (std::map<int, Client *>::const_iterator i = ch.getMembers().begin();
+			i != ch.getMembers().end(); i++)
+		{
+			if (i->first != client.getFd())
+			{
+				if (! userlist.empty())
+					userlist += ", ";
+				userlist += client.getNickName();
+			}
+		}
+		userlist.insert(0, client.getNickName()).insert(0, "@");
+
+		std::string rep = "353 " + client.getNickName() + " = #" + ch.getName() + ": " + userlist;
+
+		serverReply(client, rep);
+		serverReply(client, RPL_ENDOFNAMES(client, ch));
+}
+
+
+
+
+/* CLIENT:	[:nuna!nroth@localhost NAMES #test]
+SERVER:
+	[
+		:irc.ircgod.com 353 nroth = #test :@nroth  nroth
+		:irc.ircgod.com 366 nroth #test :End of NAMES list
+	]
+ */

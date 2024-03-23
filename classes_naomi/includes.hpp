@@ -14,7 +14,7 @@
 #include <map>
 #include <poll.h>
 #include <cstdlib>
-#include <string> 
+#include <string>
 
 
 #include "./Channel.hpp"
@@ -22,7 +22,5 @@
 #include "./Server.hpp"
 #include "./PollManager.hpp"
 
-
-#define PORT 6667
 
 #endif

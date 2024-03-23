@@ -65,6 +65,13 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 					client.addChannel(Server::getChannels().find(channel_names[i])->second);
 					getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
 					serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
+/*
+
+					//A WAY TO CALL NAME REPLY. NOT GOOD
+ 					std::vector<std::string> s;
+					s.push_back(channel_names[i]);
+					s.push_back(channel_names[i]);
+					Server::names(client, s) ;*/
 				}
 			}
 			else

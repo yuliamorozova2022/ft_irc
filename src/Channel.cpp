@@ -27,6 +27,7 @@ std::string Channel::getKey() const {return _key;}
 std::string Channel::getName() const {return _name;}
 std::string Channel::getTopic() const {return _topic;}
 int Channel::getOnline() const {return _n_online;}
+const std::map<int, Client*> &Channel::getMembers() const {return _members;}
 
 void Channel::setName(std::string new_name) {_name = new_name;}
 void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
