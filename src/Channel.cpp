@@ -1,6 +1,5 @@
 #include "Channel.hpp"
 
-
 	// Constructors
 Channel::Channel() {}
 
@@ -35,23 +34,22 @@ void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
 	//methods
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
-
+	client.addChannel(this);
 }
 
 void Channel::removeMember(Client &client) {
 	_members.erase(client.getFd());
+	client.removeChannel(this);
 }
 
 void Channel::addOper(Client &client) {
 	_opers.insert(std::pair<int, Client *> ( client.getFd(), &client));
-	_members.insert(
-		std::pair<int, Client *>
-		( client.getFd(), &client));
+	addMember(client);
 }
 
 void Channel::removeOper(Client &client) {
 	_opers.erase(client.getFd());
-	_members.erase(client.getFd());
+	removeMember(client);
 }
 
 void	Channel::sendToAll(Client &client, std::string msg)

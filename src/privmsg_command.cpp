@@ -51,7 +51,6 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		}
 		if ( Server::getChannels().find(channel_names[i]) != Server::getChannels().end())
 		{
-
 			if (Server::getChannels().find(channel_names[i])->second->getKey() != "")
 			{
 				if (i < keys.size())
@@ -62,12 +61,10 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 				//key incorrect
 				if (Server::getChannels().find(channel_names[i])->second->getKey() == keys[i]) {
 					Server::getChannels().find(channel_names[i])->second->addMember(client);
-					client.addChannel(Server::getChannels().find(channel_names[i])->second);
 					getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
 					serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
-/*
 
-					//A WAY TO CALL NAME REPLY. NOT GOOD
+					/*//A WAY TO CALL NAME REPLY. NOT GOOD BC TOO LONG
  					std::vector<std::string> s;
 					s.push_back(channel_names[i]);
 					s.push_back(channel_names[i]);
@@ -77,20 +74,16 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 			else
 			{
 				Server::getChannels().find(channel_names[i])->second->addMember(client);
-				client.addChannel(Server::getChannels().find(channel_names[i])->second);
-					getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
-					serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
-
+				getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
+				serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
 			}
-
 		}
-		else
+		else //if channel doesn't already exist, needs to be created
 		{
-			if (i >= keys.size()) //if no key exists for the value
+			if (i >= keys.size()) //if no key exists for the value, create without key
 				Server::createChannel(channel_names[i], client);
 			else
 				Server::createChannel(channel_names[i], keys[i], client);
-			client.addChannel(Server::getChannels().find(channel_names[i])->second);
 			getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
 			serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
 		}

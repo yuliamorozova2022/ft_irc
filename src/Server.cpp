@@ -191,7 +191,7 @@ void Server::_client_request(int i) {
 		<< ": "
 		<< "Connection closed"
 		<< std::endl;
-		_fds.removeFD(_fds[i].fd);
+		removeClient(_fds[i].fd);
 		/*If, for some other reason, a client connection is closed without  the
 	client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
 	on socket), the server is required to fill in the quit  message  with

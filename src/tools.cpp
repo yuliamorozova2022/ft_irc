@@ -79,22 +79,32 @@ void Server::welcomeClient(Client &c)
 }
 
 
-
+/*
+	checks that the channel name is correct, and lowercases it.
+	**** rfc1459#section-1.3
+		Channels names are strings (beginning with a '&' or '#' character) of length up to 200 characters.
+		Apart from the the requirement that the first character being either '&' or '#'; the only restriction
+		on a channel name is that it may not contain any spaces (' '), a control G (^G or ASCII 7), or a comma
+		(',' which is used as a list item separator by the protocol).
+	****
+ */
 int getChannelName(std::string &cname)
 {
-	std::string ch_prefix = "+&#!";
+	std::string ch_prefix = "&#";
 
 	if (cname.length() > 50)
 		return -1;
 
 	if (cname.find(",") != cname.npos)
+		|| cname.find(" ") != cname.npos
+		|| cname.find(7) != cname.npos
 		return -1;
 
-	if (ch_prefix.find(cname[0]) != ch_prefix.npos)
-		cname.erase(0,1);
+	if (ch_prefix.find(cname[0]) == ch_prefix.npos)
+		return -1;
 
 	for (int i = 0; i < cname.length(); i++)
 		std::tolower(cname[i]);
-	return (0);
 
+	return (0);
 }
