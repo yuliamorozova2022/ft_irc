@@ -7,3 +7,4 @@
 	- Added a static greetClientToChannel function to be used in join - it sends JOIN and NAMES messages.
 	- Moved RPL functions to src/replies.cpp
 	- Added include.hpp file to include everything at once
+	- Privmsg seems to be working on surface, but something is incorrect when trying to actually use it? Also, formatting from wechat PRIVMSG has server name in the privmsg command, is that part of regular formatting?

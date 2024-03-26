@@ -47,7 +47,8 @@ std::string ERR_NEEDMOREPARAMS (std::string c);
 std::string ERR_UNKNOWNCOMMAND (std::string c);
 std::string ERR_ERRONEUSNICKNAME (std::string c);
 std::string ERR_BADCHANMASK (std::string c);
-
+std::string ERR_NORECIPIENT (std::string c);
+std::string ERR_NOSUCHNICK (std::string c);
 
 //tools.cpp
 std::string					get_command(Client &client, int &stat);

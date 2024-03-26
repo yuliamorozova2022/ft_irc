@@ -20,6 +20,8 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getName() + " :" + c.getTopic());}
 // std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getChannelName() + " :" + c.getTopic());}
 
+std::string ERR_NORECIPIENT (std::string c) {return ("411 :No recipient given (" + c + ")");}
+std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick/channel");}
 std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
 std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
 std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}

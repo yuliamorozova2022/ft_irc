@@ -1,20 +1,65 @@
 
-#include "Server.hpp"
+#include "includes.hpp"
 
-
-//from tools.cpp
-std::vector<std::string> split(std::string str, std::string separator);
-int getChannelName(std::string &cname);
-
-
-void Server::privmsg(Client &client, std::vector<std::string> cmd)
-{
-
-}
 
 //options from client:
 // PRIVMSG <username> :[.....]	=> :client PRIVMSG <username> :[....]
-// PRIVMSG <#chcannel> :[.....]	=> :client PRIVMSG <#channel> :[....]
+// PRIVMSG <#channel> :[.....]	=> :client PRIVMSG <#channel> :[....]
+
+void Server::sendMsgToUser(Client &sender, std::string recipient, std::string msg)
+{
+	msg = sender.getPrefix() + recipient + " :" + msg;
+	for (std::map<int, Client *>::const_iterator it = getClients().begin();
+		it != getClients().end(); it++)
+		{
+			if (it->second->getNickName() == recipient)
+			{
+				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
+				return;
+			}
+		}
+	serverReply(sender, ERR_NOSUCHNICK(recipient));
+}
+void Server::sendMsgToChannel(Client &sender, std::string channel, std::string msg)
+{
+	msg = "PRIVMSG " + channel + " :" + msg;
+	if (getChannelName(channel) == -1) //check channel name
+	{
+		serverReply(sender, ERR_BADCHANMASK(channel));
+		return;
+	}
+	//check if channel exists
+	if (getChannels().find(channel) == getChannels().end())
+	{
+		serverReply(sender, ERR_NOSUCHNICK(channel));
+		return;
+	}
+	getChannels().find(channel)->second->sendToAll(sender, msg);
+}
+
+void Server::privmsg(Client &client, std::vector<std::string> cmd)
+{
+	if (cmd.size() < 2)
+	{
+		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+		return;
+	}
+
+	//get first value, which is either the channel or client name
+	std::string recipient = cmd[1].substr(0, cmd[1].find(":"));
+	if (recipient.empty())
+	{
+		serverReply(client, ERR_NORECIPIENT(cmd[0]));
+		return;
+	}
+	std::string message = cmd[1].substr(cmd[1].find(":") + 1);
+
+	if (recipient[0] == '&' || recipient[0] == '#')
+		sendMsgToChannel(client, recipient, message);
+	else
+		sendMsgToUser(client, recipient, message);
+}
+
 
 /*
 	Command: JOIN
