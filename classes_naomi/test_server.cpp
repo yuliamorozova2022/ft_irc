@@ -18,8 +18,7 @@
 
 #include "./PollManager.hpp"
 
-// const int PORT = 6666;
-const int POLL_TIMEOUT = 60 * 1000; // 1 min, in milliseconds
+=const int POLL_TIMEOUT = 60 * 1000; // 1 min, in milliseconds
 
 int setup_socket()
 {

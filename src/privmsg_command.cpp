@@ -20,6 +20,16 @@ void Server::privmsg(Client &client, std::vector<std::string> cmd)
 	Command: JOIN
 	Parameters: <channel>{,<channel>} [<key>{,<key>}]
 */
+static void greetClientToChannel(Server &server, Channel &channel, Client &client)
+{
+	std::vector<std::string> s;
+	s.push_back(channel.getName());
+	s.push_back(channel.getName());
+	server.serverReply(client, RPL_TOPIC(channel));
+	channel.sendToAll(client, "JOIN " + channel.getName());
+	server.names(client, s) ;
+
+}
 void Server::join(Client &client, std::vector<std::string> cmd)
 {
 
@@ -61,21 +71,13 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 				//key incorrect
 				if (Server::getChannels().find(channel_names[i])->second->getKey() == keys[i]) {
 					Server::getChannels().find(channel_names[i])->second->addMember(client);
-					getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
-					serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
-
-					/*//A WAY TO CALL NAME REPLY. NOT GOOD BC TOO LONG
- 					std::vector<std::string> s;
-					s.push_back(channel_names[i]);
-					s.push_back(channel_names[i]);
-					Server::names(client, s) ;*/
+					greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 				}
 			}
 			else
 			{
 				Server::getChannels().find(channel_names[i])->second->addMember(client);
-				getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
-				serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
+				greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 			}
 		}
 		else //if channel doesn't already exist, needs to be created
@@ -84,8 +86,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 				Server::createChannel(channel_names[i], client);
 			else
 				Server::createChannel(channel_names[i], keys[i], client);
-			getChannels().find(channel_names[i])->second->sendToAll(client, "JOIN " + _name);
-			serverReply(client, RPL_TOPIC(*getChannels().find(channel_names[i])->second));
+			greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 		}
 	}
 }

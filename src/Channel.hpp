@@ -1,13 +1,7 @@
 #ifndef __CHANNEL__
 # define __CHANNEL__
 
-#include <iostream>
-#include <string>
-#include <map>
-#include <sys/socket.h>
-
-#include "Client.hpp"
-#include "Server.hpp"
+#include "includes.hpp"
 
 class Client;
 class Server;

@@ -8,6 +8,8 @@ Client::Client(std::string userName, std::string nickName, int fd, std::string h
 	_host = host;
 	_registered = false;
 	_auth = false;
+	_msgBuffer = "";
+
 	std::cout << "\e[0;33mFields Constructor called of Client\e[0m" << std::endl;
 }
 Client::Client(int fd, std::string host): _fd(fd) {
@@ -16,6 +18,8 @@ Client::Client(int fd, std::string host): _fd(fd) {
 	_host = host;
 	_registered = false;
 	_auth = false;
+	_msgBuffer = "";
+
 	std::cout << "\e[0;33mFields Constructor called of Client\e[0m" << std::endl;
 }
 
@@ -44,18 +48,14 @@ void Client::setRegistered() { _registered = true;}
 
 	//methods
 void	Client::addChannel(Channel *channel) {
-	for (std::map<std::string, Channel *>::iterator i = _joinedChannels.begin(); i != _joinedChannels.end(); i++) {
-		if (channel->getName() == i->second->getName())
-			return;
-	}
 	_joinedChannels.insert(std::pair<std::string, Channel *>( channel->getName(), channel ));
+	std::cout << "\e[92mAdding channel " << channel->getName() << " to " << _nickName << "\e[0m" << std::endl;
+
 }
 
 void	Client::removeChannel(Channel *channel) {
-	for (std::map<std::string, Channel *>::iterator i = _joinedChannels.begin(); i != _joinedChannels.end(); i++) {
-		if (channel->getName() == i->second->getName())
-			_joinedChannels.erase(channel->getName());
-	}
+	_joinedChannels.erase(channel->getName());
+	std::cout << "\e[92mRemoving channel " << channel->getName() << " from " << _nickName << "\e[0m" << std::endl;
 }
 
 const std::string &Client::getMsgBuffer() const {return _msgBuffer;}

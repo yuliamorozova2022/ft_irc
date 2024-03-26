@@ -34,21 +34,27 @@ void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
 	//methods
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
+	std::cout << "\e[92mAdding member " << client.getNickName() << " to " << _name << "\e[0m" << std::endl;
 	client.addChannel(this);
 }
 
 void Channel::removeMember(Client &client) {
 	_members.erase(client.getFd());
+	std::cout << "\e[92mRemoving member " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
 	client.removeChannel(this);
 }
 
 void Channel::addOper(Client &client) {
 	_opers.insert(std::pair<int, Client *> ( client.getFd(), &client));
+	std::cout << "\e[92mAdding oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
+
 	addMember(client);
 }
 
 void Channel::removeOper(Client &client) {
 	_opers.erase(client.getFd());
+	std::cout << "\e[92mRemoving oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
+
 	removeMember(client);
 }
 
@@ -61,11 +67,11 @@ void	Channel::sendToAll(Client &client, std::string msg)
 		it != _members.end();
 		it++)
 	{
-		if (it->first != client.getFd())
-		{
+		// if (it->first != client.getFd())
+		// {
 			stat = send(it->second->getFd(),msg.c_str(), msg.length(), 0);
 			if (stat == -1)
 				throw std::runtime_error("sendToAll () failed!");
-		}
+		// }
 	}
 }

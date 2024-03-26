@@ -1,13 +1,9 @@
-#include <iostream>
-#include <string>
-#include <cctype>
 
-#include "Server.hpp"
+#include "includes.hpp"
 
 #define BUFF 1000
 //get_command
 // basically gnl
-//
 
 std::string get_command(Client &client, int &stat)
 {
@@ -34,13 +30,15 @@ std::string get_command(Client &client, int &stat)
 //return till /n
 	return (msg);
 }
-
+/*
+	check allowed message chars
+*/
 bool allowed_symbol_check(std::string params) {
-    for (int i = 0; i < params.length(); ++i) {
-        if (isalnum(params[i]) == false && params[i] != '\r') //maybe should be expanded
-            return false;
-    }
-    return true;
+	for (int i = 0; i < params.length(); ++i) {
+		if (isalnum(params[i]) == false && params[i] != '\r') //maybe should be expanded
+			return false;
+	}
+	return true;
 }
 
 
@@ -68,7 +66,9 @@ std::vector<std::string> split(std::string str, std::string separator)
 	return splot;
 }
 
-
+/*
+	Send the series of RPLs needed to greet a new client to the server
+ */
 void Server::welcomeClient(Client &c)
 {
 	c.setRegistered();
@@ -95,9 +95,9 @@ int getChannelName(std::string &cname)
 	if (cname.length() > 50)
 		return -1;
 
-	if (cname.find(",") != cname.npos)
+	if (cname.find(",") != cname.npos
 		|| cname.find(" ") != cname.npos
-		|| cname.find(7) != cname.npos
+		|| cname.find(7) != cname.npos)
 		return -1;
 
 	if (ch_prefix.find(cname[0]) == ch_prefix.npos)

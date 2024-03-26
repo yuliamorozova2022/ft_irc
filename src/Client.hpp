@@ -6,6 +6,7 @@
 #include <map>
 
 #include "Channel.hpp"
+#include "includes.hpp"
 
 class Channel;
 

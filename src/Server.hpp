@@ -18,37 +18,7 @@
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "PollManager.hpp"
-
-// ################################################
-#define USER_NOT_REGISTERED "User not registered :("
-#define ERR_NOTREGISTERED "451 :You have not registered"
-#define ERR_ALREADYREGISTRED "462 :You may not reregister"
-#define ERR_PASSWDMISMATCH "464 :Password incorrect"
-
-// ################################################
-
-
-inline std::string RPL_WELCOME (Client &c) {return ("001 " + c.getNickName() + " :Welcome to our amazzzzing server! " + c.getNickName());}
-inline std::string RPL_YOURHOST (Client &c) {return ("002 " + c.getNickName() + " :your host is IRC42");}
-inline std::string RPL_CREATED (Client &c) {return ("003 " + c.getNickName() + " :This server is not yet created");}
-inline std::string RPL_MYINFO (Client &c) {return ("004 " + c.getNickName() + " :IRC42");}
-inline std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
-	return ("366 " + c.getNickName() + " " + ch.getName() + " :End of NAMES list");
-	}
-
-inline std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getName() + " :" + c.getTopic());}
-// inline std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getChannelName() + " :" + c.getTopic());}
-
-inline std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
-inline std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
-inline std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
-inline std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
-
-inline std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel mask");}
-
-
-std::string get_command(Client &client, int &stat);
-bool allowed_symbol_check(std::string params);
+#include "includes.hpp"
 
 extern bool g_interrupt;
 
