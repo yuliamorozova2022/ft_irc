@@ -25,6 +25,7 @@ void Server::sendMsgToChannel(Client &sender, std::string channel, std::string m
 	msg = "PRIVMSG " + channel + " :" + msg;
 	if (getChannelName(channel) == -1) //check channel name
 	{
+		std::cout << "{" << channel << "}" << std::endl;
 		serverReply(sender, ERR_BADCHANMASK(channel));
 		return;
 	}
@@ -46,13 +47,13 @@ void Server::privmsg(Client &client, std::vector<std::string> cmd)
 	}
 
 	//get first value, which is either the channel or client name
-	std::string recipient = cmd[1].substr(0, cmd[1].find(":"));
+	std::string recipient = cmd[1].substr(0, cmd[1].find(" :"));
 	if (recipient.empty())
 	{
 		serverReply(client, ERR_NORECIPIENT(cmd[0]));
 		return;
 	}
-	std::string message = cmd[1].substr(cmd[1].find(":") + 1);
+	std::string message = cmd[1].substr(cmd[1].find(" :") + 2);
 
 	if (recipient[0] == '&' || recipient[0] == '#')
 		sendMsgToChannel(client, recipient, message);
