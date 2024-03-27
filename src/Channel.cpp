@@ -60,7 +60,7 @@ void Channel::removeOper(Client &client) {
 
 void	Channel::sendToAll(Client &client, std::string msg)
 {
-	msg = client.getPrefix() + msg;
+	msg = client.getPrefix() + msg + "\n";
 	// std::map <int, Client *> tst = _members;
 	int stat;
 	for (std::map<int, Client *>::iterator it = _members.begin();

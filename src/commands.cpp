@@ -160,7 +160,7 @@ void Server::names(Client &client, std::vector<std::string> cmd)
 		}
 		userlist.insert(0, client.getNickName()).insert(0, "@");
 
-		std::string rep = "353 " + client.getNickName() + " = #" + ch.getName() + ": " + userlist;
+		std::string rep = "353 " + client.getNickName() + " = " + ch.getName() + ": " + userlist;
 
 		serverReply(client, rep);
 		serverReply(client, RPL_ENDOFNAMES(client, ch));
@@ -193,3 +193,4 @@ void Server::topic(Client &client, std::vector<std::string> cmd)
 	serverReply(client, RPL_TOPIC(client, *(getChannels().find(channel)->second)));
 
 }
+

@@ -8,6 +8,7 @@
 
 // ################################################
 
+//note: RPL_NAMES is too complicated to structure, is in NAMES command function.
 
 std::string RPL_WELCOME (Client &c) {return ("001 " + c.getNickName() + " :Welcome to our amazzzzing server! " + c.getNickName());}
 std::string RPL_YOURHOST (Client &c) {return ("002 " + c.getNickName() + " :your host is IRC42");}
