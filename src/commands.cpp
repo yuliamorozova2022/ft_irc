@@ -12,6 +12,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("JOIN", &Server::join));
 	_cmds.insert(std::pair<std::string, func> ("PING", &Server::pingpong));
 	_cmds.insert(std::pair<std::string, func> ("NAMES", &Server::names));
+	_cmds.insert(std::pair<std::string, func> ("TOPIC", &Server::topic));
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -137,7 +138,6 @@ void Server::pingpong(Client &client, std::vector<std::string> cmd)
 	RPL_NAMREPLY	=> :<pref> RPL_NAMREPLY <client_nick> = #foobar :foobar1 foobar2 foobar3
 	RPL_ENDOFNAMES	=>
  */
- int getChannelName(std::string &cname);
 
 void Server::names(Client &client, std::vector<std::string> cmd)
 {
@@ -166,9 +166,6 @@ void Server::names(Client &client, std::vector<std::string> cmd)
 		serverReply(client, RPL_ENDOFNAMES(client, ch));
 }
 
-
-
-
 /* CLIENT:	[:nuna!nroth@localhost NAMES #test]
 SERVER:
 	[
@@ -176,3 +173,23 @@ SERVER:
 		:irc.ircgod.com 366 nroth #test :End of NAMES list
 	]
  */
+
+void Server::topic(Client &client, std::vector<std::string> cmd)
+{
+	std::string channel = cmd[1];
+
+	if (getChannelName(channel) == -1) //check channel name
+	{
+		serverReply(client, ERR_BADCHANMASK(channel));
+		return;
+	}
+	//check if channel exists
+	if (getChannels().find(channel) == getChannels().end())
+	{
+		serverReply(client, ERR_NOSUCHNICK(channel));
+		return;
+	}
+
+	serverReply(client, RPL_TOPIC(client, *(getChannels().find(channel)->second)));
+
+}

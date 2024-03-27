@@ -8,3 +8,20 @@
 	- Moved RPL functions to src/replies.cpp
 	- Added include.hpp file to include everything at once
 	- Privmsg seems to be working on surface, but something is incorrect when trying to actually use it? Also, formatting from wechat PRIVMSG has server name in the privmsg command, is that part of regular formatting?
+
+27.03
+	- seems that RPL_TOPIC should be in the format 
+				[332 <client.nickname> <channel.name> :<channel.topic>]
+		In the previous version we skipped the user's nickname which is why weechat displayed the topic message weird.
+	- Added TOPIC command, which calls RPL topic. doesnt work with multiple channels
+
+
+
+
+TODO:
+	- make sure JOIN command works with multiple channels/keys
+	- should TOPIC work with multiple channels?
+	- we never check if user is actually in the channel before sending message/ requesting topic etc
+	- channel modes
+	- user modes
+	- privmsg! why is it not working

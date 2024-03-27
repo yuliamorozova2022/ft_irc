@@ -70,7 +70,7 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	std::vector<std::string> s;
 	s.push_back(channel.getName());
 	s.push_back(channel.getName());
-	server.serverReply(client, RPL_TOPIC(channel));
+	server.serverReply(client, RPL_TOPIC(client, channel));
 	channel.sendToAll(client, "JOIN " + channel.getName());
 	server.names(client, s) ;
 

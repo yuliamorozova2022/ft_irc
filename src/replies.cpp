@@ -17,8 +17,7 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 	return ("366 " + c.getNickName() + " " + ch.getName() + " :End of NAMES list");
 	}
 
-std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getName() + " :" + c.getTopic());}
-// std::string RPL_TOPIC (Channel &c) {return ("332 " + c.getChannelName() + " :" + c.getTopic());}
+std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
 
 std::string ERR_NORECIPIENT (std::string c) {return ("411 :No recipient given (" + c + ")");}
 std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick/channel");}

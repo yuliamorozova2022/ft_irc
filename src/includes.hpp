@@ -41,7 +41,7 @@ std::string RPL_YOURHOST (Client &c);
 std::string RPL_CREATED (Client &c);
 std::string RPL_MYINFO (Client &c);
 std::string RPL_ENDOFNAMES (Client &c, Channel &ch);
-std::string RPL_TOPIC (Channel &c);
+std::string RPL_TOPIC (Client &c, Channel &ch);
 std::string ERR_NICKNAMEINUSE (std::string c);
 std::string ERR_NEEDMOREPARAMS (std::string c);
 std::string ERR_UNKNOWNCOMMAND (std::string c);

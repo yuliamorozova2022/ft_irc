@@ -97,6 +97,7 @@ class Server {
 		void	privmsg(Client &client, std::vector<std::string> cmd);
 		void	pingpong(Client &client, std::vector<std::string> cmd);
 		void	names(Client &client, std::vector<std::string> cmd);
+		void	topic(Client &client, std::vector<std::string> cmd);
 
 };
 
