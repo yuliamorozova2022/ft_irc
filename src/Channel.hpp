@@ -12,6 +12,8 @@ class Channel {
 		std::string				_topic;
 		std::string				_key;
 		int						_n_online;
+		bool					_inv_only;
+		int						_max_lim;
 		Client*					_creator;
 		std::map<int, Client*>	_members;
 		std::map<int, Client*>	_opers;
@@ -34,7 +36,9 @@ class Channel {
 		std::string						getTopic() const;
 		std::string						getKey() const;
 		const std::map<int, Client*>	&getMembers() const;
-		int								getOnline() const ;
+		int								getOnline() const;
+		int								getMaxLim() const;
+		bool							getInviteOnly() const;
 		void							setName(std::string new_name);
 		void							setTopic(std::string new_topic);
 
@@ -46,6 +50,8 @@ class Channel {
 		void	sendToAll(Client &client, std::string msg);
 		void	sendToClient(Client &client, std::string msg);
 		bool	isOper(Client &client);
+		void	setMaxLim(int n);
+		void	setInviteOnly(char sign);
 
 };
 

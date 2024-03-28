@@ -3,13 +3,13 @@
 	// Constructors
 Channel::Channel() {}
 
-Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0) {
+Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
 }
 
-Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0) {
+Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
@@ -27,6 +27,8 @@ std::string Channel::getName() const {return _name;}
 std::string Channel::getTopic() const {return _topic;}
 int Channel::getOnline() const {return _n_online;}
 const std::map<int, Client*> &Channel::getMembers() const {return _members;}
+int	Channel::getMaxLim() const {return _max_lim;}
+bool Channel::getInviteOnly() const {return _inv_only;}
 
 void Channel::setName(std::string new_name) {_name = new_name;}
 void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
@@ -47,14 +49,12 @@ void Channel::removeMember(Client &client) {
 void Channel::addOper(Client &client) {
 	_opers.insert(std::pair<int, Client *> ( client.getFd(), &client));
 	std::cout << "\e[92mAdding oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
-
 	addMember(client);
 }
 
 void Channel::removeOper(Client &client) {
 	_opers.erase(client.getFd());
 	std::cout << "\e[92mRemoving oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
-
 	removeMember(client);
 }
 
@@ -89,9 +89,22 @@ void	Channel::sendToClient(Client &client, std::string msg)
 	}
 }
 
-bool	Channel::isOper(Client &client)
-{
+bool	Channel::isOper(Client &client) {
 	if (_opers.find(client.getFd()) != _opers.end())
 		return true;
 	return false;
+}
+
+bool	Channel::setMaxLim(long n) {
+	if (n < INT_MIN || n > INT_MAX)
+		return false; //should throw
+	_max_lim = static_cast<int>(n);
+	return true;
+}
+
+void	Channel::setInviteOnly(char sign) {
+	if (sign == '-')
+		_inv_only = false;
+	if (sign == '+')
+		_inv_only = true;
 }
