@@ -98,7 +98,7 @@ class Server {
 		void	pingpong(Client &client, std::vector<std::string> cmd);
 		void	names(Client &client, std::vector<std::string> cmd);
 		void	topic(Client &client, std::vector<std::string> cmd);
-
+		void	mode(Client &client, std::vector<std::string> cmd);
 };
 
 #endif

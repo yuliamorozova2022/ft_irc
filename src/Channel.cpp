@@ -7,6 +7,7 @@ Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&crea
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
+	_key = "";
 }
 
 Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {

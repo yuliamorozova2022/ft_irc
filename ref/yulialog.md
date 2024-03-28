@@ -1,4 +1,4 @@
-
+28.03.
 TODO:
 	- '@' marks opers
 		from rfc2811 [https://datatracker.ietf.org/doc/html/rfc2811]:
@@ -41,3 +41,7 @@ TODO:
 
 	!!! Note that there is a maximum limit of three (3) changes per command for modes that take a parameter.
 		(MODE #Finnish +imI *!*@*.fi) so max length of params is 4 [+ or - and up to 3 params]
+done:
+	- added _max_lim and _inv_only to the channel object, getters and setters as well
+	- added new commands to help() function in commands.cpp
+	- beginnnig work on MODE function

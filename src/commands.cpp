@@ -13,6 +13,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("PING", &Server::pingpong));
 	_cmds.insert(std::pair<std::string, func> ("NAMES", &Server::names));
 	_cmds.insert(std::pair<std::string, func> ("TOPIC", &Server::topic));
+	_cmds.insert(std::pair<std::string, func> ("MODE", &Server::mode));
 }
 
 void Server::execCmd(Client &client, std::string args){
