@@ -126,7 +126,7 @@ void Server::help(Client &client, std::vector<std::string> cmd) {
 	info.append("\e[1;35m"); //purple color
 	info.append("AVAILABLE COMMANDS:\n");
 	info.append("\e[0m");
-	info.append("\tHELP\n\tPASS\n\tNICK\n\tUSER\n\tQUIT\n");
+	info.append("\tHELP\n\tPASS\n\tNICK\n\tUSER\n\tQUIT\nPRIVMSG\nPING\nTOPIC\nNAMES\nJOIN\n");
 	info.append("\e[0m");
 	serverReply(client, info);
 }
