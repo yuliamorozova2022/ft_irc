@@ -90,7 +90,7 @@ void Server::welcomeClient(Client &c)
  */
 int getChannelName(std::string &cname)
 {
-	std::string ch_prefix = "&#!+";
+	std::string ch_prefix = "&#!+"; // previously was only "&#"
 
 	if (cname.length() > 50)
 		return -1;
