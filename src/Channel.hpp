@@ -50,7 +50,7 @@ class Channel {
 		void	sendToAll(Client &client, std::string msg);
 		void	sendToClient(Client &client, std::string msg);
 		bool	isOper(Client &client);
-		void	setMaxLim(int n);
+		void	setMaxLim(long n);
 		void	setInviteOnly(char sign);
 
 };
