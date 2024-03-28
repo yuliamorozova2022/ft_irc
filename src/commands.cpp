@@ -145,6 +145,10 @@ void Server::pingpong(Client &client, std::vector<std::string> cmd)
 
 void Server::names(Client &client, std::vector<std::string> cmd)
 {
+	/*
+
+		INCORRECT - the @ symbol is not to mark sender, its to mark all opers. i think?
+	 */
 	getChannelName(cmd[1]);
 	if (Server::getChannels().find(cmd[1]) == Server::getChannels().end())
 		return;
@@ -180,21 +184,37 @@ SERVER:
 
 void Server::topic(Client &client, std::vector<std::string> cmd)
 {
-	std::string channel = cmd[1];
+	std::vector<std::string> args = split(cmd[1], " :");
+	std::string channel_s = args[0];
 
-	if (getChannelName(channel) == -1) //check channel name
+	if (getChannelName(channel_s) == -1) //check channel name
 	{
-		serverReply(client, ERR_BADCHANMASK(channel));
+		serverReply(client, ERR_BADCHANMASK(channel_s));
 		return;
 	}
 	//check if channel exists
-	if (getChannels().find(channel) == getChannels().end())
+	if (getChannels().find(channel_s) == getChannels().end())
 	{
-		serverReply(client, ERR_NOSUCHNICK(channel));
+		serverReply(client, ERR_NOSUCHNICK(channel_s));
 		return;
 	}
 
-	serverReply(client, RPL_TOPIC(client, *(getChannels().find(channel)->second)));
-
+	if (args.size() == 1 && !getChannelByName(channel_s).getTopic().empty()) //only requesting the channel's topic
+		serverReply(client, RPL_TOPIC(client, *(getChannels().find(channel_s)->second)));
+	else if (args.size() == 1 && getChannelByName(channel_s).getTopic().empty()) //if topic is empty
+		serverReply(client, RPL_NOTOPIC(channel_s));
+	else //wanting to chage the channel's topic
+	{
+		if (!getChannelByName(channel_s).isOper(client)) //if client is not oper
+		{
+			serverReply(client, ERR_CHANOPRIVSNEEDED(channel_s));
+			return;
+		}
+		getChannelByName(channel_s).setTopic(args[1]);
+		getChannelByName(channel_s).sendToAll
+			(client, "TOPIC " + channel_s + " :" + getChannelByName(channel_s).getTopic() );
+		getChannelByName(channel_s).sendToClient
+			(client, "TOPIC " + channel_s + " :" + getChannelByName(channel_s).getTopic() );
+	}
 }
 

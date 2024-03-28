@@ -191,10 +191,15 @@ bool	Server::clientRegistered(int fd) const {
 	return (false);
 }
 Client	&Server::getClientByFd(int fd) {
-	if (_clients.find(fd) == _clients.end())
-		return NULL;
+/* 	if (_clients.find(fd) == _clients.end())
+		return _clients.end(); */
 	Client *client_ptr = _clients.find(fd)->second;
 	return (*client_ptr);
+}
+
+Channel	&Server::getChannelByName(std::string channelName)
+{
+	return (*_channels.find(channelName)->second);
 }
 
 int		Server::serverReply(Client &client, std::string msg)

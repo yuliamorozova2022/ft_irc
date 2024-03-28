@@ -42,6 +42,7 @@ std::string RPL_CREATED (Client &c);
 std::string RPL_MYINFO (Client &c);
 std::string RPL_ENDOFNAMES (Client &c, Channel &ch);
 std::string RPL_TOPIC (Client &c, Channel &ch);
+std::string RPL_NOTOPIC (std::string c);
 std::string ERR_NICKNAMEINUSE (std::string c);
 std::string ERR_NEEDMOREPARAMS (std::string c);
 std::string ERR_UNKNOWNCOMMAND (std::string c);
@@ -49,6 +50,7 @@ std::string ERR_ERRONEUSNICKNAME (std::string c);
 std::string ERR_BADCHANMASK (std::string c);
 std::string ERR_NORECIPIENT (std::string c);
 std::string ERR_NOSUCHNICK (std::string c);
+std::string ERR_CHANOPRIVSNEEDED (std::string c);
 
 //tools.cpp
 std::string					get_command(Client &client, int &stat);

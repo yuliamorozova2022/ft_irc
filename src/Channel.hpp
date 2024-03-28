@@ -30,13 +30,13 @@ class Channel {
 		// Channel & operator=(const Channel &assign);
 
 			// Getters / Setters
-		std::string getName() const;
-		std::string getTopic() const;
-		std::string getKey() const;
-		const std::map<int, Client*> &getMembers() const;
-		int getOnline() const ;
-		void setName(std::string new_name);
-		void setTopic(std::string new_topic);
+		std::string						getName() const;
+		std::string						getTopic() const;
+		std::string						getKey() const;
+		const std::map<int, Client*>	&getMembers() const;
+		int								getOnline() const ;
+		void							setName(std::string new_name);
+		void							setTopic(std::string new_topic);
 
 			// Methods
 		void	addMember(Client &client);
@@ -45,6 +45,7 @@ class Channel {
 		void	removeOper(Client &client);
 		void	sendToAll(Client &client, std::string msg);
 		void	sendToClient(Client &client, std::string msg);
+		bool	isOper(Client &client);
 
 };
 

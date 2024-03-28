@@ -52,7 +52,7 @@ std::vector<std::string> split(std::string str, std::string separator)
 		if (str.find(separator) != str.npos)
 		{
 			token = str.substr(0, str.find(separator));
-			str = str.substr(str.find(separator) + 1);
+			str = str.substr(str.find(separator) + separator.size());
 		}
 		else
 		{

@@ -69,10 +69,9 @@ class Server {
 			// Methods
 		void	launch();
 		Client	&getClientByFd(int fd);
-		// void	addChannel(Channel *channel);
+		Channel	&getChannelByName(std::string channelName);
 		void	createChannel(std::string channelName, Client& creator);
 		void	createChannel(std::string channelName,std::string key, Client& creator);
-		// void	addClient(Client *client);
 		void	createClient(std::string userName, std::string nickName, int fd, std::string host);
 		void	createClient(int fd, std::string host);
 		void	removeClient(int fd);

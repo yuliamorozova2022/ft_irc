@@ -19,6 +19,7 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 	}
 
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
+std::string RPL_NOTOPIC (std::string c) {return ("331 " + c + " :No topic is set");}
 
 std::string ERR_NORECIPIENT (std::string c) {return ("411 :No recipient given (" + c + ")");}
 std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick/channel");}
@@ -28,4 +29,4 @@ std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown 
 std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
 
 std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel mask");}
-
+std::string ERR_CHANOPRIVSNEEDED (std::string c) {return ("482 " + c + " :You're not channel operator");}

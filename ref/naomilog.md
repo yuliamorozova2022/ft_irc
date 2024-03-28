@@ -19,12 +19,16 @@
 	- added server.sendToEveryone message that sends to all connected members. currently used only in NICK
 	- fixed nick command function to be able to change nick after user already registered.
 	- PRIV_MSG works!!! both to channel and user. AYYYYYYYY
+	- TOPIC command now allows channel operators to change the channel's topic
+	- added RPL_NOTOPIC if the topic is unset. removed default_topic
 
 
 
 TODO:
+	- NAMES ressponse formatting - is '@' to mark this user, or to mark opers?
 	- make sure JOIN command works with multiple channels/keys
 	- we never check if user is actually in the channel before sending message/ requesting topic etc
-	- TOPIC should be able to change a channel's topic aswell
 	- channel modes
 	- user modes (?)
+	- ignore user's prefix, if appears in command
+	- MODE command?

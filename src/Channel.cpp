@@ -6,13 +6,13 @@ Channel::Channel() {}
 Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0) {
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
-	_topic = "default_topic";
+	_topic = "";
 }
 
 Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0) {
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
-	_topic = "default_topic";
+	_topic = "";
 }
 
 
@@ -87,4 +87,11 @@ void	Channel::sendToClient(Client &client, std::string msg)
 		if (stat == -1)
 			throw std::runtime_error("sendToAll () failed!");
 	}
+}
+
+bool	Channel::isOper(Client &client)
+{
+	if (_opers.find(client.getFd()) != _opers.end())
+		return true;
+	return false;
 }
