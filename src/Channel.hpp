@@ -44,6 +44,7 @@ class Channel {
 		void	addOper(Client &client);
 		void	removeOper(Client &client);
 		void	sendToAll(Client &client, std::string msg);
+		void	sendToClient(Client &client, std::string msg);
 
 };
 

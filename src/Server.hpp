@@ -78,11 +78,12 @@ class Server {
 		void	removeClient(int fd);
 		bool	clientRegistered(int fd) const;
 		int		serverReply(Client &client, std::string msg);
-		void	sendMsgOnChannel(Channel &channel, Client &sender, std::string msg);
 		void	welcomeClient(Client &c);
 
 		void sendMsgToChannel(Client &sender, std::string channel, std::string msg);
 		void sendMsgToUser(Client &sender, std::string reciever, std::string msg);
+
+		void sendToEveryone(std::string msg);
 
 
 			//Command Handling

@@ -35,7 +35,6 @@ void Server::execCmd(Client &client, std::string args){
 }
 
 void Server::pass(Client &client, std::vector<std::string> cmd) {
-		std::cout << "pass given: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
 	if (client.isAuthed())
 		serverReply(client, ERR_ALREADYREGISTRED);
 	else if (cmd.size() == 1)
@@ -44,7 +43,6 @@ void Server::pass(Client &client, std::vector<std::string> cmd) {
 		client.setAuth();
 	else
 		serverReply(client, ERR_PASSWDMISMATCH);
-	std::cout << "pass: {" << cmd[1] << "} len: " << cmd[1].length() << std::endl;
 }
 
 void Server::nick(Client &client, std::vector<std::string> cmd) {
@@ -61,8 +59,12 @@ void Server::nick(Client &client, std::vector<std::string> cmd) {
 				return;
 			}
 		}
+
+		if (client.isRegistered()) // if is changing their nickname
+			sendToEveryone(client.getPrefix() + "NICK " + cmd[1]);
+
 		client.setNickName(cmd[1]);
-		if (client.getUserName() != "") {
+		if (client.getUserName() != "" && !client.isRegistered()) {
 			welcomeClient(client);
 		}
 	}
@@ -71,6 +73,8 @@ void Server::nick(Client &client, std::vector<std::string> cmd) {
 void Server::user(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed())
 		serverReply(client, ERR_NOTREGISTERED);
+	if (client.isRegistered())
+		return; //IS this right???
 	else if (cmd.size() == 1 || (cmd.size() >= 2 && cmd[1] == ""))
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 	else {

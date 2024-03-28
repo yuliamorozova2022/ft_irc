@@ -8,7 +8,7 @@
 
 void Server::sendMsgToUser(Client &sender, std::string recipient, std::string msg)
 {
-	msg = sender.getPrefix() + recipient + " :" + msg;
+	msg = sender.getPrefix() + "PRIVMSG " + recipient + " :" + msg + "\n";
 	for (std::map<int, Client *>::const_iterator it = getClients().begin();
 		it != getClients().end(); it++)
 		{
@@ -22,7 +22,7 @@ void Server::sendMsgToUser(Client &sender, std::string recipient, std::string ms
 }
 void Server::sendMsgToChannel(Client &sender, std::string channel, std::string msg)
 {
-	msg = "PRIVMSG " + channel + " :" + msg;
+	msg = "PRIVMSG " + channel + " :" + msg + "\n";
 	if (getChannelName(channel) == -1) //check channel name
 	{
 		std::cout << "{" << channel << "}" << std::endl;
@@ -73,6 +73,7 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	s.push_back(channel.getName());
 	server.serverReply(client, RPL_TOPIC(client, channel));
 	channel.sendToAll(client, "JOIN " + channel.getName());
+	channel.sendToClient(client, "JOIN " + channel.getName());
 	server.names(client, s) ;
 
 }

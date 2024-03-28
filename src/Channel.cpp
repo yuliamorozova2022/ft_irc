@@ -67,11 +67,24 @@ void	Channel::sendToAll(Client &client, std::string msg)
 		it != _members.end();
 		it++)
 	{
-		// if (it->first != client.getFd())
-		// {
+		if (it->first != client.getFd())
+		{
 			stat = send(it->second->getFd(),msg.c_str(), msg.length(), 0);
 			if (stat == -1)
 				throw std::runtime_error("sendToAll () failed!");
-		// }
+		}
+	}
+}
+
+void	Channel::sendToClient(Client &client, std::string msg)
+{
+	msg = client.getPrefix() + msg + "\n";
+	int stat;
+
+	if (_members.find(client.getFd()) != _members.end())
+	{
+		stat = send(client.getFd(),msg.c_str(), msg.length(), 0);
+		if (stat == -1)
+			throw std::runtime_error("sendToAll () failed!");
 	}
 }

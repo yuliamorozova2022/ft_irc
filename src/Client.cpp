@@ -43,14 +43,13 @@ void Client::setUserName(std::string userName) {
 	if (_userName == "")
 		_userName = userName;
 };
-void Client::setAuth() { _auth = true;}
-void Client::setRegistered() { _registered = true;}
+void Client::setAuth() { _auth = true;	std::cout << "\e[0;33muser " + _nickName + " authenticated\e[0m" << std::endl;}
+void Client::setRegistered() { _registered = true;	std::cout << "\e[0;33muser " + _nickName + " registered\e[0m" << std::endl;}
 
 	//methods
 void	Client::addChannel(Channel *channel) {
 	_joinedChannels.insert(std::pair<std::string, Channel *>( channel->getName(), channel ));
 	std::cout << "\e[92mAdding channel " << channel->getName() << " to " << _nickName << "\e[0m" << std::endl;
-
 }
 
 void	Client::removeChannel(Channel *channel) {

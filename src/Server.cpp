@@ -240,7 +240,12 @@ int		Server::serverReply(Client &client, std::string msg)
 	return stat;
 }
 
-void	Server::sendMsgOnChannel(Channel &channel, Client &sender, std::string msg)
-{
-	std::string formatted_msg = ": " + sender.getNickName() + " PRIVMSG ";
+void Server::sendToEveryone(std::string msg)
+{ //does not append the server/client prefix!
+	std::string newstr  =  msg + "\n";
+	for (std::map<int, Client *>::const_iterator it = getClients().begin();
+	it != getClients().end(); it++)
+	{
+		send(it->second->getFd(), newstr.c_str(), newstr.length(), 0);
+	}
 }
