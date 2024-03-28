@@ -74,7 +74,7 @@ void Server::user(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed())
 		serverReply(client, ERR_NOTREGISTERED);
 	if (client.isRegistered())
-		return; //IS this right???
+		return; //IS this right??? maybe should use some RPL?
 	else if (cmd.size() == 1 || (cmd.size() >= 2 && cmd[1] == ""))
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 	else {

@@ -24,8 +24,7 @@
 
 TODO:
 	- make sure JOIN command works with multiple channels/keys
-	- should TOPIC work with multiple channels?
 	- we never check if user is actually in the channel before sending message/ requesting topic etc
+	- TOPIC should be able to change a channel's topic aswell
 	- channel modes
-	- user modes
-	- privmsg! why is it not working
+	- user modes (?)

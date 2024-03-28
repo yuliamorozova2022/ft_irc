@@ -18,9 +18,6 @@ int Server::_get_set_port(const std::string port_s) {
 }
 
 	// Constructors
-
-
-
 Server::Server(const std::string port, std::string serverPass) : _name(SERVER_NAME), _serverFd(_get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 	if (_serverFd == -1)
 		throw std::invalid_argument("Port number invalid, must be int between [0; 65535]");
@@ -42,21 +39,18 @@ Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME
 	// Destructor
 Server::~Server() {
 	for (std::map<int, Client *>::iterator it = _clients.begin();
-			it != _clients.end();
-			it ++)
+			it != _clients.end(); it ++)
 			{
 				std::cout << "deleting " << it->first << std::endl;
 				delete(it->second);
-
 			}
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
-			it != _channels.end();
-			it ++)
+			it != _channels.end(); it ++)
 			{
 				std::cout << "deleting " << it->first << std::endl;
 				delete(it->second);
 			}
-	std::cout << "\e[92mDestructor called of Server\e[0m" << std::endl;
+	std::cout << "\e[92mDestructor of Server called\e[0m" << std::endl;
 }
 
 	// Getters / Setters
@@ -75,22 +69,13 @@ const std::map<std::string, Channel *> &Server::getChannels() const {return _cha
 void Server::setWelcomeMsg(std::string welcomeMsg) {_welcomeMsg = welcomeMsg;}
 
 	// Methods
-// void Server::addChannel(Channel *channel) {
-// 	_channels.insert(std::pair<std::string, Channel *> (channel->getName(), channel));
-// }
-
 void Server::createChannel(std::string channelName, Client& creator) {
-
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName, creator)));
 }
 
 void Server::createChannel(std::string channelName,std::string key, Client& creator) {
 	_channels.insert(std::pair<std::string, Channel *> (channelName, new Channel(channelName,key, creator)));
 }
-
-// void Server::addClient(Client *client) {
-// 	_clients.insert(std::pair<int, Client *> (client->getFd(), client));
-// }
 
 void Server::createClient(std::string userName,std::string nickName, int fd, std::string host) {
 	_clients.insert(std::pair<int, Client *> (fd, new Client(userName, nickName, fd, host)));
@@ -129,7 +114,6 @@ int Server::_setup_socket(int port) {
 		throw std::runtime_error("bind() failed");
 	if (listen(server_fd, 3) < 0)
 		throw std::runtime_error("listen() failed");
-//	std::cout << "socket done" << std::endl;
 	return server_fd;
 }
 
@@ -184,8 +168,6 @@ void Server::_client_request(int i) {
 	std::fill(buf_vec.begin(), buf_vec.end(), 0);
 	int stat;
 	std::string msg = get_command(getClientByFd(_fds[i].fd), stat);
-	// if (stat < 0)
-	// 	throw std::runtime_error(" 111 recv() failed");
 	if (stat == 0) {
 		std::cout << "  from " << _fds[i].fd
 		<< ": "
@@ -198,28 +180,8 @@ void Server::_client_request(int i) {
 	some sort  of  message  reflecting the nature of the event which
 	caused it to happen.
 		 */
-	} else {
-
+	} else
 		execCmd (getClientByFd(_fds[i].fd), msg);
-
-/* 		if (getClientByFd(_fds[i].fd).isAuthed()) {
-			std::cout << "  from " << _fds[i].fd
-			<< ": {"
-			<< msg
-			<< "} len:"
-			<< msg.length()
-			<< std::endl;
-		} else {
-			stat = send(_fds[i].fd, USER_NOT_REGISTERED, std::strlen(USER_NOT_REGISTERED), 0);
-			std::cout << "  from " << _fds[i].fd
-			<< ": "
-			<< "Closing connection ..."
-			<< std::endl;
-			_fds.removeFD(_fds[i].fd);
-		} */
-	}
-//	std::fill(buf_vec.begin(), buf_vec.end(), 0);
-//	memset(&buf_vec, 0, 5000);
 
 }
 
@@ -229,6 +191,8 @@ bool	Server::clientRegistered(int fd) const {
 	return (false);
 }
 Client	&Server::getClientByFd(int fd) {
+	if (_clients.find(fd) == _clients.end())
+		return NULL;
 	Client *client_ptr = _clients.find(fd)->second;
 	return (*client_ptr);
 }
