@@ -38,3 +38,6 @@ TODO:
 				[ 	A user limit may be set on channels by using the channel flag 'l'. When the limit is reached, 
 				servers MUST forbid their local users to join the channel. The value of the limit MUST only be made 
 				available to the channel members in the reply sent by the server to a MODE query. ]
+
+	!!! Note that there is a maximum limit of three (3) changes per command for modes that take a parameter.
+		(MODE #Finnish +imI *!*@*.fi) so max length of params is 4 [+ or - and up to 3 params]
