@@ -4,6 +4,7 @@ SRCS =	main.cpp Server.cpp Channel.cpp Client.cpp PollManager.cpp \
 		mode_command.cpp
 
 
+
 all:
 	c++ --std=c++98 ${SRCS} -o server
 	c++ --std=c++98 test_client.cpp PollManager.cpp -o client

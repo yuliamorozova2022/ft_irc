@@ -45,3 +45,11 @@ done:
 	- added _max_lim and _inv_only to the channel object, getters and setters as well
 	- added new commands to help() function in commands.cpp
 	- beginnnig work on MODE function
+
+02.04
+	- added new member variable in Channel class: bool _t_mode (it indicates if topic can be modified only by opers);
+	- added getter/setter for this member var;
+	- continuing work on mode
+
+	- Channel names should be case insensitive. In debug I see it is not implemented.
+	- Modified join function (added line channel_names[i] = toLower(channel_names[i]); for actually modification of channel name)

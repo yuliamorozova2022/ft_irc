@@ -13,6 +13,7 @@ class Channel {
 		std::string				_key;
 		int						_n_online;
 		bool					_inv_only;
+		char					_t_mode;
 		int						_max_lim;
 		Client*					_creator;
 		std::map<int, Client*>	_members;
@@ -42,6 +43,8 @@ class Channel {
 		bool							getInviteOnly() const;
 		void							setName(std::string new_name);
 		void							setTopic(std::string new_topic);
+		void							setTopicFlag(char sign);
+		bool							getTopicFlag() const;
 
 			// Methods
 		void	addMember(Client &client);
