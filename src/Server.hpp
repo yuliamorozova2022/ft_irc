@@ -68,6 +68,7 @@ class Server {
 			// Methods
 		void	launch();
 		Client	&getClientByFd(int fd);
+		Client	&getClientByNick(std::string nick);
 		Channel	&getChannelByName(std::string channelName);
 		void	createChannel(std::string channelName, Client& creator);
 		void	createChannel(std::string channelName,std::string key, Client& creator);
@@ -75,11 +76,12 @@ class Server {
 		void	createClient(int fd, std::string host);
 		void	removeClient(int fd);
 		bool	clientRegistered(int fd) const;
+		bool	clientRegistered(std::string nick) const;
 		int		serverReply(Client &client, std::string msg);
 		void	welcomeClient(Client &c);
 
-		void sendMsgToChannel(Client &sender, std::string channel, std::string msg);
-		void sendMsgToUser(Client &sender, std::string reciever, std::string msg);
+		void	sendMsgToChannel(Client &sender, std::string channel, std::string msg);
+		void	sendMsgToUser(Client &sender, std::string reciever, std::string msg);
 
 		void sendToEveryone(std::string msg);
 
@@ -98,6 +100,7 @@ class Server {
 		void	names(Client &client, std::vector<std::string> cmd);
 		void	topic(Client &client, std::vector<std::string> cmd);
 		void	mode(Client &client, std::vector<std::string> cmd);
+		void	invite(Client &client, std::vector<std::string> cmd);
 };
 
 std::string toLower(std::string str);

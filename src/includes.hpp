@@ -15,6 +15,7 @@
 #include <netdb.h>
 #include <string>
 #include <cctype>
+#include <climits>
 
 
 #include "Channel.hpp"
@@ -43,6 +44,8 @@ std::string RPL_MYINFO (Client &c);
 std::string RPL_ENDOFNAMES (Client &c, Channel &ch);
 std::string RPL_TOPIC (Client &c, Channel &ch);
 std::string RPL_NOTOPIC (std::string c);
+std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch);
+
 std::string ERR_NICKNAMEINUSE (std::string c);
 std::string ERR_NEEDMOREPARAMS (std::string c);
 std::string ERR_UNKNOWNCOMMAND (std::string c);
@@ -51,6 +54,10 @@ std::string ERR_BADCHANMASK (std::string c);
 std::string ERR_NORECIPIENT (std::string c);
 std::string ERR_NOSUCHNICK (std::string c);
 std::string ERR_CHANOPRIVSNEEDED (std::string c);
+std::string ERR_NOSUCHCHANNEL (std::string c);
+std::string ERR_USERONCHANNEL (Client &c, Channel &ch);
+std::string ERR_NOTONCHANNEL (std::string c);
+
 
 //tools.cpp
 std::string					get_command(Client &client, int &stat);

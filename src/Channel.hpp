@@ -37,6 +37,7 @@ class Channel {
 		std::string						getTopic() const;
 		std::string						getKey() const;
 		const std::map<int, Client*>	&getMembers() const;
+		const std::map<int, Client*>	&getOpers() const;
 		int								getOnline() const;
 		int								getMaxLim() const;
 		bool							getInviteOnly() const;
@@ -52,6 +53,7 @@ class Channel {
 		void	removeOper(Client &client);
 		void	sendToAll(Client &client, std::string msg);
 		void	sendToClient(Client &client, std::string msg);
+		bool	isMember(Client &client);
 		bool	isOper(Client &client);
 		bool	setMaxLim(long n);
 		void	setInviteOnly(char sign);

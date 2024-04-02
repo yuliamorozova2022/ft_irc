@@ -17,16 +17,21 @@ std::string RPL_MYINFO (Client &c) {return ("004 " + c.getNickName() + " :IRC42"
 std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 	return ("366 " + c.getNickName() + " " + ch.getName() + " :End of NAMES list");
 	}
+std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch) {return ("341 " + c1.getNickName() + " " + c2.getNickName() + " "  + ch.getName());}
 
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
 std::string RPL_NOTOPIC (std::string c) {return ("331 " + c + " :No topic is set");}
 
 std::string ERR_NORECIPIENT (std::string c) {return ("411 :No recipient given (" + c + ")");}
 std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick/channel");}
+
+std::string ERR_NOSUCHCHANNEL (std::string c) {return ("403 " + c + " :No such channel");}
 std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
 std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
 std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
 std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
+std::string ERR_USERONCHANNEL (Client &c, Channel &ch) {return ("443 " + c.getNickName() +" "+ ch.getName() + " :is already on channel");}
+std::string ERR_NOTONCHANNEL (std::string c) {return ("442 " + c + " :You're not on that channel");}
 
 std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel mask");}
 std::string ERR_CHANOPRIVSNEEDED (std::string c) {return ("482 " + c + " :You're not channel operator");}
