@@ -27,7 +27,6 @@ class Channel;
 class PollManager;
 class Server;
 
-
 class Server {
 	private:
 		typedef void (Server::*func)(Client &client, std::vector<std::string> cmd);
@@ -100,5 +99,7 @@ class Server {
 		void	topic(Client &client, std::vector<std::string> cmd);
 		void	mode(Client &client, std::vector<std::string> cmd);
 };
+
+std::string toLower(std::string str);
 
 #endif

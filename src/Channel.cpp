@@ -3,14 +3,14 @@
 	// Constructors
 Channel::Channel() {}
 
-Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
+Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false), _t_mode('-') {
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
 	_key = "";
 }
 
-Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
+Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only('-'), _t_mode(false) {
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
@@ -33,6 +33,19 @@ bool Channel::getInviteOnly() const {return _inv_only;}
 
 void Channel::setName(std::string new_name) {_name = new_name;}
 void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
+
+void Channel::setTopicFlag(char sign) {
+	if (_t_mode == sign)
+		return;
+	else
+		_t_mode = sign;
+}
+bool Channel::getTopicFlag() const {
+	if (_t_mode == '-')
+		return false;
+	if (_t_mode == '+')
+		return true;
+}
 
 	//methods
 void Channel::addMember(Client &client) {
