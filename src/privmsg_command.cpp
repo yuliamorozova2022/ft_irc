@@ -74,6 +74,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 
 	for (size_t i = 0; i < channel_names.size(); i++)
 	{
+		channel_names[i] = toLower(channel_names[i]);
 		if (getChannelName(channel_names[i]) == -1)
 		{
 			serverReply(client, ERR_BADCHANMASK(channel_names[i]));
