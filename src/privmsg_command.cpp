@@ -48,9 +48,9 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	server.names(client, s) ;
 
 }
+
 void Server::join(Client &client, std::vector<std::string> cmd)
 {
-
 	if (cmd.size() < 2)
 	{
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
@@ -70,7 +70,9 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 	std::vector<std::string> channel_names = split(cmd[1], ",");
 	std::vector<std::string> keys = split(cmd[2], ",");
 
-	for (int i = 0; i < channel_names.size(); i++)
+	Channel *ch;
+
+	for (size_t i = 0; i < channel_names.size(); i++)
 	{
 		if (getChannelName(channel_names[i]) == -1)
 		{
@@ -79,22 +81,29 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		}
 		if ( Server::getChannels().find(channel_names[i]) != Server::getChannels().end())
 		{
-			if (Server::getChannels().find(channel_names[i])->second->getKey() != "")
+			ch = Server::getChannels().find(channel_names[i])->second;
+			//check if channel is invite only, and if user is on invited list
+			if (ch->getInviteOnly() == true && ch->isInvited(client) == false)
+			{
+				serverReply(client, ERR_INVITEONLYCHAN(ch->getName()));
+				continue;
+			}
+			if (ch->getKey() != "")
 			{
 				if (i < keys.size())
 				{
 					serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
-					return;
+					continue;
 				}
-				//key incorrect
-				if (Server::getChannels().find(channel_names[i])->second->getKey() == keys[i]) {
-					Server::getChannels().find(channel_names[i])->second->addMember(client);
+
+				if (ch->getKey() == keys[i]) {
+					ch->addMember(client);
 					greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 				}
 			}
 			else
 			{
-				Server::getChannels().find(channel_names[i])->second->addMember(client);
+				ch->addMember(client);
 				greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 			}
 		}

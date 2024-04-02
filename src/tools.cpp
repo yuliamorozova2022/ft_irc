@@ -34,7 +34,7 @@ std::string get_command(Client &client, int &stat)
 	check allowed message chars
 */
 bool allowed_symbol_check(std::string params) {
-	for (int i = 0; i < params.length(); ++i) {
+	for (size_t i = 0; i < params.length(); ++i) {
 		if (isalnum(params[i]) == false && params[i] != '\r') //maybe should be expanded
 			return false;
 	}
@@ -103,7 +103,7 @@ int getChannelName(std::string &cname)
 	if (ch_prefix.find(cname[0]) == ch_prefix.npos)
 		return -1;
 
-	for (int i = 0; i < cname.length(); i++)
+	for (size_t i = 0; i <  cname.length(); i++)
 		std::tolower(cname[i]);
 
 	return (0);

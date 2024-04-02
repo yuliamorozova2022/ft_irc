@@ -22,10 +22,13 @@
 	- TOPIC command now allows channel operators to change the channel's topic
 	- added RPL_NOTOPIC if the topic is unset. removed default_topic
 
-
+2.04
+	- INVITE works
+	- modified NAMES to append '@' to mods.
+	- working on join - checking invite list if channel is set to invite-only
+	- added clause to check if channel is invite_only in JOIN. no testing bc idk how to add flag to channel currently but should be fine
 
 TODO:
-	- NAMES ressponse formatting - is '@' to mark this user, or to mark opers?
 	- make sure JOIN command works with multiple channels/keys
 	- we never check if user is actually in the channel before sending message/ requesting topic etc
 	- channel modes
