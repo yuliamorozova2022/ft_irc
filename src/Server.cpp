@@ -5,7 +5,7 @@
 int Server::_get_set_port(const std::string port_s) {
 	if (port_s.length() == 0)
 		return -1;
-	for (int i = 0; i < port_s.length(); i++) {
+	for (int i = 0; i < (int) port_s.length(); i++) {
 		if (isdigit(port_s[i]) == false) {
 			return -1;
 		}
@@ -193,7 +193,7 @@ bool	Server::clientRegistered(int fd) const {
 bool	Server::clientRegistered(std::string nick) const
 {
 	 std::map<int, Client *> clients = getClients();
-	
+
 	for (std::map<int, Client *>::iterator it = clients.begin();
 		it != clients.end(); it++)
 		{

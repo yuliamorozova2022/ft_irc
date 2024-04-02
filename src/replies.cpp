@@ -32,6 +32,9 @@ std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown 
 std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
 std::string ERR_USERONCHANNEL (Client &c, Channel &ch) {return ("443 " + c.getNickName() +" "+ ch.getName() + " :is already on channel");}
 std::string ERR_NOTONCHANNEL (std::string c) {return ("442 " + c + " :You're not on that channel");}
+std::string ERR_INVITEONLYCHAN (std::string c) {return ("473 " + c + " ::Cannot join channel (+i)");}
+
+
 
 std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel mask");}
 std::string ERR_CHANOPRIVSNEEDED (std::string c) {return ("482 " + c + " :You're not channel operator");}

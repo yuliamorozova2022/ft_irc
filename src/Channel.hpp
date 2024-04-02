@@ -9,13 +9,14 @@ class Server;
 class Channel {
 	private:
 		std::string				_name;
-		std::string				_topic;
 		std::string				_key;
+		Client*					_creator;
+		std::string				_topic;
 		int						_n_online;
 		bool					_inv_only;
 		char					_t_mode;
 		int						_max_lim;
-		Client*					_creator;
+		std::map<int, Client*>	_invited;
 		std::map<int, Client*>	_members;
 		std::map<int, Client*>	_opers;
 
@@ -38,6 +39,7 @@ class Channel {
 		std::string						getKey() const;
 		const std::map<int, Client*>	&getMembers() const;
 		const std::map<int, Client*>	&getOpers() const;
+		const std::map<int, Client*>	&getInvited() const;
 		int								getOnline() const;
 		int								getMaxLim() const;
 		bool							getInviteOnly() const;
@@ -57,6 +59,10 @@ class Channel {
 		bool	isOper(Client &client);
 		bool	setMaxLim(long n);
 		void	setInviteOnly(char sign);
+
+		void	invite(Client &client);
+		void	uninvite(Client &client);
+		bool	isInvited(Client &client);
 
 };
 

@@ -113,7 +113,7 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
 
 
 void Server::help(Client &client, std::vector<std::string> cmd) {
-  //	void (cmd);
+	(void) cmd;
 	std::string info = "";
 
 	info.append("\n\e[1;32m"); //green color
@@ -235,50 +235,35 @@ void Server::invite(Client &client, std::vector<std::string> cmd)
 	std::vector<std::string> splot = split(cmd[1]," ");
 
 	if (splot.size() < 2)
-	{serverReply(client, ERR_NEEDMOREPARAMS(cmd[0])); return;}
+		{serverReply(client, ERR_NEEDMOREPARAMS(cmd[0])); return;}
 
-std::cout <<"1" <<std::endl;
-	for (int i = 0; i < splot.size() ; i++)
-	{
-		std::cout <<"{" << splot[i] << "}" << std::endl;
-	}
 	if (!clientRegistered(splot[0]))
-		{ std::cout <<"1" << std::endl;serverReply(client, ERR_NOSUCHNICK(splot[0])); return; }
-std::cout <<"2" <<std::endl;
+		{serverReply(client, ERR_NOSUCHNICK(splot[0])); return; }
 
 	if (getChannels().find(splot[1]) == getChannels().end())
-		{std::cout <<"2" << std::endl;serverReply(client, ERR_NOSUCHCHANNEL(splot[1])); return; }
-std::cout <<"3" <<std::endl;
+		{serverReply(client, ERR_NOSUCHCHANNEL(splot[1])); return; }
 
-std::cout <<"4" <<std::endl;
 
 	Client &targetClient = getClientByNick(splot[0]);
 	Channel &targetChannel = getChannelByName(splot[1]);
 
-std::cout <<"4" <<std::endl;
 
 	//if client is already in channel => ERR_USERONCHANNEL
 	if (targetChannel.isMember(targetClient))
-		{std::cout <<"3" << std::endl; serverReply(client, ERR_USERONCHANNEL(targetClient, targetChannel)); return; }
-std::cout <<"5" <<std::endl;
+		{serverReply(client, ERR_USERONCHANNEL(targetClient, targetChannel)); return; }
 
 	//if sender is not on channel => ERR_NOTONCHANNEL
 	if (!targetChannel.isMember(client))
-		{ std::cout <<"4" << std::endl;serverReply(client, ERR_NOTONCHANNEL(targetChannel.getName())); return; }
-std::cout <<"6" <<std::endl;
+		{serverReply(client, ERR_NOTONCHANNEL(targetChannel.getName())); return; }
 
 	//if channel is invite only by opers => ERR_CHANOPRIVSNEEDED
 	if (targetChannel.getInviteOnly() && !targetChannel.isOper(client))
-		{ std::cout <<"1" << std::endl;serverReply(client, ERR_CHANOPRIVSNEEDED(targetChannel.getName())); return; }
-std::cout <<"7" <<std::endl;
+		{serverReply(client, ERR_CHANOPRIVSNEEDED(targetChannel.getName())); return; }
 
 	//if everything is ok: send Invite, send RPL_INVITING
 
 	sendMsgToUser(client, targetClient.getNickName(), cmd[0] + " " + cmd[1]);
 	serverReply(client, RPL_INVITING(client, targetClient, targetChannel));
-
-	std::cout <<"8" <<std::endl;
-
 }
 
 /*

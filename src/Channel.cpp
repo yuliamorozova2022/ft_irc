@@ -1,16 +1,19 @@
 #include "Channel.hpp"
 
 	// Constructors
-Channel::Channel() {}
 
-Channel::Channel(std::string name, Client& creator) :_name(name), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false), _t_mode('-') {
+Channel::Channel(std::string name, Client& creator)
+:_name(name), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
+
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
 	_key = "";
 }
 
-Channel::Channel(std::string name, std::string key, Client& creator) :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only('-'), _t_mode(false) {
+Channel::Channel(std::string name, std::string key, Client& creator)
+:_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
+
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
@@ -28,6 +31,7 @@ std::string Channel::getName() const {return _name;}
 std::string Channel::getTopic() const {return _topic;}
 int Channel::getOnline() const {return _n_online;}
 const std::map<int, Client*> &Channel::getMembers() const {return _members;}
+const std::map<int, Client*> &Channel::getInvited() const {return _invited;}
 const std::map<int, Client*> &Channel::getOpers() const {return _opers;}
 int	Channel::getMaxLim() const {return _max_lim;}
 bool Channel::getInviteOnly() const {return _inv_only;}
@@ -127,4 +131,14 @@ void	Channel::setInviteOnly(char sign) {
 		_inv_only = false;
 	if (sign == '+')
 		_inv_only = true;
+}
+
+
+void	Channel::invite(Client &client) {_invited.insert(std::pair<int, Client *> ( client.getFd(), &client));}
+void	Channel::uninvite(Client &client){_invited.erase(client.getFd());}
+bool	Channel::isInvited(Client &client)
+{
+	if (_invited.find(client.getFd()) != _invited.end())
+		return true;
+	return false;
 }
