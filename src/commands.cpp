@@ -150,7 +150,14 @@ void Server::pingpong(Client &client, std::vector<std::string> cmd)
 
 void Server::names(Client &client, std::vector<std::string> cmd)
 {
+
+// :master.ircgod.com 353 nroth = #linux :@idk
+//  :IRC.42.com 353 nroth = #test: @nroth
+
+
+
 	/*
+	:master.ircgod.com 353 nroth = #test :@nroth1 @nroth
 
 		INCORRECT - the @ symbol is not to mark sender, its to mark all opers. i think?
 	 */
@@ -164,16 +171,15 @@ void Server::names(Client &client, std::vector<std::string> cmd)
 		for (std::map<int, Client *>::const_iterator i = ch.getMembers().begin();
 			i != ch.getMembers().end(); i++)
 		{
-			if (i->first != client.getFd())
-			{
-				if (! userlist.empty())
-					userlist += ", ";
-				userlist += client.getNickName();
-			}
+			if (! userlist.empty())
+				userlist += " ";
+			if (ch.isOper(*i->second))
+				userlist += "@";
+			userlist += i->second->getNickName();
+std::cout << "user: " + userlist << std::endl;
 		}
-		userlist.insert(0, client.getNickName()).insert(0, "@");
-
-		std::string rep = "353 " + client.getNickName() + " = " + ch.getName() + ": " + userlist;
+std::cout << "userlist: " + userlist << std::endl;
+		std::string rep = "353 " + client.getNickName() + " = " + ch.getName() + " :" + userlist;
 
 		serverReply(client, rep);
 		serverReply(client, RPL_ENDOFNAMES(client, ch));
@@ -231,37 +237,54 @@ void Server::invite(Client &client, std::vector<std::string> cmd)
 	if (splot.size() < 2)
 	{serverReply(client, ERR_NEEDMOREPARAMS(cmd[0])); return;}
 
-	if (clientRegistered(splot[0]))
+std::cout <<"1" <<std::endl;
+	for (int i = 0; i < splot.size() ; i++)
+	{
+		std::cout <<"{" << splot[i] << "}" << std::endl;
+	}
+	if (!clientRegistered(splot[0]))
 		{ std::cout <<"1" << std::endl;serverReply(client, ERR_NOSUCHNICK(splot[0])); return; }
+std::cout <<"2" <<std::endl;
 
 	if (getChannels().find(splot[1]) == getChannels().end())
 		{std::cout <<"2" << std::endl;serverReply(client, ERR_NOSUCHCHANNEL(splot[1])); return; }
-		
-	Channel targetChannel = getChannelByName(splot[0]);
-	Client targetClient = getClientByNick(splot[1]);
+std::cout <<"3" <<std::endl;
+
+std::cout <<"4" <<std::endl;
+
+	Client &targetClient = getClientByNick(splot[0]);
+	Channel &targetChannel = getChannelByName(splot[1]);
+
+std::cout <<"4" <<std::endl;
 
 	//if client is already in channel => ERR_USERONCHANNEL
 	if (targetChannel.isMember(targetClient))
 		{std::cout <<"3" << std::endl; serverReply(client, ERR_USERONCHANNEL(targetClient, targetChannel)); return; }
+std::cout <<"5" <<std::endl;
 
 	//if sender is not on channel => ERR_NOTONCHANNEL
 	if (!targetChannel.isMember(client))
 		{ std::cout <<"4" << std::endl;serverReply(client, ERR_NOTONCHANNEL(targetChannel.getName())); return; }
-	
+std::cout <<"6" <<std::endl;
+
 	//if channel is invite only by opers => ERR_CHANOPRIVSNEEDED
 	if (targetChannel.getInviteOnly() && !targetChannel.isOper(client))
 		{ std::cout <<"1" << std::endl;serverReply(client, ERR_CHANOPRIVSNEEDED(targetChannel.getName())); return; }
+std::cout <<"7" <<std::endl;
 
 	//if everything is ok: send Invite, send RPL_INVITING
 
 	sendMsgToUser(client, targetClient.getNickName(), cmd[0] + " " + cmd[1]);
-	serverReply(client, RPL_INVITING(targetClient, targetChannel));
+	serverReply(client, RPL_INVITING(client, targetClient, targetChannel));
+
+	std::cout <<"8" <<std::endl;
+
 }
 
-/* 
+/*
 :Angel!wings@irc.org INVITE Wiz #Dust
 	; Message to WiZ when he has been invited by user Angel to channel #Dust
 
 INVITE Wiz #Twilight_Zone
-	; Command to invite WiZ to #Twilight_zone 
+	; Command to invite WiZ to #Twilight_zone
 */

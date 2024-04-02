@@ -28,6 +28,7 @@ std::string Channel::getName() const {return _name;}
 std::string Channel::getTopic() const {return _topic;}
 int Channel::getOnline() const {return _n_online;}
 const std::map<int, Client*> &Channel::getMembers() const {return _members;}
+const std::map<int, Client*> &Channel::getOpers() const {return _opers;}
 int	Channel::getMaxLim() const {return _max_lim;}
 bool Channel::getInviteOnly() const {return _inv_only;}
 

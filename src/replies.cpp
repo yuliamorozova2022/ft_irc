@@ -17,7 +17,7 @@ std::string RPL_MYINFO (Client &c) {return ("004 " + c.getNickName() + " :IRC42"
 std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 	return ("366 " + c.getNickName() + " " + ch.getName() + " :End of NAMES list");
 	}
-std::string RPL_INVITING (Client &c, Channel &ch) {return ("341 " + ch.getName() + " " + c.getNickName());}
+std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch) {return ("341 " + c1.getNickName() + " " + c2.getNickName() + " "  + ch.getName());}
 
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
 std::string RPL_NOTOPIC (std::string c) {return ("331 " + c + " :No topic is set");}
