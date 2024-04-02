@@ -47,6 +47,9 @@ done:
 	- beginnnig work on MODE function
 
 02.04
+
+	how weechat works on +channelname and 't' mode and what sends as error?
+done:
 	- added new member variable in Channel class: bool _t_mode (it indicates if topic can be modified only by opers);
 	- added getter/setter for this member var;
 	- continuing work on mode

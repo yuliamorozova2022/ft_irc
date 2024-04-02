@@ -22,8 +22,8 @@ static bool isValidMode(std::string str, std::string *unknown) {
 		return true;
 	}
 	return false;
-
 }
+
 /*	to test:
  * MODE
  * MODE wrongchannel
@@ -51,15 +51,15 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	std::vector<std::string> args = split(cmd[1], " ");
 	std::string channel = args[0];
 	channel = toLower(channel);
-	std::cout << "converted channel name is " << channel << std::endl;
-	std::cout << "args[0] is " << args[0] << std::endl;
+//	std::cout << "converted channel name is " << channel << std::endl;
+//	std::cout << "args[0] is " << args[0] << std::endl;
 	if ((args.size() < 2) || (args.size() >= 2 && args[1].empty())) { //not enough parameters
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 		return;
 	}
-	//channel check
-	// Channel names should be case insensitive
-	// need to check if user is in the channel?
+		//channel check
+		// Channel names should be case insensitive
+		// need to check if user is in the channel?
 	std::map<std::string, Channel *> tmp = getChannels();
 	if (tmp.find(channel) == tmp.end()) {
 		serverReply(client, ERR_USERNOTINCHANNEL(client.getNickName(), args[0]));
@@ -79,12 +79,46 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 		return;
 	}
 //	if () { // channel is with '+' prefix, for that only 't' mode is available
-
+//	}
+		// MODE +ik key
+	if (args[1][0] == '+') {
+		for (int j = 1; j < args[1].size(); j++) {
+			char c = args[1][j];
+			switch (c) {
+				case 't':
+					std::cout << c << std::endl;
+					break;
+				case 'k':
+					std::cout << c << std::endl;
+					break;
+				case 'i':
+					std::cout << c << std::endl;
+					break;
+				case 'o':
+					std::cout << c << std::endl;
+					break;
+				case 'l':
+					std::cout << c << std::endl;
+					if (args[2].empty()) { // wrong condition
+						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+						return;
+					}
+					try {
+						Channel ch = getChannelByName(channel);
+						//what will happen with users in the channel in case when new max limit is less than current one
+						ch.setMaxLim(atol(args[2].c_str())); // should be modified for try-catch
+						break;
+					}
+					catch (const std::exception &e) {
+						std::cerr << e.what() << std::endl;
+						return;
+					}
+			}
+		}
+	}
+//	} else  {
+//		(args[1][0] == '-')
+//		return;
 //	}
 
-
-	//check that params are only supported and its length is only 3 and one for the sign
-//	if (!args[1] || args[1].length() > 4 || )
-// check for +channelname that mode parameter is only +t
-//	if (channel[0] == '+' && )
 }
