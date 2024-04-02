@@ -190,6 +190,18 @@ bool	Server::clientRegistered(int fd) const {
 		return (true);
 	return (false);
 }
+bool	Server::clientRegistered(std::string nick) const
+{
+	 std::map<int, Client *> clients = getClients();
+	
+	for (std::map<int, Client *>::iterator it = clients.begin();
+		it != clients.end(); it++)
+		{
+			if (it->second->getNickName() == nick)
+				return true;
+		}
+	return (false);
+}
 Client	&Server::getClientByFd(int fd) {
 /* 	if (_clients.find(fd) == _clients.end())
 		return _clients.end(); */
@@ -197,6 +209,16 @@ Client	&Server::getClientByFd(int fd) {
 	return (*client_ptr);
 }
 
+Client	&Server::getClientByNick(std::string nick)
+{
+	for (std::map<int, Client *>::iterator it = _clients.begin();
+		it != _clients.end(); it++)
+		{
+			if (it->second->getNickName() == nick)
+				return (*it->second);
+		}
+	return *_clients.end()->second;
+}
 Channel	&Server::getChannelByName(std::string channelName)
 {
 	return (*_channels.find(channelName)->second);
@@ -217,4 +239,34 @@ void Server::sendToEveryone(std::string msg)
 	{
 		send(it->second->getFd(), newstr.c_str(), newstr.length(), 0);
 	}
+}
+void Server::sendMsgToUser(Client &sender, std::string recipient, std::string msg)
+{
+	msg = sender.getPrefix() + msg;
+	for (std::map<int, Client *>::const_iterator it = getClients().begin();
+		it != getClients().end(); it++)
+		{
+			if (it->second->getNickName() == recipient)
+			{
+				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
+				return;
+			}
+		}
+	serverReply(sender, ERR_NOSUCHNICK(recipient));
+}
+void Server::sendMsgToChannel(Client &sender, std::string channel, std::string msg)
+{
+	if (getChannelName(channel) == -1) //check channel name
+	{
+		std::cout << "{" << channel << "}" << std::endl;
+		serverReply(sender, ERR_BADCHANMASK(channel));
+		return;
+	}
+	//check if channel exists
+	if (getChannels().find(channel) == getChannels().end())
+	{
+		serverReply(sender, ERR_NOSUCHNICK(channel));
+		return;
+	}
+	getChannels().find(channel)->second->sendToAll(sender, msg);
 }

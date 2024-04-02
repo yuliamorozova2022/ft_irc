@@ -1,6 +1,7 @@
 
 SRCS =	main.cpp Server.cpp Channel.cpp Client.cpp PollManager.cpp \
-		tools.cpp commands.cpp privmsg_command.cpp replies.cpp
+		tools.cpp commands.cpp privmsg_command.cpp replies.cpp \
+		mode_command.cpp
 
 
 all:

@@ -14,12 +14,16 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("NAMES", &Server::names));
 	_cmds.insert(std::pair<std::string, func> ("TOPIC", &Server::topic));
 	_cmds.insert(std::pair<std::string, func> ("MODE", &Server::mode));
+	_cmds.insert(std::pair<std::string, func> ("INVITE", &Server::invite));
 }
 
 void Server::execCmd(Client &client, std::string args){
 	std::vector<std::string> cmd;
 
 	args = args.substr(0, args.find('\r'));
+
+	std::cout << client.getPrefix() + ": " << args << std::endl;
+
 	size_t i = args.find_first_of(' ');
 	cmd.push_back(args.substr(0, i));
 	// for avoiding duplication of command
@@ -219,3 +223,45 @@ void Server::topic(Client &client, std::vector<std::string> cmd)
 	}
 }
 
+
+void Server::invite(Client &client, std::vector<std::string> cmd)
+{
+	std::vector<std::string> splot = split(cmd[1]," ");
+
+	if (splot.size() < 2)
+	{serverReply(client, ERR_NEEDMOREPARAMS(cmd[0])); return;}
+
+	if (clientRegistered(splot[0]))
+		{ std::cout <<"1" << std::endl;serverReply(client, ERR_NOSUCHNICK(splot[0])); return; }
+
+	if (getChannels().find(splot[1]) == getChannels().end())
+		{std::cout <<"2" << std::endl;serverReply(client, ERR_NOSUCHCHANNEL(splot[1])); return; }
+		
+	Channel targetChannel = getChannelByName(splot[0]);
+	Client targetClient = getClientByNick(splot[1]);
+
+	//if client is already in channel => ERR_USERONCHANNEL
+	if (targetChannel.isMember(targetClient))
+		{std::cout <<"3" << std::endl; serverReply(client, ERR_USERONCHANNEL(targetClient, targetChannel)); return; }
+
+	//if sender is not on channel => ERR_NOTONCHANNEL
+	if (!targetChannel.isMember(client))
+		{ std::cout <<"4" << std::endl;serverReply(client, ERR_NOTONCHANNEL(targetChannel.getName())); return; }
+	
+	//if channel is invite only by opers => ERR_CHANOPRIVSNEEDED
+	if (targetChannel.getInviteOnly() && !targetChannel.isOper(client))
+		{ std::cout <<"1" << std::endl;serverReply(client, ERR_CHANOPRIVSNEEDED(targetChannel.getName())); return; }
+
+	//if everything is ok: send Invite, send RPL_INVITING
+
+	sendMsgToUser(client, targetClient.getNickName(), cmd[0] + " " + cmd[1]);
+	serverReply(client, RPL_INVITING(targetClient, targetChannel));
+}
+
+/* 
+:Angel!wings@irc.org INVITE Wiz #Dust
+	; Message to WiZ when he has been invited by user Angel to channel #Dust
+
+INVITE Wiz #Twilight_Zone
+	; Command to invite WiZ to #Twilight_zone 
+*/

@@ -95,6 +95,11 @@ bool	Channel::isOper(Client &client) {
 		return true;
 	return false;
 }
+bool	Channel::isMember(Client &client) {
+	if (_members.find(client.getFd()) != _members.end())
+		return true;
+	return false;
+}
 
 bool	Channel::setMaxLim(long n) {
 	if (n < INT_MIN || n > INT_MAX)

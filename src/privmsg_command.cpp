@@ -6,37 +6,7 @@
 // PRIVMSG <username> :[.....]	=> :client PRIVMSG <username> :[....]
 // PRIVMSG <#channel> :[.....]	=> :client PRIVMSG <#channel> :[....]
 
-void Server::sendMsgToUser(Client &sender, std::string recipient, std::string msg)
-{
-	msg = sender.getPrefix() + "PRIVMSG " + recipient + " :" + msg + "\n";
-	for (std::map<int, Client *>::const_iterator it = getClients().begin();
-		it != getClients().end(); it++)
-		{
-			if (it->second->getNickName() == recipient)
-			{
-				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
-				return;
-			}
-		}
-	serverReply(sender, ERR_NOSUCHNICK(recipient));
-}
-void Server::sendMsgToChannel(Client &sender, std::string channel, std::string msg)
-{
-	msg = "PRIVMSG " + channel + " :" + msg + "\n";
-	if (getChannelName(channel) == -1) //check channel name
-	{
-		std::cout << "{" << channel << "}" << std::endl;
-		serverReply(sender, ERR_BADCHANMASK(channel));
-		return;
-	}
-	//check if channel exists
-	if (getChannels().find(channel) == getChannels().end())
-	{
-		serverReply(sender, ERR_NOSUCHNICK(channel));
-		return;
-	}
-	getChannels().find(channel)->second->sendToAll(sender, msg);
-}
+
 
 void Server::privmsg(Client &client, std::vector<std::string> cmd)
 {
@@ -53,7 +23,8 @@ void Server::privmsg(Client &client, std::vector<std::string> cmd)
 		serverReply(client, ERR_NORECIPIENT(cmd[0]));
 		return;
 	}
-	std::string message = cmd[1].substr(cmd[1].find(" :") + 2);
+	std::string message = cmd[1].substr(cmd[1].find(" :"));
+	message = "PRIVMSG " + recipient + message + "\n";
 
 	if (recipient[0] == '&' || recipient[0] == '#')
 		sendMsgToChannel(client, recipient, message);

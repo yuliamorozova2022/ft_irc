@@ -49,6 +49,7 @@ class Channel {
 		void	removeOper(Client &client);
 		void	sendToAll(Client &client, std::string msg);
 		void	sendToClient(Client &client, std::string msg);
+		bool	isMember(Client &client);
 		bool	isOper(Client &client);
 		bool	setMaxLim(long n);
 		void	setInviteOnly(char sign);
