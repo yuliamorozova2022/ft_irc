@@ -31,7 +31,7 @@ Client::~Client() {
 	// Getters
 std::string Client::getUserName() const					{ return _userName;}
 std::string Client::getNickName() const						{ return _nickName;}
-int Client::getFd() const								{ return _fd;}
+const int Client::getFd() const								{ return _fd;}
 std::string Client::getHost() const							{ return _host;}
 std::map<std::string, Channel *> Client::getJoinedChannels() const	{ return _joinedChannels;}
 bool  Client::isRegistered() const{ return _registered;}

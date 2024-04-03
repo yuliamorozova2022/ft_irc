@@ -58,6 +58,8 @@ std::string ERR_CHANOPRIVSNEEDED (std::string c);
 std::string ERR_NOSUCHCHANNEL (std::string c);
 std::string ERR_USERONCHANNEL (Client &c, Channel &ch);
 std::string ERR_NOTONCHANNEL (std::string c);
+std::string ERR_UNKNOWNMODE (std::string mode, std::string channel);
+std::string ERR_USERNOTINCHANNEL (std::string user, std::string channel);
 
 
 //tools.cpp
@@ -65,5 +67,6 @@ std::string					get_command(Client &client, int &stat);
 bool						allowed_symbol_check(std::string params);
 std::vector<std::string>	split(std::string str, std::string separator);
 int							getChannelName(std::string &cname);
+std::string					toLower(std::string str);
 
 #endif

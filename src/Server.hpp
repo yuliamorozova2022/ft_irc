@@ -103,6 +103,4 @@ class Server {
 		void	invite(Client &client, std::vector<std::string> cmd);
 };
 
-std::string toLower(std::string str);
-
 #endif

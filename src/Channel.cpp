@@ -3,7 +3,7 @@
 	// Constructors
 
 Channel::Channel(std::string name, Client& creator)
-:_name(name), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
+:_name(name), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
 
 	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
@@ -12,7 +12,7 @@ Channel::Channel(std::string name, Client& creator)
 }
 
 Channel::Channel(std::string name, std::string key, Client& creator)
-:_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(-1), _inv_only(false) {
+:_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
 
 	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
@@ -120,9 +120,10 @@ bool	Channel::isMember(Client &client) {
 }
 
 bool	Channel::setMaxLim(long n) {
-	if (n < INT_MIN || n > INT_MAX)
-		return false; //should throw
-	_max_lim = static_cast<int>(n);
+	if (n < 0 || n > UINT_MAX)
+		throw std::runtime_error("recived number is not valid for limit!");
+		//return false; //should throw
+	_max_lim = static_cast<unsigned int>(n);
 	return true;
 }
 

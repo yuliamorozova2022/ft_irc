@@ -15,7 +15,7 @@ class Channel {
 		int						_n_online;
 		bool					_inv_only;
 		char					_t_mode;
-		int						_max_lim;
+		unsigned int			_max_lim;
 		std::map<int, Client*>	_invited;
 		std::map<int, Client*>	_members;
 		std::map<int, Client*>	_opers;

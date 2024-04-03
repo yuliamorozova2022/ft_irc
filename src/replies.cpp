@@ -37,7 +37,7 @@ std::string ERR_INVITEONLYCHAN (std::string c) {return ("473 " + c + " ::Cannot 
 
 
 std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel mask");}
-std::string ERR_CHANOPRIVSNEEDED (std::string c) {return ("482 " + c + " :You're not channel operator");}
 
-std::string ERR_UNKNOWNMODE (std::string c, std::string channel) {return ("472 " + c + " :is unknown mode char to me for " + channel);}
-std::string ERR_USERNOTINCHANNEL (std::string a, std::string b) {return ("441 " + a + " " + b +" :They aren't on that channel");}
+std::string ERR_CHANOPRIVSNEEDED (std::string c) {return ("482 " + c + " :You're not channel operator");}
+std::string ERR_UNKNOWNMODE (std::string mode, std::string channel) {return ("472 " + mode + " :is unknown mode char to me for " + channel);}
+std::string ERR_USERNOTINCHANNEL (std::string user, std::string channel) {return ("441 " + user + " " + channel +" :They aren't on that channel");}

@@ -56,3 +56,20 @@ done:
 
 	- Channel names should be case insensitive. In debug I see it is not implemented.
 	- Modified join function (added line channel_names[i] = toLower(channel_names[i]); for actually modification of channel name)
+
+03.04
+done:
+	- MODE +[-]l //maybe can be improved, should be tested more properly
+	- MODE +[-]o //maybe can be improved, should be tested more properly
+  	- changed getFd() returned value in Client.[h/c]pp : "const Client getFd() const" to "const int getFd() const"
+    - changed type of member variable _max_lim in Channel.[h/c]pp : "int _max_lim" to "unsigned int _max_lim".
+        When _max_lim is 0 - no limit for members in the channel is set
+	- function declarations moved from Server.hpp and mode_command.cpp to includes.hpp
+
+TODO:
+    - JOIN has to increment _n_online when client joined some channel
+    - JOIN has to check number of clients in channel, if _max_lim is 0 - there is no limit set. If it is, then server will not join 
+        client to the channel if this limit is reached(_n_online shows it)
+	- MODE +[-]t 
+	- MODE +[-]i
+	- MODE +[-]k
