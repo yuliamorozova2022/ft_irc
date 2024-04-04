@@ -62,6 +62,9 @@
 		"sstream": "cpp",
 		"cinttypes": "cpp",
 		"valarray": "cpp",
-		"ranges": "cpp"
+		"ranges": "cpp",
+		"condition_variable": "cpp",
+		"thread": "cpp",
+		"typeindex": "cpp"
 	}
 }

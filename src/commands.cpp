@@ -262,14 +262,20 @@ void Server::invite(Client &client, std::vector<std::string> cmd)
 
 	//if everything is ok: send Invite, send RPL_INVITING
 
-	sendMsgToUser(client, targetClient.getNickName(), cmd[0] + " " + cmd[1]);
+	targetChannel.invite(targetClient);
+
+	sendMsgToUser(client, targetClient.getNickName(), cmd[0] + " " + splot[0] + " " + splot[1]);
 	serverReply(client, RPL_INVITING(client, targetClient, targetChannel));
 }
 
 /*
+Angel: 
+INVITE Wiz #Twilight_Zone
+	; Command to invite WiZ to #Twilight_zone
+
+Server ->  Wiz:
 :Angel!wings@irc.org INVITE Wiz #Dust
 	; Message to WiZ when he has been invited by user Angel to channel #Dust
 
-INVITE Wiz #Twilight_Zone
-	; Command to invite WiZ to #Twilight_zone
+
 */

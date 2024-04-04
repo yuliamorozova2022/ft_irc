@@ -42,10 +42,14 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	std::vector<std::string> s;
 	s.push_back(channel.getName());
 	s.push_back(channel.getName());
+
+	int &a = channel.getOnline();
+	a++;
+	std::cout << channel.getName() << " online: " << channel.getOnline() << std::endl;
 	server.serverReply(client, RPL_TOPIC(client, channel));
 	channel.sendToAll(client, "JOIN " + channel.getName());
 	channel.sendToClient(client, "JOIN " + channel.getName());
-	server.names(client, s) ;
+	server.names(client, s);
 
 }
 
@@ -107,6 +111,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 				ch->addMember(client);
 				greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 			}
+			std::cout << ch->getName() << " online: " << ch->getOnline() << std::endl;
 		}
 		else //if channel doesn't already exist, needs to be created
 		{
@@ -115,6 +120,10 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 			else
 				Server::createChannel(channel_names[i], keys[i], client);
 			greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
+			std::cout << ch->getName() << " online: " << ch->getOnline() << std::endl;
 		}
+
+		// std::cout << ch->getName() << " online: " << ch->getOnline() << std::endl;
 	}
+
 }

@@ -38,6 +38,9 @@ static bool isValidMode(std::string str, std::string *unknown) {
  */
 
 
+
+std::string RPL_CHANNELMODEIS (std::string channel, std::string mode, std::string params) {return ("324 " + channel + " " + mode + " " + params);}
+
 void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed()) { //not registered
 		serverReply(client, ERR_NOTREGISTERED);
@@ -137,6 +140,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						return;
 					}
 				}
+				serverReply(client,RPL_CHANNELMODEIS(channel, "" + mode[j], args[j]));
 			}
 		}
 	} else {
@@ -190,6 +194,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					}
 				}
 			}
+			serverReply(client,RPL_CHANNELMODEIS(channel, "" + mode[j], args[j]));
 		}
 	}
 
