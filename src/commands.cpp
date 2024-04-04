@@ -110,8 +110,6 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
 	std::cout << "  from " << tmp_fd << ": " << "Connection closed" << std::endl;
 }
 
-
-
 void Server::help(Client &client, std::vector<std::string> cmd) {
 	(void) cmd;
 	std::string info = "";
@@ -269,7 +267,7 @@ void Server::invite(Client &client, std::vector<std::string> cmd)
 }
 
 /*
-Angel: 
+Angel:
 INVITE Wiz #Twilight_Zone
 	; Command to invite WiZ to #Twilight_zone
 

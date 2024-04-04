@@ -87,7 +87,7 @@ void Server::removeClient(int fd) {
 	Client *client_ptr = _clients.find(fd)->second;
 	delete client_ptr;
 	_clients.erase(fd);
-  _fds.removeFD(fd);
+	_fds.removeFD(fd);
 
 }
 
@@ -117,6 +117,34 @@ int Server::_setup_socket(int port) {
 	return server_fd;
 }
 
+std::string find_revent(short revent)
+{
+	std::string ret = "";
+	if (revent & POLLIN)
+		ret += "POLLIN";
+	if (revent & POLLRDNORM)
+		ret += " POLLRDNORM";
+	if (revent & POLLRDBAND)
+		ret += " POLLRDBAND";
+	if (revent & POLLPRI)
+		ret += " POLLPRI";
+	if (revent & POLLOUT)
+		ret += " POLLOUT";
+	if (revent & POLLWRNORM)
+		ret += " POLLWRNORM";
+	if (revent & POLLWRBAND)
+		ret += " POLLWRBAND";
+	if (revent & POLLERR)
+		ret += " POLLERR";
+	if (revent & POLLHUP)
+		ret += " POLLHUP";
+	if (revent & POLLNVAL)
+		ret += " POLLNVAL";
+
+	return ret;
+}
+
+
 void Server::launch() {
 	int poll_status;
 	while (!g_interrupt) {
@@ -129,9 +157,17 @@ void Server::launch() {
 			throw std::runtime_error("  poll() timed out");
 
 		for (int i = 0; i < _fds.getSize(); i++) {
-			if (_fds.getFds()[i].revents != POLLIN)
+			if (!_fds.getFds()[i].revents)				//if event wasnt on this fd
 				continue;
-			if (_fds.getFds()[i].fd == _serverFd) // called on serverfd
+			if (_fds.getFds()[i].revents != POLLIN)		//if event is not POLLIN
+			{
+				std::cout << "Unexpected event from [" << _fds.getFds()[i].fd << "]: " << _fds.getFds()[i].revents << std::endl;
+				std::cout << "	event: " << find_revent(_fds.getFds()[i].revents) << std::endl;
+				std::cout << "	removing client...." << std::endl;
+				removeClient(_fds[i].fd);
+				continue;
+			}
+			if (_fds.getFds()[i].fd == _serverFd)		// called on serverfd
 				_accept_new_connection();
 			else
 				_client_request(i);

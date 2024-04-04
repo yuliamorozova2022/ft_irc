@@ -121,6 +121,4 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		}
 	}
 
-	std::cout << channel.getName() << " online: " << channel.getOnline() << std::endl;
-
 }

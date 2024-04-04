@@ -30,7 +30,7 @@ std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname 
 std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
 std::string ERR_UNKNOWNCOMMAND (std::string c) {return ("421 " + c + " :Unknown command");}
 std::string ERR_ERRONEUSNICKNAME (std::string c) {return ("432 " + c + " :Erroneus nickname");}
-std::string ERR_USERONCHANNEL (Client &c, Channel &ch) {return ("443 " + c.getNickName() +" "+ ch.getName() + " :is already on channel");}
+std::string ERR_USERONCHANNEL (Client &c, Channel &ch) {return ("443 " + ch.getName() +" "+ c.getNickName() + " :is already on channel");}
 std::string ERR_NOTONCHANNEL (std::string c) {return ("442 " + c + " :You're not on that channel");}
 std::string ERR_INVITEONLYCHAN (std::string c) {return ("473 " + c + " ::Cannot join channel (+i)");}
 
