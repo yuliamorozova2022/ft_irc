@@ -77,7 +77,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 		serverReply(client, ERR_CHANOPRIVSNEEDED(channel));
 		return;
 	}
-//	 	 channel is with '+' prefix, for that only 't' mode is available
+//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
 		// MODE +ik key
 		std::string mode = args[1];
 		args.erase(args.begin(), args.begin() + 2); // now there are only arguments for modes, or it's empty
@@ -97,11 +97,12 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'i': {
-					std::cout << c << std::endl;
+					Channel &ch = getChannelByName(channel);
+					ch.setInviteOnly('+');
 					break;
 				}
 				case 'o': {
-					if (!args[j].empty()) {
+					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
@@ -120,7 +121,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'l': {
-					if (!args[j].empty()) {
+					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
@@ -153,12 +154,13 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'i': {
-					std::cout << c << std::endl;
+					Channel &ch = getChannelByName(channel);
+					ch.setInviteOnly('-');
 					break;
 				}
 
 				case 'o': {
-					if (!args[j].empty()) {
+					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
