@@ -42,6 +42,9 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	std::vector<std::string> s;
 	s.push_back(channel.getName());
 	s.push_back(channel.getName());
+
+	channel.getOnline()++;
+	std::cout << channel.getName() << " online: " << channel.getOnline() << std::endl;
 	server.serverReply(client, RPL_TOPIC(client, channel));
 	channel.sendToAll(client, "JOIN " + channel.getName());
 	channel.sendToClient(client, "JOIN " + channel.getName());
@@ -117,4 +120,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 			greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 		}
 	}
+
+	std::cout << channel.getName() << " online: " << channel.getOnline() << std::endl;
+
 }

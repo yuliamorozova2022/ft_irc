@@ -177,7 +177,7 @@ void Server::_client_request(int i) {
 		/*If, for some other reason, a client connection is closed without  the
 	client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
 	on socket), the server is required to fill in the quit  message  with
-	some sort  of  message  reflecting the nature of the event which
+	some sort  of  message  reflecting the nature of tserverReplyhe event which
 	caused it to happen.
 		 */
 	} else
@@ -226,6 +226,7 @@ Channel	&Server::getChannelByName(std::string channelName)
 
 int		Server::serverReply(Client &client, std::string msg)
 {
+	//maybe replies need to end in \r\n??
 	std::string newstr  = ":" + _name + " " + msg + "\n";
 	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
 	return stat;
@@ -242,12 +243,14 @@ void Server::sendToEveryone(std::string msg)
 }
 void Server::sendMsgToUser(Client &sender, std::string recipient, std::string msg)
 {
-	msg = sender.getPrefix() + msg;
+	msg = sender.getPrefix() + msg + "\n";
+
 	for (std::map<int, Client *>::const_iterator it = getClients().begin();
 		it != getClients().end(); it++)
 		{
 			if (it->second->getNickName() == recipient)
 			{
+				std::cout << "sending to " << recipient << " {" + msg + "}" << std::endl;
 				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
 				return;
 			}
