@@ -102,7 +102,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'o': {
-					if (args[j].empty()) {
+					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
@@ -121,7 +121,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'l': {
-					if (args[j].empty()) {
+					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
@@ -160,7 +160,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 				}
 
 				case 'o': {
-					if (args[j].empty()) {
+					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
