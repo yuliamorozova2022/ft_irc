@@ -78,5 +78,9 @@ TODO:
 
 05.04
 	todo:
-		toLower() should be modified to handle convertion of next symbols: []\~ to theese: {}|^
+		- toLower() should be modified to handle convertion of next symbols: []\~ to theese: {}|^
 		(for channel names or nicknames)
+		- add to modes case when channel name starts from +
+		- update join
+		- add kick and part
+		- test everything

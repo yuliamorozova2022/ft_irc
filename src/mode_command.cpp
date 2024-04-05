@@ -73,10 +73,22 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 		serverReply(client, ERR_CHANOPRIVSNEEDED(ch.getName()));
 		return;
 	}
-//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
+
 		// MODE +ik key
 		std::string mode = args[1];
 		args.erase(args.begin(), args.begin() + 2); // now there are only arguments for modes, or it's empty
+
+	if (ch.getName()[0] == '+') {//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
+		if (mode == "+t") {
+			ch.setTopicFlag('+');
+		} else if (mode == "-t") {
+			ch.setTopicFlag('-');
+		} else {
+			serverReply(client, ERR_UNKNOWNMODE(mode, ch.getName()));
+		}
+		return;
+	}
+
 	if (mode[0] == '+') {
 		mode.erase(mode.begin());
 		for (int j = 0; j < mode.size(); j++) {
@@ -86,7 +98,8 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					ch.setTopicFlag('+');
 					break;
 				}
-				case 'k': {// how weechat will behave in case when key is set, and oper tries to change it to another without -k before
+				case 'k': {
+					// how weechat will behave in case when key is set, and oper tries to change it to another without -k before
 					// case when key is set, and oper tries to change it to another without -k before
 					if (!ch.getKey().empty()) { //key is already setted
 						serverReply(client, ERR_KEYSET(ch.getName()));
@@ -100,7 +113,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'i': {
-					// Channel &ch = getChannelByName(channel);
+					
 					ch.setInviteOnly('+');
 					break;
 				}
@@ -109,7 +122,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
-					// Channel &ch = getChannelByName(channel);
+					
 					Client &cl = getClientByNick(args[j]);
 						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
@@ -129,7 +142,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						return;
 					}
 					try {
-						// Channel &ch = getChannelByName(channel);
+						
 						//what will happen with users in the channel in case when new max limit is less than current one
 						// or when value is 0
 						ch.setMaxLim(atol(args[j].c_str())); 
@@ -153,28 +166,20 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'k': {
-						// how weechat will behave in case when key is set, and oper tries to use mode -k with wrong key?
-					
-					// if (args.size() >= j || args[j].empty()) { //not enough params
-					// 	serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
-					// 	return;
-					// }
+					// how weechat will behave in case when key is set, and oper tries to use mode -k with wrong key?
 					//should we check match of channel key and params?
 					ch.setKey("");
 					break;
 				}
 				case 'i': {
-					// Channel &ch = getChannelByName(channel);
 					ch.setInviteOnly('-');
 					break;
 				}
-
 				case 'o': {
 					if (args.size() >= j || args[j].empty()) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
-					// Channel &ch = getChannelByName(channel);
 					Client &cl = getClientByNick(args[j]);
 						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
@@ -190,7 +195,6 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 				}
 				case 'l': {
 					try {
-						// Channel &ch = getChannelByName(channel);
 						ch.setMaxLim(0);
 						break;
 					}
