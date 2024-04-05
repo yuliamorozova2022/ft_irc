@@ -76,6 +76,8 @@ bool Channel::getTopicFlag() const {
 		return true;
 }
 
+void Channel::setKey(std::string key) {_key = key;}
+
 	//methods
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
@@ -159,9 +161,7 @@ void	Channel::setInviteOnly(char sign) {
 }
 
 
-void	Channel::invite(Client &client) {
-	std::cout << "		adding" << client.getNickName() <<  " to " << getName() << std::endl;
-	_invited.insert(std::pair<int, Client *> ( client.getFd(), &client));}
+void	Channel::invite(Client &client) {_invited.insert(std::pair<int, Client *> ( client.getFd(), &client));}
 void	Channel::uninvite(Client &client){_invited.erase(client.getFd());}
 bool	Channel::isInvited(Client &client)
 {

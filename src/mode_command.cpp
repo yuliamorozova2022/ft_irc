@@ -83,12 +83,20 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 			char c = mode[j];
 			switch (c) {
 				case 't': {
-					std::cout << c << std::endl;
+					ch.setTopicFlag('+');
 					break;
 				}
 				case 'k': {// how weechat will behave in case when key is set, and oper tries to change it to another without -k before
 					// case when key is set, and oper tries to change it to another without -k before
-					std::cout << c << std::endl;
+					if (!ch.getKey().empty()) { //key is already setted
+						serverReply(client, ERR_KEYSET(ch.getName()));
+						return;
+					}
+					if (args.size() >= j || args[j].empty()) { //not enough params
+						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+						return;
+					}
+					ch.setKey(args[j]);
 					break;
 				}
 				case 'i': {
@@ -141,12 +149,18 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 			char c = mode[j];
 			switch (c) {
 				case 't': {
-					std::cout << c << std::endl;
+					ch.setTopicFlag('-');
 					break;
 				}
 				case 'k': {
 						// how weechat will behave in case when key is set, and oper tries to use mode -k with wrong key?
-					std::cout << c << std::endl;
+					
+					// if (args.size() >= j || args[j].empty()) { //not enough params
+					// 	serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+					// 	return;
+					// }
+					//should we check match of channel key and params?
+					ch.setKey("");
 					break;
 				}
 				case 'i': {

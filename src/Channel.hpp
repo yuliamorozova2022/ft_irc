@@ -49,6 +49,8 @@ class Channel {
 		void							setTopicFlag(char sign);
 		bool							getTopicFlag() const;
 
+		void						setKey(std::string key);
+
 			// Methods
 		void	addMember(Client &client);
 		void	removeMember(Client &client);
