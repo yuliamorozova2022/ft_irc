@@ -29,7 +29,7 @@ Channel::~Channel() {
 std::string Channel::getKey() const {return _key;}
 std::string Channel::getName() const {return _name;}
 std::string Channel::getTopic() const {return _topic;}
-int Channel::getOnline() const {return _n_online;}
+int &Channel::getOnline() {return _n_online;}
 const std::map<int, Client*> &Channel::getMembers() const {return _members;}
 const std::map<int, Client*> &Channel::getInvited() const {return _invited;}
 const std::map<int, Client*> &Channel::getOpers() const {return _opers;}
@@ -137,7 +137,8 @@ void	Channel::setInviteOnly(char sign) {
 }
 
 
-void	Channel::invite(Client &client) {_invited.insert(std::pair<int, Client *> ( client.getFd(), &client));}
+void	Channel::invite(Client &client) {
+	_invited.insert(std::pair<int, Client *> ( client.getFd(), &client));}
 void	Channel::uninvite(Client &client){_invited.erase(client.getFd());}
 bool	Channel::isInvited(Client &client)
 {

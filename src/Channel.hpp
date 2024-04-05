@@ -40,7 +40,7 @@ class Channel {
 		const std::map<int, Client*>	&getMembers() const;
 		const std::map<int, Client*>	&getOpers() const;
 		const std::map<int, Client*>	&getInvited() const;
-		int								getOnline() const;
+		int								&getOnline();
 		int								getMaxLim() const;
 		bool							getInviteOnly() const;
 		void							setName(std::string new_name);

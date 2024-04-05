@@ -87,7 +87,7 @@ void Server::removeClient(int fd) {
 	Client *client_ptr = _clients.find(fd)->second;
 	delete client_ptr;
 	_clients.erase(fd);
-  _fds.removeFD(fd);
+	_fds.removeFD(fd);
 
 }
 
@@ -117,6 +117,34 @@ int Server::_setup_socket(int port) {
 	return server_fd;
 }
 
+std::string find_revent(short revent)
+{
+	std::string ret = "";
+	if (revent & POLLIN)
+		ret += "POLLIN";
+	if (revent & POLLRDNORM)
+		ret += " POLLRDNORM";
+	if (revent & POLLRDBAND)
+		ret += " POLLRDBAND";
+	if (revent & POLLPRI)
+		ret += " POLLPRI";
+	if (revent & POLLOUT)
+		ret += " POLLOUT";
+	if (revent & POLLWRNORM)
+		ret += " POLLWRNORM";
+	if (revent & POLLWRBAND)
+		ret += " POLLWRBAND";
+	if (revent & POLLERR)
+		ret += " POLLERR";
+	if (revent & POLLHUP)
+		ret += " POLLHUP";
+	if (revent & POLLNVAL)
+		ret += " POLLNVAL";
+
+	return ret;
+}
+
+
 void Server::launch() {
 	int poll_status;
 	while (!g_interrupt) {
@@ -129,9 +157,17 @@ void Server::launch() {
 			throw std::runtime_error("  poll() timed out");
 
 		for (int i = 0; i < _fds.getSize(); i++) {
-			if (_fds.getFds()[i].revents != POLLIN)
+			if (!_fds.getFds()[i].revents)				//if event wasnt on this fd
 				continue;
-			if (_fds.getFds()[i].fd == _serverFd) // called on serverfd
+			if (_fds.getFds()[i].revents != POLLIN)		//if event is not POLLIN
+			{
+				std::cout << "Unexpected event from [" << _fds.getFds()[i].fd << "]: " << _fds.getFds()[i].revents << std::endl;
+				std::cout << "	event: " << find_revent(_fds.getFds()[i].revents) << std::endl;
+				std::cout << "	removing client...." << std::endl;
+				removeClient(_fds[i].fd);
+				continue;
+			}
+			if (_fds.getFds()[i].fd == _serverFd)		// called on serverfd
 				_accept_new_connection();
 			else
 				_client_request(i);
@@ -177,7 +213,7 @@ void Server::_client_request(int i) {
 		/*If, for some other reason, a client connection is closed without  the
 	client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
 	on socket), the server is required to fill in the quit  message  with
-	some sort  of  message  reflecting the nature of the event which
+	some sort  of  message  reflecting the nature of tserverReplyhe event which
 	caused it to happen.
 		 */
 	} else
@@ -202,6 +238,13 @@ bool	Server::clientRegistered(std::string nick) const
 		}
 	return (false);
 }
+bool	Server::channelExists(std::string channelName) const
+{
+	if (_channels.find(channelName) != _channels.end())
+		return (true);
+	return (false);
+}
+
 Client	&Server::getClientByFd(int fd) {
 /* 	if (_clients.find(fd) == _clients.end())
 		return _clients.end(); */
@@ -226,6 +269,7 @@ Channel	&Server::getChannelByName(std::string channelName)
 
 int		Server::serverReply(Client &client, std::string msg)
 {
+	//maybe replies need to end in \r\n??
 	std::string newstr  = ":" + _name + " " + msg + "\n";
 	int stat = send(client.getFd(),newstr.c_str(), newstr.length(), 0);
 	return stat;
@@ -242,12 +286,14 @@ void Server::sendToEveryone(std::string msg)
 }
 void Server::sendMsgToUser(Client &sender, std::string recipient, std::string msg)
 {
-	msg = sender.getPrefix() + msg;
+	msg = sender.getPrefix() + msg + "\n";
+
 	for (std::map<int, Client *>::const_iterator it = getClients().begin();
 		it != getClients().end(); it++)
 		{
 			if (it->second->getNickName() == recipient)
 			{
+				std::cout << "sending to " << recipient << " {" + msg + "}" << std::endl;
 				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
 				return;
 			}
@@ -258,12 +304,11 @@ void Server::sendMsgToChannel(Client &sender, std::string channel, std::string m
 {
 	if (getChannelName(channel) == -1) //check channel name
 	{
-		std::cout << "{" << channel << "}" << std::endl;
 		serverReply(sender, ERR_BADCHANMASK(channel));
 		return;
 	}
 	//check if channel exists
-	if (getChannels().find(channel) == getChannels().end())
+	if (!channelExists(channel))
 	{
 		serverReply(sender, ERR_NOSUCHNICK(channel));
 		return;
