@@ -217,6 +217,12 @@ void Server::topic(Client &client, std::vector<std::string> cmd)
 		serverReply(client, RPL_NOTOPIC(channel_s));
 	else //wanting to change the channel's topic
 	{
+
+		if (!getChannelByName(channel_s).isMember(client)) //if client is not in channel
+		{
+			serverReply(client, ERR_NOTONCHANNEL(channel_s));
+			return;
+		}
 		if (!getChannelByName(channel_s).isOper(client) && getChannelByName(channel_s).getTopicFlag()) //if client is not oper
 		{
 			serverReply(client, ERR_CHANOPRIVSNEEDED(channel_s));
@@ -277,6 +283,7 @@ void Server::invite(Client &client, std::vector<std::string> cmd)
 	serverReply(client, RPL_INVITING(client, targetClient, targetChannel));
 }
 
+
 //options from client:
 // PRIVMSG <username> :[.....]	=> :client PRIVMSG <username> :[....]
 // PRIVMSG <#channel> :[.....]	=> :client PRIVMSG <#channel> :[....]
@@ -296,7 +303,7 @@ void Server::privmsg(Client &client, std::vector<std::string> cmd)
 		return;
 	}
 	std::string message = cmd[1].substr(cmd[1].find(" :"));
-	message = "PRIVMSG " + recipient + message + "\n";
+	message = "PRIVMSG " + recipient + message;
 
 	if (recipient[0] == '&' || recipient[0] == '#')
 		sendMsgToChannel(client, recipient, message);

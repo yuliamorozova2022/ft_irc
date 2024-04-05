@@ -25,6 +25,7 @@ std::string RPL_CHANNELMODEIS (std::string channel, std::string modes) {return (
 
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
 std::string RPL_NOTOPIC (std::string c) {return ("331 " + c + " :No topic is set");}
+
 /*
 	OLD VERSION: [322 <userNick> <channelname> :<usersonline>]
 std::string RPL_LIST (Client &c, Channel &ch) {

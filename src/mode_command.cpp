@@ -38,6 +38,7 @@ static bool isValidMode(std::string str, std::string *unknown) {
  */
 
 
+
 void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed()) { //not registered
 		serverReply(client, ERR_NOTREGISTERED);
@@ -110,13 +111,13 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					}
 					// Channel &ch = getChannelByName(channel);
 					Client &cl = getClientByNick(args[j]);
-					// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
+						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], channel));
+						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
 						return;
 					}
 					if (!ch.isMember(cl)) { //	in case when client exists but is not a member of channel
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], channel));
+						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
 						return;
 					}
 					ch.addOper(cl);
@@ -131,7 +132,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						// Channel &ch = getChannelByName(channel);
 						//what will happen with users in the channel in case when new max limit is less than current one
 						// or when value is 0
-						ch.setMaxLim(atol(args[j].c_str())); // should be modified for try-catch
+						ch.setMaxLim(atol(args[j].c_str())); 
 						break;
 					}
 					catch (const std::exception &e) {
@@ -139,6 +140,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						return;
 					}
 				}
+				serverReply(client,RPL_CHANNELMODEIS(ch.getName(), ch.getModes()));
 			}
 		}
 	} else {
@@ -162,7 +164,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'i': {
-					Channel &ch = getChannelByName(channel);
+					// Channel &ch = getChannelByName(channel);
 					ch.setInviteOnly('-');
 					break;
 				}
@@ -176,11 +178,11 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					Client &cl = getClientByNick(args[j]);
 						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], channel));
+						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
 						return;
 					}
 					if (!ch.isMember(cl)) { //	in case when client is not a member of channel
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], channel));
+						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
 						return;
 					}
 					ch.removeOper(cl);
@@ -198,6 +200,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					}
 				}
 			}
+			serverReply(client,RPL_CHANNELMODEIS(ch.getName(), ch.getModes()));
 		}
 	}
 

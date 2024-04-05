@@ -39,3 +39,6 @@ TODO:
 	- we never check if user is actually in the channel before sending message/ requesting topic etc (or do we?)
 	- channel modes
 	- user modes (?)
+	- file transfers (?)
+	- PART command
+	- KICK command
