@@ -36,6 +36,30 @@ const std::map<int, Client*> &Channel::getOpers() const {return _opers;}
 int	Channel::getMaxLim() const {return _max_lim;}
 bool Channel::getInviteOnly() const {return _inv_only;}
 
+std::string	Channel::getModes() {
+	std::string mode = "";
+	if (!_inv_only && _t_mode == '-' && _max_lim == 0 && _key.empty())
+		return mode;
+	mode.append("+");
+	std::string params = "";
+	if (_inv_only) {
+		mode.append("i");
+	}
+	if (_t_mode == '+') {
+		mode.append("t");
+		params.append(_topic);
+	}
+	if (_max_lim > 0) {
+		mode.append("l");
+		params.append(" " + numb_to_str(static_cast<long>(_max_lim)));
+	}
+	if (!_key.empty()) {
+		mode.append("k");
+		params.append(" " + _key);
+	}
+	return mode + params;
+}
+
 void Channel::setName(std::string new_name) {_name = new_name;}
 void Channel::setTopic(std::string new_topic) {_topic = new_topic;}
 

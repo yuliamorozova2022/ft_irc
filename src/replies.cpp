@@ -21,6 +21,7 @@ std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch) {return ("341 " +
 
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
 std::string RPL_NOTOPIC (std::string c) {return ("331 " + c + " :No topic is set");}
+std::string RPL_CHANNELMODEIS (std::string channel, std::string modes) {return ("324 " + channel + " " + modes);}
 
 std::string ERR_NORECIPIENT (std::string c) {return ("411 :No recipient given (" + c + ")");}
 std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick/channel");}

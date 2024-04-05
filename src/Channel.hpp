@@ -37,6 +37,7 @@ class Channel {
 		std::string						getName() const;
 		std::string						getTopic() const;
 		std::string						getKey() const;
+		std::string						getModes();
 		const std::map<int, Client*>	&getMembers() const;
 		const std::map<int, Client*>	&getOpers() const;
 		const std::map<int, Client*>	&getInvited() const;
