@@ -303,7 +303,7 @@ void Server::privmsg(Client &client, std::vector<std::string> cmd)
 		return;
 	}
 	std::string message = cmd[1].substr(cmd[1].find(" :"));
-	message = "PRIVMSG " + recipient + message + "\n";
+	message = "PRIVMSG " + recipient + message;
 
 	if (recipient[0] == '&' || recipient[0] == '#')
 		sendMsgToChannel(client, recipient, message);
