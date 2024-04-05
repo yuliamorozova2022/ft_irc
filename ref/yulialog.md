@@ -73,3 +73,10 @@ TODO:
 	- MODE +[-]t 
 	- MODE +[-]i
 	- MODE +[-]k
+
+
+
+05.04
+	todo:
+		toLower() should be modified to handle convertion of next symbols: []\~ to theese: {}|^
+		(for channel names or nicknames)
