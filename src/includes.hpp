@@ -23,6 +23,29 @@
 #include "PollManager.hpp"
 #include "Server.hpp"
 
+// COLORS:
+#define DEFAULT		"\e[39m"
+#define BLACK		"\e[30m"
+#define RED			"\e[31m"
+#define GREEN		"\e[32m"
+#define YELLOW		"\e[33m"
+#define BLUE		"\e[34m"
+#define MAGENTA		"\e[35m"
+#define CYAN		"\e[36m"
+#define LGRAY		"\e[37m"
+#define DGRAY		"\e[90m"
+#define LRED		"\e[91m"
+#define LGREEN		"\e[92m"
+#define LYELLOW		"\e[93m"
+#define LBLUE		"\e[94m"
+#define LMAGENTA	"\e[95m"
+#define LCYAN		"\e[96m"
+#define WHITE		"\e[97m"
+////////////////////////////////////////////////////
+
+
+
+
 class Server;
 class Channel;
 class Client;

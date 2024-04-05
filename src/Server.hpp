@@ -101,6 +101,7 @@ class Server {
 		void	topic(Client &client, std::vector<std::string> cmd);
 		void	mode(Client &client, std::vector<std::string> cmd);
 		void	invite(Client &client, std::vector<std::string> cmd);
+		void	list(Client &client, std::vector<std::string> cmd);
 };
 
 #endif
