@@ -21,11 +21,21 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch) {return ("341 " + c1.getNickName() + " " + c2.getNickName() + " "  + ch.getName());}
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}
 std::string RPL_NOTOPIC (std::string c) {return ("331 " + c + " :No topic is set");}
+/*
+	OLD VERSION: [322 <userNick> <channelname> :<usersonline>]
 std::string RPL_LIST (Client &c, Channel &ch) {
 	std::stringstream ss;
 	ss << ch.getOnline();
 	return ("322 " + c.getNickName() + " " + ch.getName() + " :" + ss.str().c_str());
+	} */
+
+	// NEW VERSION: [322 <username> <channel> <# visible> :<topic>]
+std::string RPL_LIST (Client &c, Channel &ch) {
+	std::stringstream ss;
+	ss << ch.getOnline();
+	return ("322 " + c.getNickName() +" "+ ch.getName() + " " + ss.str().c_str() + " :" + ch.getTopic());
 	}
+// :lithium.libera.chat 322 nroth #_ 3 :
 std::string RPL_LISTEND (Client &c) {return ("323 " + c.getNickName() + " :End of LIST");}
 
 

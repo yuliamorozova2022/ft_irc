@@ -27,11 +27,15 @@
 	- modified NAMES to append '@' to mods.
 	- working on join - checking invite list if channel is set to invite-only
 	- added clause to check if channel is invite_only in JOIN. no testing bc idk how to add flag to channel currently but should be fine
+5.04
+	- LIST works
+	- deleted file 'privmsg_command.cpp'. now all commands are in commands.cpp
+	- added color definitions in include.hpp
+	- added rule to skip client prefix if is present
+
 
 TODO:
 	- make sure JOIN command works with multiple channels/keys
-	- we never check if user is actually in the channel before sending message/ requesting topic etc
+	- we never check if user is actually in the channel before sending message/ requesting topic etc (or do we?)
 	- channel modes
 	- user modes (?)
-	- ignore user's prefix, if appears in command
-	- MODE command?

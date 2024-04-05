@@ -25,6 +25,9 @@ void Server::execCmd(Client &client, std::string args){
 
 	std::cout << MAGENTA << client.getPrefix() + ": " << args << DEFAULT << std::endl;
 
+	if (args[0] == ':') // if prefix is present
+		args = args.substr(args.find_first_of(' ') + 1);
+
 	size_t i = args.find_first_of(' ');
 	cmd.push_back(args.substr(0, i));
 	// for avoiding duplication of command
@@ -212,9 +215,9 @@ void Server::topic(Client &client, std::vector<std::string> cmd)
 		serverReply(client, RPL_TOPIC(client, *(getChannels().find(channel_s)->second)));
 	else if (args.size() == 1 && getChannelByName(channel_s).getTopic().empty()) //if topic is empty
 		serverReply(client, RPL_NOTOPIC(channel_s));
-	else //wanting to chage the channel's topic
+	else //wanting to change the channel's topic
 	{
-		if (!getChannelByName(channel_s).isOper(client)) //if client is not oper
+		if (!getChannelByName(channel_s).isOper(client) && getChannelByName(channel_s).getTopicFlag()) //if client is not oper
 		{
 			serverReply(client, ERR_CHANOPRIVSNEEDED(channel_s));
 			return;
@@ -408,7 +411,10 @@ void Server::list(Client &client, std::vector<std::string> cmd)
 	{
 		for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 		it != _channels.end(); it++)
+		{
 			serverReply(client, RPL_LIST(client, *it->second));
+			std::cout << LMAGENTA << RPL_LIST(client, *it->second) << DEFAULT << std::endl;
+		}
 
 	}
 	else if (cmd.size() == 2)
@@ -418,9 +424,15 @@ void Server::list(Client &client, std::vector<std::string> cmd)
 		it != channelNames.end(); it++)
 		{
 			if (channelExists(*it))
+			{
 				serverReply(client, RPL_LIST(client, getChannelByName(*it)));
+				std::cout << LMAGENTA << RPL_LIST(client, getChannelByName(*it)) << DEFAULT << std::endl;
+
+			}
 			else
+			{
 				serverReply(client, ERR_NOSUCHCHANNEL(*it));
+			}
 		}
 	}
 	serverReply(client, RPL_LISTEND(client));
