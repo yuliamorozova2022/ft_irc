@@ -52,6 +52,8 @@ bool Channel::getTopicFlag() const {
 		return true;
 }
 
+void Channel::setKey(std::string key) {_key = key;}
+
 	//methods
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
