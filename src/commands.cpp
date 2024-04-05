@@ -15,6 +15,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("TOPIC", &Server::topic));
 	_cmds.insert(std::pair<std::string, func> ("MODE", &Server::mode));
 	_cmds.insert(std::pair<std::string, func> ("INVITE", &Server::invite));
+	_cmds.insert(std::pair<std::string, func> ("LIST", &Server::list));
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -388,8 +389,39 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 	}
 }
 
+/*
+reply to [/LIST] with one channel:
 
+	:master.ircgod.com 322 nroth #linux :1
+	:master.ircgod.com 323 nroth :End of LIST
+
+RPL_LIST: 322 <username> <channelname> :<channelcount>
+
+
+*/
 void Server::list(Client &client, std::vector<std::string> cmd)
 {
-	//todo
+	std::vector<Channel> channelList;
+	std::vector<std::string> channelNames;
+
+	if (cmd.size() == 1)
+	{
+		for (std::map<std::string, Channel *>::iterator it = _channels.begin();
+		it != _channels.end(); it++)
+			serverReply(client, RPL_LIST(client, *it->second));
+
+	}
+	else if (cmd.size() == 2)
+	{
+		channelNames = split(cmd[1], ",");
+		for (std::vector<std::string>::iterator it = channelNames.begin();
+		it != channelNames.end(); it++)
+		{
+			if (channelExists(*it))
+				serverReply(client, RPL_LIST(client, getChannelByName(*it)));
+			else
+				serverReply(client, ERR_NOSUCHCHANNEL(*it));
+		}
+	}
+	serverReply(client, RPL_LISTEND(client));
 }

@@ -16,7 +16,7 @@
 #include <string>
 #include <cctype>
 #include <climits>
-
+#include <sstream>
 
 #include "Channel.hpp"
 #include "Client.hpp"
@@ -68,6 +68,9 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch);
 std::string RPL_TOPIC (Client &c, Channel &ch);
 std::string RPL_NOTOPIC (std::string c);
 std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch);
+std::string RPL_LIST (Client &c, Channel &ch);
+std::string RPL_LISTEND (Client &c);
+
 
 std::string ERR_INVITEONLYCHAN (std::string c);
 std::string ERR_NICKNAMEINUSE (std::string c);

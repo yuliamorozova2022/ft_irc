@@ -238,6 +238,13 @@ bool	Server::clientRegistered(std::string nick) const
 		}
 	return (false);
 }
+bool	Server::channelExists(std::string channelName) const
+{
+	if (_channels.find(channelName) != _channels.end())
+		return (true);
+	return (false);
+}
+
 Client	&Server::getClientByFd(int fd) {
 /* 	if (_clients.find(fd) == _clients.end())
 		return _clients.end(); */
@@ -297,12 +304,11 @@ void Server::sendMsgToChannel(Client &sender, std::string channel, std::string m
 {
 	if (getChannelName(channel) == -1) //check channel name
 	{
-		std::cout << "{" << channel << "}" << std::endl;
 		serverReply(sender, ERR_BADCHANMASK(channel));
 		return;
 	}
 	//check if channel exists
-	if (getChannels().find(channel) == getChannels().end())
+	if (!channelExists(channel))
 	{
 		serverReply(sender, ERR_NOSUCHNICK(channel));
 		return;
