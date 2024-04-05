@@ -217,6 +217,12 @@ void Server::topic(Client &client, std::vector<std::string> cmd)
 		serverReply(client, RPL_NOTOPIC(channel_s));
 	else //wanting to change the channel's topic
 	{
+
+		if (!getChannelByName(channel_s).isMember(client)) //if client is not in channel
+		{
+			serverReply(client, ERR_NOTONCHANNEL(channel_s));
+			return;
+		}
 		if (!getChannelByName(channel_s).isOper(client) && getChannelByName(channel_s).getTopicFlag()) //if client is not oper
 		{
 			serverReply(client, ERR_CHANOPRIVSNEEDED(channel_s));
