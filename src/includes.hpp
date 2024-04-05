@@ -45,6 +45,7 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch);
 std::string RPL_TOPIC (Client &c, Channel &ch);
 std::string RPL_NOTOPIC (std::string c);
 std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch);
+std::string RPL_CHANNELMODEIS (std::string channel, std::string modes);
 
 std::string ERR_INVITEONLYCHAN (std::string c);
 std::string ERR_NICKNAMEINUSE (std::string c);
@@ -60,6 +61,7 @@ std::string ERR_USERONCHANNEL (Client &c, Channel &ch);
 std::string ERR_NOTONCHANNEL (std::string c);
 std::string ERR_UNKNOWNMODE (std::string mode, std::string channel);
 std::string ERR_USERNOTINCHANNEL (std::string user, std::string channel);
+std::string ERR_KEYSET (std::string c);
 
 
 //tools.cpp

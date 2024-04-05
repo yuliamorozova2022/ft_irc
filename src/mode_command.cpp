@@ -47,18 +47,13 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 		return;
 	}
-	//args[0] - channelname; args[1] - modes; further args[i] - arguments for modes
+			//args[0] - channelname; args[1] - modes; further args[i] - arguments for modes
 	std::vector<std::string> args = split(cmd[1], " ");
 	std::string channel = toLower(args[0]);
-//	std::cout << "converted channel name is " << channel << std::endl;
-//	std::cout << "args[0] is " << args[0] << std::endl;
 	if ((args.size() < 2) || (args.size() >= 2 && args[1].empty())) { //not enough parameters
 		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 		return;
 	}
-		//channel check
-		// Channel names should be case insensitive
-		// need to check if user is in the channel?
 	std::map<std::string, Channel *> tmp = getChannels();
 	if (tmp.find(channel) == tmp.end()) { // checks actually channel name
 		serverReply(client, ERR_USERNOTINCHANNEL(client.getNickName(), args[0]));
@@ -72,16 +67,15 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 			serverReply(client, ERR_UNKNOWNMODE(args[1], channel));
 		return;
 	}
-
-	if (!getChannelByName(channel).isOper(client)) { // client is not an oper
-		serverReply(client, ERR_CHANOPRIVSNEEDED(channel));
+	Channel &ch = getChannelByName(channel);
+	if (!ch.isOper(client)) { // client is not an oper
+		serverReply(client, ERR_CHANOPRIVSNEEDED(ch.getName()));
 		return;
 	}
 //	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
 		// MODE +ik key
 		std::string mode = args[1];
 		args.erase(args.begin(), args.begin() + 2); // now there are only arguments for modes, or it's empty
-
 	if (mode[0] == '+') {
 		mode.erase(mode.begin());
 		for (int j = 0; j < mode.size(); j++) {
@@ -105,7 +99,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'i': {
-					Channel &ch = getChannelByName(channel);
+					// Channel &ch = getChannelByName(channel);
 					ch.setInviteOnly('+');
 					break;
 				}
@@ -114,7 +108,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
-					Channel &ch = getChannelByName(channel);
+					// Channel &ch = getChannelByName(channel);
 					Client &cl = getClientByNick(args[j]);
 					// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
@@ -134,7 +128,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						return;
 					}
 					try {
-						Channel &ch = getChannelByName(channel);
+						// Channel &ch = getChannelByName(channel);
 						//what will happen with users in the channel in case when new max limit is less than current one
 						// or when value is 0
 						ch.setMaxLim(atol(args[j].c_str())); // should be modified for try-catch
@@ -178,7 +172,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
-					Channel &ch = getChannelByName(channel);
+					// Channel &ch = getChannelByName(channel);
 					Client &cl = getClientByNick(args[j]);
 						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
@@ -194,7 +188,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 				}
 				case 'l': {
 					try {
-						Channel &ch = getChannelByName(channel);
+						// Channel &ch = getChannelByName(channel);
 						ch.setMaxLim(0);
 						break;
 					}
