@@ -13,6 +13,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <netdb.h>
+#include <sstream>
 #include <string>
 #include <cctype>
 #include <climits>
@@ -68,6 +69,7 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch);
 std::string RPL_TOPIC (Client &c, Channel &ch);
 std::string RPL_NOTOPIC (std::string c);
 std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch);
+std::string RPL_CHANNELMODEIS (std::string channel, std::string modes);
 
 std::string RPL_CHANNELMODEIS (std::string channel, std::string modes);
 
@@ -97,5 +99,6 @@ bool						allowed_symbol_check(std::string params);
 std::vector<std::string>	split(std::string str, std::string separator);
 int							getChannelName(std::string &cname);
 std::string					toLower(std::string str);
+std::string                 numb_to_str(long n);
 
 #endif

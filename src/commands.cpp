@@ -277,6 +277,7 @@ void Server::invite(Client &client, std::vector<std::string> cmd)
 	serverReply(client, RPL_INVITING(client, targetClient, targetChannel));
 }
 
+
 //options from client:
 // PRIVMSG <username> :[.....]	=> :client PRIVMSG <username> :[....]
 // PRIVMSG <#channel> :[.....]	=> :client PRIVMSG <#channel> :[....]

@@ -116,3 +116,10 @@ std::string toLower(std::string str) {
 	}
 	return str;
 }
+
+
+std::string numb_to_str(long n) {
+	std::ostringstream str1;
+	str1 << n;
+ 	return str1.str();
+}
