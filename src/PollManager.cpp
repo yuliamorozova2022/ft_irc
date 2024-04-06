@@ -35,7 +35,7 @@ PollManager::~PollManager() {
 	for (int i = 0; i < _cur_size; i++) {
 		if (_fds[i].fd != -1)
 		{
-	std::cout << "closing " << _fds[i].fd << std::endl;
+			std::cout << BLUE <<"closing " << _fds[i].fd<< DEFAULT << std::endl;
 			close (_fds[i].fd);
 
 		}
@@ -81,15 +81,26 @@ void PollManager::addFD(int fd, short events) {
 void PollManager::removeFD(int fd) {
 	for (int i = 0; i < _cur_size; i++) {
 		if (_fds[i].fd == fd) {
+		std::cout << BLUE <<"closing " << _fds[i].fd<< DEFAULT << std::endl;
+
 			close (_fds[i].fd);
-			for (int j = i; j < _cur_size - 1; j++) {
-				_fds[j].fd = _fds[j + 1].fd;
-				_fds[j].events = _fds[j + 1].events;
+			for (int j = i; j < _cur_size; j++) {
+				if (j == _cur_size - 1)
+				{
+					_fds[j].fd = -1;
+					_fds[j].events = 0;
+				}
+				else
+				{
+					_fds[j].fd = _fds[j + 1].fd;
+					_fds[j].events = _fds[j + 1].events;
+				}
 			}
 			_cur_size --;
 		}
 	}
 }
+
 
 int	PollManager::poll(int timeout) {
 	return (::poll(getFds(), getSize(), timeout));
