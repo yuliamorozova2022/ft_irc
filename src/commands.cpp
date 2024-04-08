@@ -23,7 +23,7 @@ void Server::execCmd(Client &client, std::string args){
 
 	args = args.substr(0, args.find('\r'));
 
-	std::cout << MAGENTA << client.getPrefix() + ": " << args << DEFAULT << std::endl;
+	std::cout << get_date_time() << ": " << MAGENTA << client.getPrefix() + ": " << args << DEFAULT << std::endl;
 
 	if (args[0] == ':') // if prefix is present
 		args = args.substr(args.find_first_of(' ') + 1);
@@ -68,7 +68,6 @@ void Server::nick(Client &client, std::vector<std::string> cmd) {
 				return;
 			}
 		}
-
 		if (client.isRegistered()) // if is changing their nickname
 			sendToEveryone(client.getPrefix() + "NICK " + cmd[1]);
 
@@ -90,7 +89,6 @@ void Server::user(Client &client, std::vector<std::string> cmd) {
 		client.setUserName(cmd[1].substr(0, cmd[1].find_first_of(' ')));
 		if (client.getNickName() != "") {
 			welcomeClient(client);
-
 		}
 	}
 }
@@ -111,6 +109,7 @@ void Server::quit(Client &client, std::vector<std::string> cmd) {
 		it->second->removeMember(client);
 	}
 	removeClient(tmp_fd);
+	std::cout << get_date_time() << ": ";
 	std::cout << "  from " << tmp_fd << ": " << "Connection closed" << std::endl;
 }
 

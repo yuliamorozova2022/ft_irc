@@ -20,9 +20,9 @@ int Server::_get_set_port(const std::string port_s) {
 	// Constructors
 Server::Server(const std::string port, std::string serverPass) : _name(SERVER_NAME), _serverFd(_get_set_port(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 	if (_serverFd == -1)
-		throw std::invalid_argument("Port number invalid, must be int between [0; 65535]");
+		throw std::invalid_argument(get_date_time() + ": Port number invalid, must be int between [0; 65535]");
 
-	std::cout << "adding server fd..." << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ":adding server fd..." << "\e[0m" << std::endl;
 
 	_fds.addFD(_serverFd);
 	setupCmds();
@@ -41,13 +41,13 @@ Server::~Server() {
 	for (std::map<int, Client *>::iterator it = _clients.begin();
 			it != _clients.end(); it ++)
 			{
-				std::cout << "deleting " << it->first << std::endl;
+				std::cout << get_date_time() << ": deleting " << it->first << std::endl;
 				delete(it->second);
 			}
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 			it != _channels.end(); it ++)
 			{
-				std::cout << "deleting " << it->first << std::endl;
+				std::cout << get_date_time() << ":deleting " << it->first << std::endl;
 				delete(it->second);
 			}
 	std::cout << "\e[92mDestructor of Server called\e[0m" << std::endl;
@@ -100,20 +100,20 @@ int Server::_setup_socket(int port) {
 	// Creating socket file descriptor
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_fd < 0)
-		throw std::runtime_error("socket() failed");
+		throw std::runtime_error(get_date_time() + ": socket() failed");
 	int opt = 1;
 	// Forcefully attaching socket to the port
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
-		throw std::runtime_error("setsockopt() failed");
+		throw std::runtime_error(get_date_time() + ": setsockopt() failed");
 	// Setting server fd to non-blocking
 	if (fcntl(server_fd, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("fcntl() failed");
+		throw std::runtime_error(get_date_time() + ": fcntl() failed");
 
 	// Forcefully attaching socket to the port specified
 	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-		throw std::runtime_error("bind() failed");
+		throw std::runtime_error(get_date_time() + ": bind() failed");
 	if (listen(server_fd, 3) < 0)
-		throw std::runtime_error("listen() failed");
+		throw std::runtime_error(get_date_time() + ": listen() failed");
 	return server_fd;
 }
 
@@ -151,16 +151,18 @@ void Server::launch() {
 		poll_status = _fds.poll(POLL_TIMEOUT);
 		if (poll_status < 0) {
 			if (errno != EINTR) //interrupted system call
-				throw std::runtime_error("  poll() failed");
+				throw std::runtime_error(get_date_time() + ": poll() failed");
 		}
 		else if (poll_status == 0)
-			throw std::runtime_error("  poll() timed out");
+			throw std::runtime_error(get_date_time() + ": poll() timed out");
 
 		for (int i = 0; i < _fds.getSize(); i++) {
 			if (!_fds.getFds()[i].revents)				//if event wasnt on this fd
 				continue;
-			if (_fds.getFds()[i].revents != POLLIN)		//if event is not POLLIN
+			if ((_fds.getFds()[i].revents & POLLIN) == 0)
+//				if (_fds.getFds()[i].revents != POLLIN)//if event is not POLLIN
 			{
+				std::cout << get_date_time() << ": ";
 				std::cout << "Unexpected event from [" << _fds.getFds()[i].fd << "]: " << _fds.getFds()[i].revents << std::endl;
 				std::cout << "	event: " << find_revent(_fds.getFds()[i].revents) << std::endl;
 				std::cout << "	removing client...." << std::endl;
@@ -185,14 +187,16 @@ void Server::_accept_new_connection() {
 	new_connection = accept(_serverFd, reinterpret_cast<sockaddr *>(&s_address), &s_size);
 
 	if (fcntl(new_connection, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("fcntl() failed");
+		throw std::runtime_error(get_date_time() + ": fcntl() failed");
 
 	if (new_connection < 0)
-		throw std::runtime_error("  accept() for new client failed");
+		throw std::runtime_error(get_date_time() + ": accept() for new client failed");
 	else {
+
+		std::cout << get_date_time() << ": ";
 		std::cout << "  New incoming connection " << new_connection << std::endl;
 		if (getnameinfo((struct sockaddr *) &s_address, sizeof(s_address), hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) != 0)
-			throw std::runtime_error("Error while getting hostname on new client.");
+			throw std::runtime_error(get_date_time() + ": Error while getting hostname on new client.");
 
 		_fds.addFD(new_connection);
 		createClient(new_connection, hostname);
@@ -203,21 +207,26 @@ void Server::_client_request(int i) {
 	std::vector<char> buf_vec(5000);
 	std::fill(buf_vec.begin(), buf_vec.end(), 0);
 	int stat;
-	std::string msg = get_command(getClientByFd(_fds[i].fd), stat);
-	if (stat == 0) {
-		std::cout << "  from " << _fds[i].fd
-		<< ": "
-		<< "Connection closed"
-		<< std::endl;
-		removeClient(_fds[i].fd);
-		/*If, for some other reason, a client connection is closed without  the
-	client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
-	on socket), the server is required to fill in the quit  message  with
-	some sort  of  message  reflecting the nature of tserverReplyhe event which
-	caused it to happen.
-		 */
-	} else
-		execCmd (getClientByFd(_fds[i].fd), msg);
+	while (true) { //loop is needed to read all info from socket
+		std::string msg = get_command(getClientByFd(_fds[i].fd), stat);
+		if (msg == "") //exit from loop condition
+			return;
+		if (stat == 0) {
+			std::cout << get_date_time() << ": ";
+			std::cout << "  from " << _fds[i].fd
+					  << ": "
+					  << "Connection closed"
+					  << std::endl;
+			removeClient(_fds[i].fd);
+			/*If, for some other reason, a client connection is closed without  the
+		client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
+		on socket), the server is required to fill in the quit  message  with
+		some sort  of  message  reflecting the nature of the serverReply event which
+		caused it to happen.
+			 */
+		} else
+			execCmd(getClientByFd(_fds[i].fd), msg);
+	}
 
 }
 
@@ -278,8 +287,7 @@ int		Server::serverReply(Client &client, std::string msg)
 void Server::sendToEveryone(std::string msg)
 { //does not append the server/client prefix!
 	std::string newstr  =  msg + "\n";
-	for (std::map<int, Client *>::const_iterator it = getClients().begin();
-	it != getClients().end(); it++)
+	for (std::map<int, Client *>::const_iterator it = getClients().begin(); it != getClients().end(); it++)
 	{
 		send(it->second->getFd(), newstr.c_str(), newstr.length(), 0);
 	}
@@ -293,6 +301,7 @@ void Server::sendMsgToUser(Client &sender, std::string recipient, std::string ms
 		{
 			if (it->second->getNickName() == recipient)
 			{
+				std::cout << get_date_time() << ": ";
 				std::cout << "sending to " << recipient << " {" + msg + "}" << std::endl;
 				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
 				return;

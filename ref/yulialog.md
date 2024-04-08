@@ -84,3 +84,9 @@ TODO:
 		- update join
 		- add kick and part
 		- test everything
+
+08.04
+	- need to test modes case when channel name starts from +
+	- uploaded modified server.cpp with loop in _client_request()
+	- added function get_date_time() to print time on each output in server
+	- added time in server output for debugging purposes

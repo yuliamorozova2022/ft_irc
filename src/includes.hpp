@@ -19,6 +19,8 @@
 #include <climits>
 #include <sstream>
 
+#include <ctime>
+
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "PollManager.hpp"
@@ -100,5 +102,6 @@ std::vector<std::string>	split(std::string str, std::string separator);
 int							getChannelName(std::string &cname);
 std::string					toLower(std::string str);
 std::string                 numb_to_str(long n);
+std::string 				get_date_time();
 
 #endif

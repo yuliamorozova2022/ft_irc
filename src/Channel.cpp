@@ -5,7 +5,7 @@
 Channel::Channel(std::string name, Client& creator)
 :_name(name), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
 
-	std::cout << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
 	_key = "";
@@ -14,7 +14,7 @@ Channel::Channel(std::string name, Client& creator)
 Channel::Channel(std::string name, std::string key, Client& creator)
 :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
 
-	std::cout << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addOper(creator);
 	_topic = "";
 }
@@ -22,7 +22,7 @@ Channel::Channel(std::string name, std::string key, Client& creator)
 
 	// Destructor
 Channel::~Channel() {
-	std::cout << "\e[92mDestructor called for Channel " << _name << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mDestructor called for Channel " << _name << "\e[0m" << std::endl;
 }
 
 	// Getters / Setters
@@ -81,25 +81,25 @@ void Channel::setKey(std::string key) {_key = key;}
 	//methods
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
-	std::cout << "\e[92mAdding member " << client.getNickName() << " to " << _name << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mAdding member " << client.getNickName() << " to " << _name << "\e[0m" << std::endl;
 	client.addChannel(this);
 }
 
 void Channel::removeMember(Client &client) {
 	_members.erase(client.getFd());
-	std::cout << "\e[92mRemoving member " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mRemoving member " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
 	client.removeChannel(this);
 }
 
 void Channel::addOper(Client &client) {
 	_opers.insert(std::pair<int, Client *> ( client.getFd(), &client));
-	std::cout << "\e[92mAdding oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mAdding oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
 	addMember(client);
 }
 
 void Channel::removeOper(Client &client) {
 	_opers.erase(client.getFd());
-	std::cout << "\e[92mRemoving oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mRemoving oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
 	removeMember(client);
 }
 
@@ -116,7 +116,7 @@ void	Channel::sendToAll(Client &client, std::string msg)
 		{
 			stat = send(it->second->getFd(),msg.c_str(), msg.length(), 0);
 			if (stat == -1)
-				throw std::runtime_error("sendToAll () failed!");
+				throw std::runtime_error(get_date_time() + " sendToAll () failed!");
 		}
 	}
 }
@@ -130,7 +130,7 @@ void	Channel::sendToClient(Client &client, std::string msg)
 	{
 		stat = send(client.getFd(),msg.c_str(), msg.length(), 0);
 		if (stat == -1)
-			throw std::runtime_error("sendToAll () failed!");
+			throw std::runtime_error(get_date_time() + " sendToAll () failed!");
 	}
 }
 
@@ -147,7 +147,7 @@ bool	Channel::isMember(Client &client) {
 
 bool	Channel::setMaxLim(long n) {
 	if (n < 0 || n > UINT_MAX)
-		throw std::runtime_error("recived number is not valid for limit!");
+		throw std::runtime_error(get_date_time() + "recived number is not valid for limit!");
 		//return false; //should throw
 	_max_lim = static_cast<unsigned int>(n);
 	return true;

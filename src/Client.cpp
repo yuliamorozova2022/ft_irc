@@ -10,7 +10,7 @@ Client::Client(std::string userName, std::string nickName, int fd, std::string h
 	_auth = false;
 	_msgBuffer = "";
 
-	std::cout << "\e[0;33mFields Constructor called of Client\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[0;33mFields Constructor called of Client\e[0m" << std::endl;
 }
 Client::Client(int fd, std::string host): _fd(fd) {
 	_nickName = "";
@@ -20,12 +20,12 @@ Client::Client(int fd, std::string host): _fd(fd) {
 	_auth = false;
 	_msgBuffer = "";
 
-	std::cout << "\e[0;33mFields Constructor called of Client\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[0;33mFields Constructor called of Client\e[0m" << std::endl;
 }
 
 	// Destructor
 Client::~Client() {
-	std::cout << "\e[92mDestructor called of Client " << _userName <<"\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mDestructor called of Client " << _userName <<"\e[0m" << std::endl;
 }
 
 	// Getters
@@ -43,18 +43,18 @@ void Client::setUserName(std::string userName) {
 	if (_userName == "")
 		_userName = userName;
 };
-void Client::setAuth() { _auth = true;	std::cout << "\e[0;33muser " + _nickName + " authenticated\e[0m" << std::endl;}
-void Client::setRegistered() { _registered = true;	std::cout << "\e[0;33muser " + _nickName + " registered\e[0m" << std::endl;}
+void Client::setAuth() { _auth = true;	std::cout << get_date_time() << ": " << "\e[0;33muser " + _nickName + " authenticated\e[0m" << std::endl;}
+void Client::setRegistered() { _registered = true;	std::cout << get_date_time() << ": " << "\e[0;33muser " + _nickName + " registered\e[0m" << std::endl;}
 
 	//methods
 void	Client::addChannel(Channel *channel) {
 	_joinedChannels.insert(std::pair<std::string, Channel *>( channel->getName(), channel ));
-	std::cout << "\e[92mAdding channel " << channel->getName() << " to " << _nickName << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mAdding channel " << channel->getName() << " to " << _nickName << "\e[0m" << std::endl;
 }
 
 void	Client::removeChannel(Channel *channel) {
 	_joinedChannels.erase(channel->getName());
-	std::cout << "\e[92mRemoving channel " << channel->getName() << " from " << _nickName << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": " << "\e[92mRemoving channel " << channel->getName() << " from " << _nickName << "\e[0m" << std::endl;
 }
 
 const std::string &Client::getMsgBuffer() const {return _msgBuffer;}

@@ -15,7 +15,7 @@ std::string get_command(Client &client, int &stat)
 		if (stat == -1)
 		{
 			if (errno != EWOULDBLOCK)
-				throw std::runtime_error("  recv() failed");
+				throw std::runtime_error(get_date_time() + ": recv() failed");
 			return "";
 		}
 		if (stat == 0)
@@ -122,4 +122,17 @@ std::string numb_to_str(long n) {
 	std::ostringstream str1;
 	str1 << n;
  	return str1.str();
+}
+
+std::string get_date_time() {
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer[100];
+
+	time (&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer,sizeof(buffer),"%d-%m-%Y [%H:%M:%S]",timeinfo);
+	std::string str(buffer);
+	return str;
 }

@@ -1,4 +1,5 @@
 #include "PollManager.hpp"
+#include "includes.hpp"
 
 static struct pollfd *init_fds(int max_size) {
 	struct pollfd *fds = new struct pollfd[max_size];
@@ -35,7 +36,8 @@ PollManager::~PollManager() {
 	for (int i = 0; i < _cur_size; i++) {
 		if (_fds[i].fd != -1)
 		{
-			std::cout  <<"closing " << _fds[i].fd << std::endl;
+			std::cout << BLUE <<"closing " << _fds[i].fd<< DEFAULT << std::endl;
+//			std::cout  <<"closing " << _fds[i].fd << std::endl;
 			close (_fds[i].fd);
 
 		}
@@ -81,7 +83,8 @@ void PollManager::addFD(int fd, short events) {
 void PollManager::removeFD(int fd) {
 	for (int i = 0; i < _cur_size; i++) {
 		if (_fds[i].fd == fd) {
-		std::cout  <<"closing " << _fds[i].fd << std::endl;
+			std::cout << BLUE <<"closing " << _fds[i].fd<< DEFAULT << std::endl;
+//		std::cout  <<"closing " << _fds[i].fd << std::endl;
 
 			close (_fds[i].fd);
 			for (int j = i; j < _cur_size; j++) {
