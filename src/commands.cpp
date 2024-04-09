@@ -17,6 +17,7 @@ void Server::setupCmds(void) {
 	_cmds.insert(std::pair<std::string, func> ("INVITE", &Server::invite));
 	_cmds.insert(std::pair<std::string, func> ("LIST", &Server::list));
 	_cmds.insert(std::pair<std::string, func> ("KICK", &Server::kick));
+	_cmds.insert(std::pair<std::string, func> ("PART", &Server::part));
 }
 
 void Server::execCmd(Client &client, std::string args){
@@ -134,7 +135,7 @@ void Server::help(Client &client, std::vector<std::string> cmd) {
 	info.append("\e[1;35m"); //purple color
 	info.append("AVAILABLE COMMANDS:\n");
 	info.append("\e[0m");
-	info.append("\tHELP\n\tPASS\n\tNICK\n\tUSER\n\tQUIT\nPRIVMSG\nPING\nTOPIC\nNAMES\nJOIN\n");
+	info.append("\tHELP\n\tPASS\n\tNICK\n\tUSER\n\tQUIT\nPRIVMSG\nPING\nTOPIC\nNAMES\nJOIN\nMODE\nLIST\nINVITE\nKICK\nPART\n");
 	info.append("\e[0m");
 	serverReply(client, info);
 }
@@ -318,7 +319,7 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	s.push_back(channel.getName());
 	s.push_back(channel.getName());
 
-	channel.getOnline()++;
+//	channel.getOnline()++;
 	std::cout << channel.getName() << " online: " << channel.getOnline() << std::endl;
 	server.serverReply(client, RPL_TOPIC(client, channel));
 	channel.sendToAll(client, "JOIN " + channel.getName());
@@ -459,7 +460,7 @@ void Server::kick(Client &client, std::vector<std::string> cmd)
 	
 	
 
-	std::string channelname = split(cmd[1], " ")[0];
+	std::string channelname = toLower(split(cmd[1], " ")[0]);
 	std::string clientname = split(cmd[1], " ")[1];
 	if (!clientRegistered(clientname))
 	{
@@ -485,4 +486,38 @@ void Server::kick(Client &client, std::vector<std::string> cmd)
 
 	sendMsgToChannel(client, channelname, cmd[0] +" "+ cmd[1] + " " + msg);
 	getChannelByName(channelname).removeMember(getClientByNick(clientname));
+}
+
+
+
+//Command: PART
+//   Parameters: <channel> *( "," <channel> ) [ <Part Message> ]
+//Numeric Replies:
+//           ERR_NEEDMOREPARAMS   ERR_NOSUCHCHANNEL   ERR_NOTONCHANNEL
+
+//:WiZ!jto@tolsun.oulu.fi PART #playzone :I lost
+void Server::part(Client &client, std::vector<std::string> cmd) {
+	if (cmd.size() < 2) {
+		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+		return ;
+	}
+	std::string msg = "";
+	if (cmd[1].find(" :") != std::string::npos) {
+		msg = cmd[1].substr(cmd[1].find(':'));
+		cmd[1] = cmd[1].substr(0, cmd[1].find(" :"));
+	}
+	std::vector<std::string> channels = split(cmd[1], ",");
+	for (int i = 0; i < channels.size(); ++i) {
+		if (channels[i].empty() || !channelExists(toLower(channels[i]))) {
+			serverReply(client, ERR_NOSUCHCHANNEL(channels[i]));
+			return;
+		}
+		Channel &tmp = getChannelByName(toLower(channels[i]));
+		if (!tmp.isMember(client)) {
+			serverReply(client, ERR_NOTONCHANNEL(channels[i]));
+			return;
+		}
+		sendMsgToChannel(client, tmp.getName(), msg);
+		tmp.removeMember(client);
+	}
 }

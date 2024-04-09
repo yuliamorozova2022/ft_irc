@@ -6,6 +6,7 @@ Channel::Channel(std::string name, Client& creator)
 :_name(name), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
 
 	std::cout << get_date_time() << ": " << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
+	addMember(creator);
 	addOper(creator);
 	_topic = "";
 	_key = "";
@@ -15,6 +16,7 @@ Channel::Channel(std::string name, std::string key, Client& creator)
 :_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
 
 	std::cout << get_date_time() << ": " << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
+	addMember(creator);
 	addOper(creator);
 	_topic = "";
 }
@@ -83,24 +85,26 @@ void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
 	std::cout << get_date_time() << ": " << "\e[92mAdding member " << client.getNickName() << " to " << _name << "\e[0m" << std::endl;
 	client.addChannel(this);
+	_n_online++;
 }
 
 void Channel::removeMember(Client &client) {
 	_members.erase(client.getFd());
 	std::cout << get_date_time() << ": " << "\e[92mRemoving member " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
 	client.removeChannel(this);
+	_n_online--;
 }
 
 void Channel::addOper(Client &client) {
 	_opers.insert(std::pair<int, Client *> ( client.getFd(), &client));
 	std::cout << get_date_time() << ": " << "\e[92mAdding oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
-	addMember(client);
+//	addMember(client);
 }
 
 void Channel::removeOper(Client &client) {
 	_opers.erase(client.getFd());
 	std::cout << get_date_time() << ": " << "\e[92mRemoving oper " << client.getNickName() << " from " << _name << "\e[0m" << std::endl;
-	removeMember(client);
+//	removeMember(client);
 }
 
 void	Channel::sendToAll(Client &client, std::string msg)

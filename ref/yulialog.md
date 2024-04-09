@@ -90,3 +90,8 @@ TODO:
 	- uploaded modified server.cpp with loop in _client_request()
 	- added function get_date_time() to print time on each output in server
 	- added time in server output for debugging purposes
+
+09.04
+	- draft for PART function.
+	- _n_online behaves weird in channel, maybe logic must be more complicated //fixed
+		WHY do we call addMember function inside addOper func????? 

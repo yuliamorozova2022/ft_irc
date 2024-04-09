@@ -104,6 +104,7 @@ class Server {
 		void	invite(Client &client, std::vector<std::string> cmd);
 		void	list(Client &client, std::vector<std::string> cmd);
 		void	kick(Client &client, std::vector<std::string> cmd);
+		void	part(Client &client, std::vector<std::string> cmd);
 };
 
 #endif
