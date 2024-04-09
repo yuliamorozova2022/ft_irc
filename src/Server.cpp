@@ -207,17 +207,18 @@ void Server::_client_request(int i) {
 	std::vector<char> buf_vec(5000);
 	std::fill(buf_vec.begin(), buf_vec.end(), 0);
 	int stat;
-	while (true) { //loop is needed to read all info from socket
-		std::string msg = get_command(getClientByFd(_fds[i].fd), stat);
+	int fd = _fds[i].fd;
+	while (clientRegistered(fd)) { //loop is needed to read all info from socket
+		std::string msg = get_command(getClientByFd(fd), stat);
 		if (msg == "") //exit from loop condition
 			return;
 		if (stat == 0) {
 			std::cout << get_date_time() << ": ";
-			std::cout << "  from " << _fds[i].fd
+			std::cout << "  from " << fd
 					  << ": "
 					  << "Connection closed"
 					  << std::endl;
-			removeClient(_fds[i].fd);
+			removeClient(fd);
 			/*If, for some other reason, a client connection is closed without  the
 		client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs
 		on socket), the server is required to fill in the quit  message  with
@@ -225,7 +226,7 @@ void Server::_client_request(int i) {
 		caused it to happen.
 			 */
 		} else
-			execCmd(getClientByFd(_fds[i].fd), msg);
+			execCmd(getClientByFd(fd), msg);
 	}
 
 }
