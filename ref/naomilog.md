@@ -33,7 +33,8 @@
 	- added color definitions in include.hpp
 	- added rule to skip client prefix if is present
 
-
+8.04
+	-kick command, is not same as ban - does not prevent users from immediately joining
 TODO:
 	- make sure JOIN command works with multiple channels/keys
 	- we never check if user is actually in the channel before sending message/ requesting topic etc (or do we?)
