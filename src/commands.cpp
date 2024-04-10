@@ -517,6 +517,7 @@ void Server::part(Client &client, std::vector<std::string> cmd) {
 			serverReply(client, ERR_NOTONCHANNEL(channels[i]));
 			return;
 		}
+		//std::cout << "message to send from PART is: " << msg << std::endl;
 		sendMsgToChannel(client, tmp.getName(), msg);
 		tmp.removeMember(client);
 	}

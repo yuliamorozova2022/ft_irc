@@ -95,3 +95,16 @@ TODO:
 	- draft for PART function.
 	- _n_online behaves weird in channel, maybe logic must be more complicated //fixed
 		WHY do we call addMember function inside addOper func????? 
+		
+10.04
+	- played with join and part(testing). I created channels: #tt &rr +ll. For &rr was setted keyword("key"), third client tried to "/join &rr,#tt key". Server connected this client only to &rr channel, and skipped #tt.
+	Screenshot:		![alt text](<Screenshot from 2024-04-10 12-10-39.png>)
+
+	- when client uses part with message (weechat adds channelname automatically); server send this message to all users in the channel, and weechat shows it as:
+		![alt text](<Screenshot from 2024-04-10 12-23-57.png>)
+	and weechat still shows that client in the channel:
+		![alt text](<Screenshot from 2024-04-10 11-58-51.png>)
+
+	- when client joins channel, weechat sends MODE channelname, so server replies "not enough params" -> looks like weechat expects cnannel modes for the channel
+
+	- only +t/-t mode is availiable for channels with "+" prefix
