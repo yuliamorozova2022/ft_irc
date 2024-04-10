@@ -508,17 +508,21 @@ void Server::part(Client &client, std::vector<std::string> cmd) {
 	}
 	std::vector<std::string> channels = split(cmd[1], ",");
 	for (int i = 0; i < channels.size(); ++i) {
+
+		std::cout << "message to send from PART is: {" << msg << "}\nchannelname is: " << channels[i]<< std::endl;
+
 		if (channels[i].empty() || !channelExists(toLower(channels[i]))) {
 			serverReply(client, ERR_NOSUCHCHANNEL(channels[i]));
-			return;
+			// return;
+			continue;
 		}
 		Channel &tmp = getChannelByName(toLower(channels[i]));
 		if (!tmp.isMember(client)) {
 			serverReply(client, ERR_NOTONCHANNEL(channels[i]));
-			return;
+			// return;
+			continue;
 		}
-		//std::cout << "message to send from PART is: " << msg << std::endl;
-		sendMsgToChannel(client, tmp.getName(), msg);
+		sendMsgToChannel(client, tmp.getName(), cmd[0] + " " + tmp.getName() + " " + msg);
 		tmp.removeMember(client);
 	}
 }

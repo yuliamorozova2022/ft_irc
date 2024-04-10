@@ -97,6 +97,7 @@ TODO:
 		WHY do we call addMember function inside addOper func????? 
 		
 10.04
+	- updated toLower() for specific symbols, allowed in names
 	- played with join and part(testing). I created channels: #tt &rr +ll. For &rr was setted keyword("key"), third client tried to "/join &rr,#tt key". Server connected this client only to &rr channel, and skipped #tt.
 	Screenshot:		![alt text](<Screenshot from 2024-04-10 12-10-39.png>)
 
@@ -108,3 +109,7 @@ TODO:
 	- when client joins channel, weechat sends MODE channelname, so server replies "not enough params" -> looks like weechat expects cnannel modes for the channel
 
 	- only +t/-t mode is availiable for channels with "+" prefix
+
+
+	-PART works!!! (maybe default message should be nickname instead of empty string?)
+		should test part with several channels
