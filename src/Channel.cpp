@@ -134,7 +134,7 @@ void	Channel::sendToClient(Client &client, std::string msg)
 	{
 		stat = send(client.getFd(),msg.c_str(), msg.length(), 0);
 		if (stat == -1)
-			throw std::runtime_error(get_date_time() + " sendToAll () failed!");
+			throw std::runtime_error(get_date_time() + " sendToClient () failed!");
 	}
 }
 

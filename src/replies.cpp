@@ -60,4 +60,5 @@ std::string ERR_BADCHANMASK (std::string c) {return ("476 " + c + " :Bad channel
 std::string ERR_CHANOPRIVSNEEDED (std::string c) {return ("482 " + c + " :You're not channel operator");}
 std::string ERR_UNKNOWNMODE (std::string mode, std::string channel) {return ("472 " + mode + " :is unknown mode char to me for " + channel);}
 std::string ERR_USERNOTINCHANNEL (std::string user, std::string channel) {return ("441 " + user + " " + channel +" :They aren't on that channel");}
-std::string ERR_KEYSET (std::string c) {return ("467 " + c + " :Channel key already set");};
+std::string ERR_KEYSET (std::string c) {return ("467 " + c + " :Channel key already set");}
+std::string ERR_BADCHANNELKEY (std::string c) {return ("475 " + c + " :Cannot join channel (+k)");}

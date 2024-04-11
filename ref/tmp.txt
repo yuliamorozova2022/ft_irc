@@ -1,0 +1,12 @@
+client &client, cmd[2] => {'MODE', '#chann <+asdf> <values>' }
+
+separate arguments by ' '
+
+check channel name, that it exists, that users in channe
+
+if args size > 1 (if modes, values are present):
+	check if client is oper of channel, if is, process modes/values
+
+
+send RPL_MODEIS
+

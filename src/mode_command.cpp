@@ -1,3 +1,4 @@
+
 #include "Server.hpp"
 //#include "PollManager.hpp"
 /*
@@ -38,7 +39,10 @@ static bool isValidMode(std::string str, std::string *unknown) {
  */
 
 
-
+/* 	if ((args.size() < 2) || (args.size() >= 2 && args[1].empty())) { //not enough parameters
+		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+		return;
+	} */
 void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed()) { //not registered
 		serverReply(client, ERR_NOTREGISTERED);
@@ -50,33 +54,31 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	}
 			//args[0] - channelname; args[1] - modes; further args[i] - arguments for modes
 	std::vector<std::string> args = split(cmd[1], " ");
-	std::string channel = toLower(args[0]);
-	if ((args.size() < 2) || (args.size() >= 2 && args[1].empty())) { //not enough parameters
-		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+	std::string channel = toLower(args[0]); 														// check if is better to use getChannelName()
+
+	if (!channelExists(channel)) { // checks actually channel name
+		serverReply(client, ERR_NOSUCHCHANNEL(channel));
 		return;
 	}
-	std::map<std::string, Channel *> tmp = getChannels();
-	if (tmp.find(channel) == tmp.end()) { // checks actually channel name
-		serverReply(client, ERR_USERNOTINCHANNEL(client.getNickName(), args[0]));
+	if (!getChannelByName(channel).isMember(client)) //check user is on channel
+	{
+		serverReply(client,ERR_NOTONCHANNEL(channel));
 		return;
 	}
+
 	std::string invalid = "";
 	if (isValidMode(args[1], &invalid) == false) { // check for valid modes
-		if (invalid.empty() == false)
-			serverReply(client, ERR_UNKNOWNMODE(args[1][0] + invalid, channel));
-		else //maybe no need
-			serverReply(client, ERR_UNKNOWNMODE(args[1], channel));
+		serverReply(client, ERR_UNKNOWNMODE(args[1][0] + invalid, channel));
 		return;
 	}
+
 	Channel &ch = getChannelByName(channel);
 	if (!ch.isOper(client)) { // client is not an oper
 		serverReply(client, ERR_CHANOPRIVSNEEDED(ch.getName()));
 		return;
 	}
-
-		// MODE +ik key
-		std::string mode = args[1];
-		args.erase(args.begin(), args.begin() + 2); // now there are only arguments for modes, or it's empty
+	std::string mode = args[1];
+	args.erase(args.begin(), args.begin() + 2); // now there are only arguments for modes, or it's empty
 
 	if (ch.getName()[0] == '+') {//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
 		if (mode == "+t") {
@@ -113,7 +115,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 					break;
 				}
 				case 'i': {
-					
+
 					ch.setInviteOnly('+');
 					break;
 				}
@@ -122,7 +124,7 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 						return;
 					}
-					
+
 					Client &cl = getClientByNick(args[j]);
 						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
 					if (!cl.isAuthed()) {
@@ -142,10 +144,10 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 						return;
 					}
 					try {
-						
+
 						//what will happen with users in the channel in case when new max limit is less than current one
 						// or when value is 0
-						ch.setMaxLim(atol(args[j].c_str())); 
+						ch.setMaxLim(atol(args[j].c_str()));
 						break;
 					}
 					catch (const std::exception &e) {

@@ -37,6 +37,8 @@
 	-kick command, is not same as ban - does not prevent users from immediately joining
 	- fixed memory leak caused by QUIT command and get_command loop - when command QUIT is called the function still tried to read info from (freed) client. solved by checking client exists with each loop
 
+11.04
+	- added if to actually check if user is in channel before messaging.
 
 TODO:
 	- make sure JOIN command works with multiple channels/keys

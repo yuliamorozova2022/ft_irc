@@ -320,8 +320,14 @@ void Server::sendMsgToChannel(Client &sender, std::string channel, std::string m
 	//check if channel exists
 	if (!channelExists(channel))
 	{
-		serverReply(sender, ERR_NOSUCHNICK(channel));
+		serverReply(sender, ERR_NOSUCHCHANNEL(channel));
 		return;
 	}
-	getChannels().find(channel)->second->sendToAll(sender, msg);
+	if (!getChannelByName(channel).isMember(sender)) //check user is on channel
+	{
+		serverReply(sender,ERR_NOTONCHANNEL(channel));
+		return;
+	}
+
+	getChannelByName(channel).sendToAll(sender, msg);
 }

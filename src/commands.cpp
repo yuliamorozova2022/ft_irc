@@ -373,7 +373,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 			}
 			if (ch->getKey() != "")
 			{
-				if (i < keys.size())
+				if (i >= keys.size())
 				{
 					serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
 					continue;
@@ -383,6 +383,8 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 					ch->addMember(client);
 					greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 				}
+				else
+					serverReply(client, ERR_BADCHANNELKEY(ch->getName()));
 			}
 			else
 			{
@@ -457,8 +459,8 @@ void Server::kick(Client &client, std::vector<std::string> cmd)
 		cmd[1] = cmd[1].substr(0, cmd[1].find(" :"));
 	}
 
-	
-	
+
+
 
 	std::string channelname = toLower(split(cmd[1], " ")[0]);
 	std::string clientname = split(cmd[1], " ")[1];
@@ -522,7 +524,10 @@ void Server::part(Client &client, std::vector<std::string> cmd) {
 			// return;
 			continue;
 		}
-		sendMsgToChannel(client, tmp.getName(), cmd[0] + " " + tmp.getName() + " " + msg);
+
+		tmp.sendToAll(client, cmd[0] + " " + tmp.getName() + " " + msg);
+		tmp.sendToClient(client, cmd[0] + " " + tmp.getName() + " " + msg);
+
 		tmp.removeMember(client);
 	}
 }
