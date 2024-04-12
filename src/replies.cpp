@@ -20,7 +20,8 @@ std::string RPL_ENDOFNAMES (Client &c, Channel &ch) {
 	}
 std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch) {return ("341 " + c1.getNickName() + " " + c2.getNickName() + " "  + ch.getName());}
 
-std::string RPL_CHANNELMODEIS (std::string channel, std::string modes) {return ("324 " + channel + " " + modes);}
+std::string RPL_CHANNELMODEIS (Client &c, Channel &ch) {return ("324 " + c.getNickName() + " " +ch.getName() + " " + ch.getModes());}
+// :master.ircgod.com 324 nroth #linux +n
 
 
 std::string RPL_TOPIC (Client &c, Channel &ch) {return ("332 " + c.getNickName() +" "+ ch.getName() + " :" + ch.getTopic());}

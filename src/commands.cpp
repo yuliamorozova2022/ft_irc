@@ -375,7 +375,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 			{
 				if (i >= keys.size())
 				{
-					serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+					serverReply(client, ERR_BADCHANNELKEY (ch->getName()));
 					continue;
 				}
 

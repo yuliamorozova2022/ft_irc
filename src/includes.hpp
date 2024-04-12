@@ -73,8 +73,8 @@ std::string RPL_NOTOPIC (std::string c);
 std::string RPL_INVITING (Client &c1, Client &c2, Channel &ch);
 std::string RPL_CHANNELMODEIS (std::string channel, std::string modes);
 
-std::string RPL_CHANNELMODEIS (std::string channel, std::string modes);
-
+// std::string RPL_CHANNELMODEIS (std::string channel, std::string modes);
+std::string RPL_CHANNELMODEIS (Client &c, Channel &ch);
 std::string RPL_LIST (Client &c, Channel &ch);
 std::string RPL_LISTEND (Client &c);
 
@@ -101,7 +101,7 @@ bool						allowed_symbol_check(std::string params);
 std::vector<std::string>	split(std::string str, std::string separator);
 int							checkAndLowercaseChannelName(std::string &cname);
 std::string					toLower(std::string str);
-std::string                 numb_to_str(long n);
+std::string					numb_to_str(long n);
 std::string 				get_date_time();
 
 #endif

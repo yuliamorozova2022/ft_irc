@@ -45,7 +45,8 @@ static bool isValidMode(std::string str, std::string *unknown) {
 		- check if key can be changes when is already set -> it can be changed
 		- if error encountered - should we handle other modes? for now no
 		- what will happen with users in the channel in case when new max limit is less than current one, or when 0
-
+		- when oper is added - should regular MODE reply be sent or something else?
+			also - should NAMES be sent directly after?
 */
 void Server::set_modes(Client &client, Channel &channel, std::vector<std::string> args) {
 	if (!channel.isOper(client)) { // client is not an oper
@@ -145,8 +146,10 @@ void Server::set_modes(Client &client, Channel &channel, std::vector<std::string
 			}
 		}
 	}
-}
 
+	channel.sendToAll(client, "MODE " + channel.getName() + " " + channel.getModes());
+	channel.sendToClient(client, "MODE " + channel.getName() + " " + channel.getModes());
+}
 
 void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed()) { //not registered
@@ -180,5 +183,6 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 		args.erase(args.begin(), args.begin() + 1); // now there are only arguments for modes, or it's empty
 		set_modes(client, ch, args);
 	}
-	serverReply(client,RPL_CHANNELMODEIS(ch.getName(), ch.getModes()));
+	else
+		ch.sendToClient(client, RPL_CHANNELMODEIS(client, ch));
 }
