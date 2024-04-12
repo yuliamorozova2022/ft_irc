@@ -39,10 +39,115 @@ static bool isValidMode(std::string str, std::string *unknown) {
  */
 
 
-/* 	if ((args.size() < 2) || (args.size() >= 2 && args[1].empty())) { //not enough parameters
-		serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
+/*
+	todo
+
+		- check if key can be changes when is already set -> it can be changed
+		- if error encountered - should we handle other modes? for now no
+		- what will happen with users in the channel in case when new max limit is less than current one, or when 0
+
+*/
+void Server::set_modes(Client &client, Channel &channel, std::vector<std::string> args) {
+	if (!channel.isOper(client)) { // client is not an oper
+		serverReply(client, ERR_CHANOPRIVSNEEDED(channel.getName()));
 		return;
-	} */
+	}
+
+	std::string mode = args[0];
+	args.erase(args.begin(), args.begin() + 1); //only params are in the vector
+	std::string invalid = "";
+	if (isValidMode(mode, &invalid) == false) { // check for valid modes
+		serverReply(client, ERR_UNKNOWNMODE(args[1][0] + invalid, channel.getName()));
+		return;
+	}
+	if (channel.getName()[0] == '+') {//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
+		if (mode == "+t") {
+			channel.setTopicFlag('+');
+		} else if (mode == "-t") {
+			channel.setTopicFlag('-');
+		} else {
+			serverReply(client, ERR_UNKNOWNMODE(mode, channel.getName()));
+		}
+		return;
+	}
+	char sign = mode[0];
+	mode.erase(mode.begin());
+
+	for (int j = 0; j < mode.size(); j++) {
+		char c = mode[j];
+		switch (c) {
+			case 't': {
+				channel.setTopicFlag(sign);
+				break;
+				}
+			case 'k': {
+				if (sign == '-')
+					channel.setKey("");
+				else {
+					if (sign == '+' && !channel.getKey().empty()) { //key is already setted
+						serverReply(client, ERR_KEYSET(channel.getName()));
+						return;
+					}
+					if (args.size() == 0) { //not enough params
+						serverReply(client, ERR_NEEDMOREPARAMS("MODE"));
+						return;
+					}
+					channel.setKey(args[0]);
+					args.erase(args.begin(), args.begin() + 1);
+				}
+				break;
+			}
+			case 'i': {
+				channel.setInviteOnly(sign);
+				break;
+			}
+			case 'o': {
+				if (args.size() == 0) { //not enough params
+					serverReply(client, ERR_NEEDMOREPARAMS("MODE"));
+					return;
+				}
+				if (!clientRegistered(args[0]))
+				{
+					serverReply(client, ERR_NOSUCHNICK(channel.getName()));
+					return;
+				}
+				Client &cl = getClientByNick(args[0]);
+				if (!channel.isMember(cl)) { //	in case when client exists but is not a member of channel
+					serverReply(client, ERR_USERNOTINCHANNEL(args[0], channel.getName()));
+					return;
+				}
+				if (sign == '+')
+					channel.addOper(cl);
+				else
+					channel.removeOper(cl);
+				args.erase(args.begin(), args.begin() + 1);
+				break;
+			}
+			case 'l': {
+				if (sign == '-')
+				{
+					channel.setMaxLim(0);
+					break;
+				}
+				if (args.size() == 0) { //not enough params
+					serverReply(client, ERR_NEEDMOREPARAMS("MODE"));
+					return;
+				}
+				try {
+					channel.setMaxLim(atol(args[0].c_str()));
+					break;
+				}
+				catch (const std::exception &e) {
+					std::cerr << e.what() << std::endl; //should be some message for client???
+					return;
+				}
+				args.erase(args.begin(), args.begin() + 1);
+			}
+		}
+	}
+}
+
+
 void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	if (!client.isAuthed()) { //not registered
 		serverReply(client, ERR_NOTREGISTERED);
@@ -54,9 +159,13 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 	}
 			//args[0] - channelname; args[1] - modes; further args[i] - arguments for modes
 	std::vector<std::string> args = split(cmd[1], " ");
-	std::string channel = toLower(args[0]); 														// check if is better to use getChannelName()
+	std::string channel = args[0];
 
-	if (!channelExists(channel)) { // checks actually channel name
+	if (checkAndLowercaseChannelName(channel) == -1) { // checks actually channel name validity
+		serverReply(client, ERR_BADCHANMASK(channel));
+		return;
+	}
+	if (!channelExists(channel)) { // checks channel exists
 		serverReply(client, ERR_NOSUCHCHANNEL(channel));
 		return;
 	}
@@ -66,148 +175,10 @@ void	Server::mode(Client &client, std::vector<std::string> cmd) {
 		return;
 	}
 
-	std::string invalid = "";
-	if (isValidMode(args[1], &invalid) == false) { // check for valid modes
-		serverReply(client, ERR_UNKNOWNMODE(args[1][0] + invalid, channel));
-		return;
-	}
-
 	Channel &ch = getChannelByName(channel);
-	if (!ch.isOper(client)) { // client is not an oper
-		serverReply(client, ERR_CHANOPRIVSNEEDED(ch.getName()));
-		return;
+	if (args.size() > 1) {
+		args.erase(args.begin(), args.begin() + 1); // now there are only arguments for modes, or it's empty
+		set_modes(client, ch, args);
 	}
-	std::string mode = args[1];
-	args.erase(args.begin(), args.begin() + 2); // now there are only arguments for modes, or it's empty
-
-	if (ch.getName()[0] == '+') {//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
-		if (mode == "+t") {
-			ch.setTopicFlag('+');
-		} else if (mode == "-t") {
-			ch.setTopicFlag('-');
-		} else {
-			serverReply(client, ERR_UNKNOWNMODE(mode, ch.getName()));
-		}
-		return;
-	}
-
-	if (mode[0] == '+') {
-		mode.erase(mode.begin());
-		for (int j = 0; j < mode.size(); j++) {
-			char c = mode[j];
-			switch (c) {
-				case 't': {
-					ch.setTopicFlag('+');
-					break;
-				}
-				case 'k': {
-					// how weechat will behave in case when key is set, and oper tries to change it to another without -k before
-					// case when key is set, and oper tries to change it to another without -k before
-					if (!ch.getKey().empty()) { //key is already setted
-						serverReply(client, ERR_KEYSET(ch.getName()));
-						return;
-					}
-					if (args.size() >= j || args[j].empty()) { //not enough params
-						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
-						return;
-					}
-					ch.setKey(args[j]);
-					break;
-				}
-				case 'i': {
-
-					ch.setInviteOnly('+');
-					break;
-				}
-				case 'o': {
-					if (args.size() >= j || args[j].empty()) {
-						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
-						return;
-					}
-
-					Client &cl = getClientByNick(args[j]);
-						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
-					if (!cl.isAuthed()) {
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
-						return;
-					}
-					if (!ch.isMember(cl)) { //	in case when client exists but is not a member of channel
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
-						return;
-					}
-					ch.addOper(cl);
-					break;
-				}
-				case 'l': {
-					if (args.size() >= j || args[j].empty()) {
-						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
-						return;
-					}
-					try {
-
-						//what will happen with users in the channel in case when new max limit is less than current one
-						// or when value is 0
-						ch.setMaxLim(atol(args[j].c_str()));
-						break;
-					}
-					catch (const std::exception &e) {
-						std::cerr << e.what() << std::endl; //should be some message for client???
-						return;
-					}
-				}
-				serverReply(client,RPL_CHANNELMODEIS(ch.getName(), ch.getModes()));
-			}
-		}
-	} else {
-		mode.erase(mode.begin());
-		for (int j = 0; j < mode.size(); j++) {
-			char c = mode[j];
-			switch (c) {
-				case 't': {
-					ch.setTopicFlag('-');
-					break;
-				}
-				case 'k': {
-					// how weechat will behave in case when key is set, and oper tries to use mode -k with wrong key?
-					//should we check match of channel key and params?
-					ch.setKey("");
-					break;
-				}
-				case 'i': {
-					ch.setInviteOnly('-');
-					break;
-				}
-				case 'o': {
-					if (args.size() >= j || args[j].empty()) {
-						serverReply(client, ERR_NEEDMOREPARAMS(cmd[0]));
-						return;
-					}
-					Client &cl = getClientByNick(args[j]);
-						// ^^^ when client is not on server function returns "empty client object" that means client can't be channel member
-					if (!cl.isAuthed()) {
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
-						return;
-					}
-					if (!ch.isMember(cl)) { //	in case when client is not a member of channel
-						serverReply(client, ERR_USERNOTINCHANNEL(args[j], ch.getName()));
-						return;
-					}
-					ch.removeOper(cl);
-					break;
-				}
-				case 'l': {
-					try {
-						ch.setMaxLim(0);
-						break;
-					}
-					catch (const std::exception &e) {
-						std::cerr << e.what() << std::endl;
-						return;
-					}
-				}
-			}
-			serverReply(client,RPL_CHANNELMODEIS(ch.getName(), ch.getModes()));
-		}
-	}
-
+	serverReply(client,RPL_CHANNELMODEIS(ch.getName(), ch.getModes()));
 }

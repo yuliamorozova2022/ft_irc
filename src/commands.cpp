@@ -164,7 +164,7 @@ void Server::names(Client &client, std::vector<std::string> cmd)
 
 		INCORRECT - the @ symbol is not to mark sender, its to mark all opers. i think?
 	 */
-	getChannelName(cmd[1]);
+	checkAndLowercaseChannelName(cmd[1]);
 	if (Server::getChannels().find(cmd[1]) == Server::getChannels().end())
 		return;
 	Channel &ch = *(Server::getChannels().find(cmd[1])->second);
@@ -201,7 +201,7 @@ void Server::topic(Client &client, std::vector<std::string> cmd)
 	std::vector<std::string> args = split(cmd[1], " :");
 	std::string channel_s = args[0];
 
-	if (getChannelName(channel_s) == -1) //check channel name
+	if (checkAndLowercaseChannelName(channel_s) == -1) //check channel name
 	{
 		serverReply(client, ERR_BADCHANMASK(channel_s));
 		return;
@@ -357,7 +357,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 	for (size_t i = 0; i < channel_names.size(); i++)
 	{
 		channel_names[i] = toLower(channel_names[i]);
-		if (getChannelName(channel_names[i]) == -1)
+		if (checkAndLowercaseChannelName(channel_names[i]) == -1)
 		{
 			serverReply(client, ERR_BADCHANMASK(channel_names[i]));
 			continue;

@@ -85,6 +85,7 @@ class Server {
 		void	sendMsgToUser(Client &sender, std::string reciever, std::string msg);
 
 		void	sendToEveryone(std::string msg);
+		void	set_modes(Client &client, Channel &channel, std::vector<std::string> args);
 
 
 			//Command Handling

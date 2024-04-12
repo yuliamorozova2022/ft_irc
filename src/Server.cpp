@@ -312,7 +312,7 @@ void Server::sendMsgToUser(Client &sender, std::string recipient, std::string ms
 }
 void Server::sendMsgToChannel(Client &sender, std::string channel, std::string msg)
 {
-	if (getChannelName(channel) == -1) //check channel name
+	if (checkAndLowercaseChannelName(channel) == -1) //check channel name
 	{
 		serverReply(sender, ERR_BADCHANMASK(channel));
 		return;

@@ -99,7 +99,7 @@ std::string ERR_BADCHANNELKEY (std::string c);
 std::string					get_command(Client &client, int &stat);
 bool						allowed_symbol_check(std::string params);
 std::vector<std::string>	split(std::string str, std::string separator);
-int							getChannelName(std::string &cname);
+int							checkAndLowercaseChannelName(std::string &cname);
 std::string					toLower(std::string str);
 std::string                 numb_to_str(long n);
 std::string 				get_date_time();
