@@ -48,7 +48,7 @@ std::string RPL_LISTEND (Client &c) {return ("323 " + c.getNickName() + " :End o
 
 //ERRS
 std::string ERR_NORECIPIENT (std::string c) {return ("411 :No recipient given (" + c + ")");}
-std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick/channel");}
+std::string ERR_NOSUCHNICK (std::string c) {return ("401 " + c + " :No such nick");}
 std::string ERR_NOSUCHCHANNEL (std::string c) {return ("403 " + c + " :No such channel");}
 std::string ERR_NICKNAMEINUSE (std::string c) {return ("433 " + c + " :Nickname is already in use");}
 std::string ERR_NEEDMOREPARAMS (std::string c) {return ("461 " + c + " :Not enough parameters");}
@@ -63,3 +63,4 @@ std::string ERR_UNKNOWNMODE (std::string mode, std::string channel) {return ("47
 std::string ERR_USERNOTINCHANNEL (std::string user, std::string channel) {return ("441 " + user + " " + channel +" :They aren't on that channel");}
 std::string ERR_KEYSET (std::string c) {return ("467 " + c + " :Channel key already set");}
 std::string ERR_BADCHANNELKEY (std::string c) {return ("475 " + c + " :Cannot join channel (+k)");}
+std::string ERR_CHANNELISFULL (std::string c) {return ("471 " + c + " :Cannot join channel (+l)");}

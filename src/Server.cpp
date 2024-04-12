@@ -303,7 +303,6 @@ void Server::sendMsgToUser(Client &sender, std::string recipient, std::string ms
 			if (it->second->getNickName() == recipient)
 			{
 				std::cout << get_date_time() << ": ";
-				std::cout << "sending to " << recipient << " {" + msg + "}" << std::endl;
 				send(it->second->getFd(), msg.c_str(), msg.length(), 0);
 				return;
 			}

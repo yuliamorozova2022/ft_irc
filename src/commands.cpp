@@ -319,13 +319,10 @@ static void greetClientToChannel(Server &server, Channel &channel, Client &clien
 	s.push_back(channel.getName());
 	s.push_back(channel.getName());
 
-//	channel.getOnline()++;
-	std::cout << channel.getName() << " online: " << channel.getOnline() << std::endl;
 	server.serverReply(client, RPL_TOPIC(client, channel));
 	channel.sendToAll(client, "JOIN " + channel.getName());
 	channel.sendToClient(client, "JOIN " + channel.getName());
 	server.names(client, s) ;
-
 }
 /*
 	Command: JOIN
@@ -356,7 +353,6 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 
 	for (size_t i = 0; i < channel_names.size(); i++)
 	{
-		channel_names[i] = toLower(channel_names[i]);
 		if (checkAndLowercaseChannelName(channel_names[i]) == -1)
 		{
 			serverReply(client, ERR_BADCHANMASK(channel_names[i]));
@@ -365,6 +361,11 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		if ( Server::getChannels().find(channel_names[i]) != Server::getChannels().end())
 		{
 			ch = Server::getChannels().find(channel_names[i])->second;
+			if (ch->getMaxLim() && ch->getOnline() >= ch->getMaxLim() )
+			{
+				Server::serverReply(client, ERR_CHANNELISFULL(ch->getName()));
+				continue;
+			}
 			//check if channel is invite only, and if user is on invited list
 			if (ch->getInviteOnly() == true && ch->isInvited(client) == false)
 			{
@@ -381,7 +382,8 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 
 				if (ch->getKey() == keys[i]) {
 					ch->addMember(client);
-					greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
+					if (ch->isMember(client))
+						greetClientToChannel(*this, *(getChannels().find(channel_names[i])->second), client);
 				}
 				else
 					serverReply(client, ERR_BADCHANNELKEY(ch->getName()));
@@ -422,10 +424,7 @@ void Server::list(Client &client, std::vector<std::string> cmd)
 	{
 		for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 		it != _channels.end(); it++)
-		{
 			serverReply(client, RPL_LIST(client, *it->second));
-			std::cout << LMAGENTA << RPL_LIST(client, *it->second) << DEFAULT << std::endl;
-		}
 
 	}
 	else if (cmd.size() == 2)
@@ -510,9 +509,6 @@ void Server::part(Client &client, std::vector<std::string> cmd) {
 	}
 	std::vector<std::string> channels = split(cmd[1], ",");
 	for (int i = 0; i < channels.size(); ++i) {
-
-		std::cout << "message to send from PART is: {" << msg << "}\nchannelname is: " << channels[i]<< std::endl;
-
 		if (channels[i].empty() || !channelExists(toLower(channels[i]))) {
 			serverReply(client, ERR_NOSUCHCHANNEL(channels[i]));
 			// return;

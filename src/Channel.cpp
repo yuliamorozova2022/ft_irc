@@ -81,6 +81,7 @@ bool Channel::getTopicFlag() const {
 void Channel::setKey(std::string key) {_key = key;}
 
 	//methods
+
 void Channel::addMember(Client &client) {
 	_members.insert(std::pair<int, Client *> (client.getFd(), &client));
 	std::cout << get_date_time() << ": " << "\e[92mAdding member " << client.getNickName() << " to " << _name << "\e[0m" << std::endl;

@@ -49,6 +49,11 @@ static bool isValidMode(std::string str, std::string *unknown) {
 			also - should NAMES be sent directly after?
 */
 void Server::set_modes(Client &client, Channel &channel, std::vector<std::string> args) {
+	std::string str = "MODE " + channel.getName();
+	for(int i = 0; i < args.size(); i++)
+		str.append(" ").append(args[i]);
+
+
 	if (!channel.isOper(client)) { // client is not an oper
 		serverReply(client, ERR_CHANOPRIVSNEEDED(channel.getName()));
 		return;
@@ -58,7 +63,7 @@ void Server::set_modes(Client &client, Channel &channel, std::vector<std::string
 	args.erase(args.begin(), args.begin() + 1); //only params are in the vector
 	std::string invalid = "";
 	if (isValidMode(mode, &invalid) == false) { // check for valid modes
-		serverReply(client, ERR_UNKNOWNMODE(args[1][0] + invalid, channel.getName()));
+		serverReply(client, ERR_UNKNOWNMODE(invalid, channel.getName()));
 		return;
 	}
 	if (channel.getName()[0] == '+') {//	 	 !!!!!!!!!!! channel is with '+' prefix, for that only 't' mode is available
@@ -69,6 +74,8 @@ void Server::set_modes(Client &client, Channel &channel, std::vector<std::string
 		} else {
 			serverReply(client, ERR_UNKNOWNMODE(mode, channel.getName()));
 		}
+		channel.sendToAll(client, str);
+		channel.sendToClient(client, str);
 		return;
 	}
 	char sign = mode[0];
@@ -146,9 +153,8 @@ void Server::set_modes(Client &client, Channel &channel, std::vector<std::string
 			}
 		}
 	}
-
-	channel.sendToAll(client, "MODE " + channel.getName() + " " + channel.getModes());
-	channel.sendToClient(client, "MODE " + channel.getName() + " " + channel.getModes());
+	channel.sendToAll(client, str);
+	channel.sendToClient(client, str);
 }
 
 void	Server::mode(Client &client, std::vector<std::string> cmd) {

@@ -94,7 +94,7 @@ std::string ERR_UNKNOWNMODE (std::string mode, std::string channel);
 std::string ERR_USERNOTINCHANNEL (std::string user, std::string channel);
 std::string ERR_KEYSET (std::string c);
 std::string ERR_BADCHANNELKEY (std::string c);
-
+std::string ERR_CHANNELISFULL (std::string c);
 //tools.cpp
 std::string					get_command(Client &client, int &stat);
 bool						allowed_symbol_check(std::string params);
