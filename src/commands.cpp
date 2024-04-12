@@ -179,9 +179,7 @@ void Server::names(Client &client, std::vector<std::string> cmd)
 			if (ch.isOper(*i->second))
 				userlist += "@";
 			userlist += i->second->getNickName();
-std::cout << "user: " + userlist << std::endl;
 		}
-std::cout << "userlist: " + userlist << std::endl;
 		std::string rep = "353 " + client.getNickName() + " = " + ch.getName() + " :" + userlist;
 
 		serverReply(client, rep);
@@ -361,6 +359,7 @@ void Server::join(Client &client, std::vector<std::string> cmd)
 		if ( Server::getChannels().find(channel_names[i]) != Server::getChannels().end())
 		{
 			ch = Server::getChannels().find(channel_names[i])->second;
+			if (ch->isMember(client)) {continue;}
 			if (ch->getMaxLim() && ch->getOnline() >= ch->getMaxLim() )
 			{
 				Server::serverReply(client, ERR_CHANNELISFULL(ch->getName()));
@@ -508,7 +507,7 @@ void Server::part(Client &client, std::vector<std::string> cmd) {
 		cmd[1] = cmd[1].substr(0, cmd[1].find(" :"));
 	}
 	std::vector<std::string> channels = split(cmd[1], ",");
-	for (int i = 0; i < channels.size(); ++i) {
+	for (size_t i = 0; i < channels.size(); ++i) {
 		if (channels[i].empty() || !channelExists(toLower(channels[i]))) {
 			serverReply(client, ERR_NOSUCHCHANNEL(channels[i]));
 			// return;

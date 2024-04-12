@@ -31,7 +31,7 @@ class Client {
 		~Client();
 			// Getters
 		std::string getUserName() const;
-		const int getFd() const;
+		int getFd() const;
 		std::string getNickName() const;
 		std::string getHost() const;
 		const std::string &getMsgBuffer() const;

@@ -22,18 +22,18 @@ Server::Server(const std::string port, std::string serverPass) : _name(SERVER_NA
 	if (_serverFd == -1)
 		throw std::invalid_argument(get_date_time() + ": Port number invalid, must be int between [0; 65535]");
 
-	std::cout << get_date_time() << ":adding server fd..." << "\e[0m" << std::endl;
+	std::cout << get_date_time() << ": adding server fd..." << "\e[0m" << std::endl;
 
 	_fds.addFD(_serverFd);
 	setupCmds();
-	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
+	// std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
 }
 
 Server::Server(const int port, const std::string serverPass) : _name(SERVER_NAME), _serverFd(_setup_socket(port)), _serverPass(serverPass), _welcomeMsg("Welcome!") {
 
 	_fds.addFD(_serverFd);
 	setupCmds();
-	std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
+	// std::cout << "\e[0;33mConstructor called of Server " << _name << "\e[0m" << std::endl;
 }
 
 	// Destructor
@@ -41,16 +41,16 @@ Server::~Server() {
 	for (std::map<int, Client *>::iterator it = _clients.begin();
 			it != _clients.end(); it ++)
 			{
-				std::cout << get_date_time() << ": deleting " << it->first << std::endl;
+				std::cout << get_date_time() << " : deleting " << it->first << std::endl;
 				delete(it->second);
 			}
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 			it != _channels.end(); it ++)
 			{
-				std::cout << get_date_time() << ":deleting " << it->first << std::endl;
+				std::cout << get_date_time() << " : deleting " << it->first << std::endl;
 				delete(it->second);
 			}
-	std::cout << "\e[92mDestructor of Server called\e[0m" << std::endl;
+	// std::cout << "\e[92mDestructor of Server called\e[0m" << std::endl;
 }
 
 	// Getters / Setters
@@ -165,7 +165,7 @@ void Server::launch() {
 				std::cout << get_date_time() << ": ";
 				std::cout << "Unexpected event from [" << _fds.getFds()[i].fd << "]: " << _fds.getFds()[i].revents << std::endl;
 				std::cout << "	event: " << find_revent(_fds.getFds()[i].revents) << std::endl;
-				std::cout << "	removing client...." << std::endl;
+				std::cout << "	removing client..." << std::endl;
 				removeClient(_fds[i].fd);
 				continue;
 			}
@@ -194,7 +194,7 @@ void Server::_accept_new_connection() {
 	else {
 
 		std::cout << get_date_time() << ": ";
-		std::cout << "  New incoming connection " << new_connection << std::endl;
+		std::cout << "	New incoming connection: " << new_connection << std::endl;
 		if (getnameinfo((struct sockaddr *) &s_address, sizeof(s_address), hostname, NI_MAXHOST, NULL, 0, NI_NUMERICSERV) != 0)
 			throw std::runtime_error(get_date_time() + ": Error while getting hostname on new client.");
 

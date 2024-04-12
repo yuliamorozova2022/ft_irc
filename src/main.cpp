@@ -8,34 +8,6 @@
 
 
 
-/*
-	NOTE:
-		packages myst be aggregated till a new line char is found.
-		nc is good for testing, package will be sent without nl
-		std::getLine can be used for this (?)
-
-
-
-		TODO:
-			- Tough name reply exists, it doesnt automatically gets called when using JOIN. find a way to call it
-			temp solution commented in Server::join code
-
-			- channel name prefix(#&) need to be part of channel name
-			**** rfc1459#section-1.3
-				Channels names are strings (beginning with a '&' or '#' character) of length up to 200 characters.
-				Apart from the the requirement that the first character being either '&' or '#'; the only restriction
-				on a channel name is that it may not contain any spaces (' '), a control G (^G or ASCII 7), or a comma
-				(',' which is used as a list item separator by the protocol).
-			****
-
-			- privmsg
-
-
-
- */
-
-
-
 bool g_interrupt = false;
 
 void signal_handler(int const sig)
@@ -49,13 +21,13 @@ void signal_handler(int const sig)
 
 int main(int argc, char *argv[])
 {
-	if (argc == 1)
+/* 	if (argc == 1)
 	{
 		argc = 3;
 		argv[0] = "./ircserv";
 		argv[1] =  "6666";
 		argv[2] = "test";
-	}
+	} */
 	if (argc != 3) {
 		std::cout << "Usage ./ircserv <port> <password>" << std::endl;
 		return 1;

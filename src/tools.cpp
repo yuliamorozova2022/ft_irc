@@ -79,7 +79,7 @@ void Server::welcomeClient(Client &c)
 }
 
 std::string toLower(std::string str) {
-	for (int i = 0; i < str.length(); ++i) {
+	for (size_t i = 0; i < str.length(); ++i) {
 		if (str[i] >= 'A' && str[i] <= 'Z')
 			str[i] = std::tolower(str[i]);
 			//[]\~ to theese: {}|^

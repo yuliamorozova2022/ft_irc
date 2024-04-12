@@ -3,21 +3,23 @@
 	// Constructors
 
 Channel::Channel(std::string name, Client& creator)
-:_name(name), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
+:_name(name), _creator(&creator), _n_online(0), _inv_only(false), _max_lim(0) {
 
 	std::cout << get_date_time() << ": " << "\e[0;33mInt Constructor called for Channel\e[0m" << std::endl;
 	addMember(creator);
 	addOper(creator);
 	_topic = "";
+	_t_mode = '-';
 	_key = "";
 }
 
 Channel::Channel(std::string name, std::string key, Client& creator)
-:_name(name), _key(key), _creator(&creator), _n_online(0), _max_lim(0), _inv_only(false) {
+:_name(name), _key(key), _creator(&creator), _n_online(0), _inv_only(false), _max_lim(0) {
 
 	std::cout << get_date_time() << ": " << "\e[0;33mInt Constructor called for private Channel\e[0m" << std::endl;
 	addMember(creator);
 	addOper(creator);
+	_t_mode = '-';
 	_topic = "";
 }
 
@@ -74,8 +76,7 @@ void Channel::setTopicFlag(char sign) {
 bool Channel::getTopicFlag() const {
 	if (_t_mode == '-')
 		return false;
-	if (_t_mode == '+')
-		return true;
+	return true;
 }
 
 void Channel::setKey(std::string key) {_key = key;}

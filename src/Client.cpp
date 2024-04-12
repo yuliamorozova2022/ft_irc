@@ -31,7 +31,7 @@ Client::~Client() {
 	// Getters
 std::string Client::getUserName() const					{ return _userName;}
 std::string Client::getNickName() const						{ return _nickName;}
-const int Client::getFd() const								{ return _fd;}
+int Client::getFd() const								{ return _fd;}
 std::string Client::getHost() const							{ return _host;}
 std::map<std::string, Channel *> Client::getJoinedChannels() const	{ return _joinedChannels;}
 bool  Client::isRegistered() const{ return _registered;}
@@ -43,7 +43,7 @@ void Client::setUserName(std::string userName) {
 	if (_userName == "")
 		_userName = userName;
 };
-void Client::setAuth() { _auth = true;	std::cout << get_date_time() << ": " << "\e[0;33muser " + _nickName + " authenticated\e[0m" << std::endl;}
+void Client::setAuth() { _auth = true;	std::cout << get_date_time() << ": " << "\e[0;33mnew user is authenticated\e[0m" << std::endl;}
 void Client::setRegistered() { _registered = true;	std::cout << get_date_time() << ": " << "\e[0;33muser " + _nickName + " registered\e[0m" << std::endl;}
 
 	//methods
